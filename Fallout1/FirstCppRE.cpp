@@ -61,13 +61,11 @@ namespace RE {
 
     uintptr_t FindDMAAddy(HANDLE hProc, uintptr_t ptr, std::vector<unsigned int> offsets) {
         uintptr_t addr = ptr;
-        Print("FIND ADDRESS FOR: {:x}", addr);
+        int       out;
         for (unsigned int i = 0; i < offsets.size(); ++i) {
-            ReadProcessMemory(hProc, (BYTE*)addr, &addr, sizeof(addr), 0);
-            Print("Read address: {:x}", addr);
-            addr += offsets[i];
+            ReadProcessMemory(hProc, (BYTE*)addr, &out, sizeof(out), 0);
+            addr = out + offsets[i];
         }
-        Print("Returning address: {:x}", addr);
         return addr;
     }
 }
@@ -91,37 +89,24 @@ namespace Fallout2 {
             int       itemNumberAddress;
             uintptr_t pointerAddress = GetAddress(0x19E960);
             ReadProcessMemory(_handle, (BYTE*)pointerAddress, &itemNumberAddress, sizeof(itemNumberAddress), 0);
-            Print("Item Number Address: {:x}", itemNumberAddress);
             ReadProcessMemory(_handle, (BYTE*)itemNumberAddress, &result, sizeof(result), 0);
         });
         return result;
     }
 
-    void ListQuantitiesOfItemsInInventory() {
-        // int result;
+    void PrintQuantitiesOfItemsInInventory() {
+        int itemCount = GetNumberOfItemsInInventory();
+        Print("Item count: {}", itemCount);
+        if (itemCount == 0) return;
+
         UsingProcess([&]() {
-            uintptr_t root = GetAddress(0x19E960);
-            Print("ROOT: {:x}", root);
-
-            int one;
-            ReadProcessMemory(_handle, (BYTE*)root, &one, sizeof(one), 0);
-            Print("ONE: {:x}", one);
-
-            one += 0x8;
-
-            int two;
-            Print("Getting TWO: {:x}", one);
-            ReadProcessMemory(_handle, (BYTE*)one, &two, sizeof(two), 0);
-            Print("TWO: {:x}", two);
-
-            two += 0x4;
-
-            int three;
-            Print("Getting THREE: {:x}", two);
-            ReadProcessMemory(_handle, (BYTE*)two, &three, sizeof(three), 0);
-            Print("THREE: {}", three);
+            for (unsigned int i = 0; i < itemCount; i++) {
+                uintptr_t address = GetAddress(0x19E960, {0x8, 0x4 + i * 8});
+                int       count;
+                ReadProcessMemory(_handle, (BYTE*)address, &count, sizeof(count), 0);
+                Print("Inventory item slot {} has {} items", i, count);
+            }
         });
-        // return result;
     }
 }
 
@@ -135,7 +120,6 @@ void DoReverseEngineeringShit() {
 }
 
 int main() {
-    // Print("Your character currently has {} items in their inventory.", Fallout2::GetNumberOfItemsInInventory());
-    Fallout2::ListQuantitiesOfItemsInInventory();
+    Fallout2::PrintQuantitiesOfItemsInInventory();
     return 0;
 }
