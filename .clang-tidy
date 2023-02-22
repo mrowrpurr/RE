@@ -1,0 +1,6 @@
+FormatStyle: google
+CheckOptions:
+  - key:             misc-definitions-in-headers.HeaderFileExtensions
+    value:           ''
+  - key:             misc-definitions-in-headers.UseHeaderFileExtension
+    value:           '1'
