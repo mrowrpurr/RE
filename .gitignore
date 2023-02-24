@@ -8,3 +8,5 @@ docs
 doxygen-awesome-css
 Debug
 x86
+x64
+.cache
