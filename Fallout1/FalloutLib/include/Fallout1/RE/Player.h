@@ -6,22 +6,23 @@
 
 namespace Fallout1::RE {
 
-    class Player {
-        uintptr_t m_base;
-
-    public:
-        Player(uintptr_t base) : m_base(Addresses::PlayerPtr) {}
-
-        // uint32_t GetActionPoints() const { return *reinterpret_cast<uint32_t*>(m_base + 0x3C); }
-
-        // uint32_t GetInventoryCount() const { return *reinterpret_cast<uint32_t*>(m_base + 0x2C); }
-
-        // uint32_t GetInventoryPtr() const { return *reinterpret_cast<uint32_t*>(m_base + 0x30); }
-
-        // uint32_t GetScreenScrollX() const { return *reinterpret_cast<uint32_t*>(m_base + 0x10); }
-
-        // uint32_t GetScreenScrollY() const { return *reinterpret_cast<uint32_t*>(m_base + 0x0C); }
-
-        // uint32_t GetCharacterDirection() const { return *reinterpret_cast<uint32_t*>(m_base + 0x18); }
+    struct Player {
+        uint32_t unk00;
+        uint32_t maybeMapHex;
+        uint32_t unk08;
+        uint32_t unk0C;
+        uint32_t screenScrollY;
+        uint32_t screenScrollX;
+        uint32_t unk18;
+        uint32_t characterDirection;
+        uint32_t unk20Ptr;
+        uint32_t unk24;
+        uint32_t unk28;
+        uint32_t inventoryCount;
+        uint32_t unk30;
+        uint32_t inventoryPtr;
+        uint32_t unk38;
+        uint32_t unk3C;
+        uint32_t actionPoints;
     };
 }

@@ -2,6 +2,7 @@
 
 #include <string>
 
+#include "RE/Addresses.h"
 #include "RE/GetAddress.h"
 #include "RE/Player.h"
 
@@ -28,6 +29,13 @@ namespace Fallout1 {
         void        SetName(const char* name) {
             char* playerName = (char*)Fallout1::RE::GetAddress(Fallout1::RE::Addresses::PlayerName);
             strcpy(playerName, (char*)name);
+        }
+
+        // TODO - move to like an inventory object or some shit.
+        unsigned int GetInventoryCount() {
+            RE::Player* player =
+                RE::GetAddress<RE::Player*>(RE::Addresses::PlayerPtr, {0x0});  // Move the 0x0 to addresses
+            return player->inventoryCount;
         }
     };
 
