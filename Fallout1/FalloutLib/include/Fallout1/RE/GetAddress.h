@@ -17,7 +17,18 @@ namespace Fallout1::RE {
     }
 
     template <typename T>
-    T* GetAddress(uintptr_t base, const std::vector<uintptr_t>& offsets = {}) {
-        return reinterpret_cast<T*>(GetAddress(base, offsets));
+    T GetAddress(uintptr_t base, const std::vector<uintptr_t>& offsets = {}) {
+        return reinterpret_cast<T>(GetAddress(base, offsets));
+    }
+
+    void SetAddress(uintptr_t base, uintptr_t value) {
+        uintptr_t address                      = GetAddress(base);
+        *reinterpret_cast<uintptr_t*>(address) = value;
+    }
+
+    template <typename T>
+    void SetAddress(uintptr_t base, T value) {
+        uintptr_t address              = GetAddress(base);
+        *reinterpret_cast<T*>(address) = value;
     }
 }

@@ -21,8 +21,14 @@ namespace Fallout1 {
             return singleton;
         }
 
-        int  GetAge() { return *RE::GetAddress<int>(RE::Addresses::PlayerAge); }
-        void SetAge(int age) { *RE::GetAddress<int>(RE::Addresses::PlayerAge) = age; }
+        int  GetAge() { return *RE::GetAddress<int*>(RE::Addresses::PlayerAge); }
+        void SetAge(int age) { *RE::GetAddress<int*>(RE::Addresses::PlayerAge) = age; }
+
+        const char* GetName() { return RE::GetAddress<const char*>(RE::Addresses::PlayerName); }
+        void        SetName(const char* name) {
+            char* playerName = (char*)Fallout1::RE::GetAddress(Fallout1::RE::Addresses::PlayerName);
+            strcpy(playerName, (char*)name);
+        }
     };
 
     Player& GetPlayer() { return Player::GetSingleton(); }

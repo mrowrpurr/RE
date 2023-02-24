@@ -7,8 +7,8 @@ void Injected_DLL_Main() {
     Fallout1::RE::MODULE_BASE = DllInjector::MODULE_BASE;
 
     auto& player = Fallout1::GetPlayer();
-    Print("The player's age is {}", player.GetAge());
+    Print("The player's name is {}", player.GetName());
 
-    player.SetAge(22);
-    Print("The player's age is {}", player.GetAge());
+    player.SetName("The Dawg");
+    Print("The player's name is now {}", player.GetName());
 }

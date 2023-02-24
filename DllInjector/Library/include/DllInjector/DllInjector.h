@@ -48,7 +48,13 @@ namespace DllInjector {
         MODULE_BASE = (uintptr_t)GetModuleHandle(wideProcessName);
 
         // Call your stuff!
-        Injected_DLL_Main();
+        try {
+            Injected_DLL_Main();
+        } catch (const std::exception& e) {
+            std::cout << "Exception: " << e.what() << std::endl;
+        } catch (...) {
+            std::cout << "Unknown Exception" << std::endl;
+        }
 
         MessageBoxA(0, "Close to eject .dll", "Close to eject .dll", MB_OK);
         fclose(f);
