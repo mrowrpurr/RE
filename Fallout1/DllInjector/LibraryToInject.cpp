@@ -9,25 +9,36 @@
 #include <thread>
 #include <vector>
 
-
 constexpr auto PROCESS_NAME = L"falloutwHR.exe";
+uintptr_t      MODULE_BASE;
 
 // Find Dynamic Memory Allocation Address
-uintptr_t GetAddress(uintptr_t base, const std::vector<uintptr_t>& offsets) {
-    uintptr_t address = base;
+uintptr_t GetAddress(uintptr_t base, const std::vector<uintptr_t>& offsets = {}) {
+    uintptr_t address = MODULE_BASE + base;
     for (auto offset : offsets) {
         address = *reinterpret_cast<uintptr_t*>(address) + offset;
     }
     return address;
 }
 
+template <class... Args>
+void MsgBox(const std::string_view text, Args&&... args) {
+    auto message = std::vformat(text, std::make_format_args(args...));
+    MessageBoxA(0, message.c_str(), "Our Sweet Fallout Injected DLL", MB_OK);
+}
+
+void DoCoolStuff() {
+    auto ageAddress = GetAddress(0x1076C8);
+    int* age        = reinterpret_cast<int*>(ageAddress);
+    *age            = 22;
+}
+
 // Main Thread
 DWORD __stdcall mainThread(PVOID base) {
-    uintptr_t moduleBase = (uintptr_t)GetModuleHandle(PROCESS_NAME);
-    //
+    MODULE_BASE = (uintptr_t)GetModuleHandle(PROCESS_NAME);
+    DoCoolStuff();
     auto module = static_cast<HMODULE>(base);
-    MessageBoxA(0, std::format("The module base is {:x}", moduleBase).c_str(), "DLL Message", MB_OK);
-    std::this_thread::sleep_for(std::chrono::seconds(5));
+    MessageBoxA(0, "Close to eject", "Our Sweet Fallout Injected DLL", MB_OK);
     FreeLibraryAndExitThread(module, 0);
 }
 
