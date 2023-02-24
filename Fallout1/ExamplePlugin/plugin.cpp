@@ -14,12 +14,9 @@ void Injected_DLL_Main() {
     Print("AGE: {}", player.GetAge());
     Print("INVENTORY COUNT: {}", player.GetInventoryCount());
 
-    uint32_t* item1Quantity = reinterpret_cast<uint32_t*>(player.GetREPlayer()->inventoryPtr + 0x4);
-    Print("HOW MANY OF ITEM ONE???? {}", *item1Quantity);
-
-    // auto* item = player.GetInventoryItem(0);
-    // if (item) {
-    //     Print("ITEM ptr: {}", item->ptr);
-    //     Print("ITEM qty: {}", item->quantity);
-    // }
+    for (unsigned int i = 0; i < player.GetInventoryCount(); ++i) {
+        auto item = player.GetInventoryItem(i);
+        Print("ITEM QUANTITY: {}", item.quantity);
+        Print("Item Pointer: {:x}", item.ptr);
+    }
 }

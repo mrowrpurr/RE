@@ -41,13 +41,15 @@ namespace Fallout1 {
         // TODO - move to like an inventory object or some shit.
         unsigned int GetInventoryCount() { return GetREPlayer()->inventoryCount; }
 
-        // RE::InventoryItem* GetInventoryItem(unsigned int index) {
-        //     auto total = GetInventoryCount();
-        //     if (index >= total) return nullptr;
-        //     uintptr_t inventorySomethingAddress = RE::GetAddress(GetREPlayer()->inventoryPtr, {0x0});
-        //     auto      item = RE::GetAddress<RE::InventoryItem*>(inventorySomethingAddress, {index * 8});
-        //     return item;
-        // }
+        RE::InventoryItem GetInventoryItem(unsigned int index) {
+            auto total = GetInventoryCount();
+            if (index >= total) return {};
+            uintptr_t  inventoryPtr = GetREPlayer()->inventoryPtr;
+            uintptr_t  itemBase     = inventoryPtr + index * 0x8;
+            uintptr_t* itemPtr      = reinterpret_cast<uintptr_t*>(itemBase);
+            uint32_t*  quantity     = reinterpret_cast<uint32_t*>(itemBase + 0x4);
+            return RE::InventoryItem{*itemPtr, *quantity};
+        }
     };
 
     Player& GetPlayer() { return Player::GetSingleton(); }
