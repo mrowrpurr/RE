@@ -1,11 +1,13 @@
 #pragma once
 
+#include <Fallout1/RE/InventoryItem.h>
+
 #include <string>
 
-#include "RE/Addresses.h"
-#include "RE/GetAddress.h"
-#include "RE/InventoryItem.h"
-#include "RE/Player.h"
+#include "Fallout1/RE/Addresses.h"
+#include "Fallout1/RE/GetAddress.h"
+#include "Fallout1/RE/ModuleBase.h"
+#include "Fallout1/RE/Player.h"
 
 namespace Fallout1 {
 
@@ -17,13 +19,12 @@ namespace Fallout1 {
         Player& operator=(const Player&) = delete;
         Player& operator=(Player&&)      = delete;
 
-    public:
-        // TODO this should be private
-        // TODO XXX move the 0x0 bit to Addresses
         RE::Player* GetREPlayer() {
+            // TODO XXX move the 0x0 bit to Addresses
             return RE::GetAddress<RE::Player*>(RE::MODULE_BASE + RE::Addresses::PlayerPtr, {0x0});
         }
 
+    public:
         static Player& GetSingleton() {
             static Player singleton;
             return singleton;
@@ -38,21 +39,15 @@ namespace Fallout1 {
             strcpy(playerName, (char*)name);
         }
 
-        // TODO - move to like an inventory object or some shit.
         unsigned int GetInventoryCount() { return GetREPlayer()->inventoryCount; }
 
-        RE::InventoryItem GetInventoryItem(unsigned int index) {
-            auto total = GetInventoryCount();
-            if (index >= total) return {};
-            uintptr_t  inventoryPtr = GetREPlayer()->inventoryPtr;
-            uintptr_t  itemBase     = inventoryPtr + index * 0x8;
-            uintptr_t* itemPtr      = reinterpret_cast<uintptr_t*>(itemBase);
-            uint32_t*  quantity     = reinterpret_cast<uint32_t*>(itemBase + 0x4);
-            return RE::InventoryItem{*itemPtr, *quantity};
+        std::vector<RE::InventoryItem> GetInventoryItems() {
+            auto count = GetInventoryCount();
+            if (count == 0) return {};
+            auto* itemsPtr = (RE::InventoryItem*)GetREPlayer()->inventoryPtr;
+            return std::vector<RE::InventoryItem>(itemsPtr, itemsPtr + count);
         }
     };
 
     Player& GetPlayer() { return Player::GetSingleton(); }
 }
-
-// return RE::GetAddress<RE::InventoryItem*>(GetREPlayer()->inventoryPtr, {index * 8});

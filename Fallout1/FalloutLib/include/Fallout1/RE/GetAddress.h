@@ -3,8 +3,6 @@
 #include <cstdint>
 #include <vector>
 
-#include "Fallout1/RE/ModuleBase.h"
-
 namespace Fallout1::RE {
 
     // Find Dynamic Memory Allocation Address

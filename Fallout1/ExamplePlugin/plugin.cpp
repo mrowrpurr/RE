@@ -12,11 +12,12 @@ void Injected_DLL_Main() {
 
     Print("NAME: {}", player.GetName());
     Print("AGE: {}", player.GetAge());
-    Print("INVENTORY COUNT: {}", player.GetInventoryCount());
+    auto count = player.GetInventoryCount();
+    Print("INVENTORY COUNT: {}", count);
 
-    for (unsigned int i = 0; i < player.GetInventoryCount(); ++i) {
-        auto item = player.GetInventoryItem(i);
+    auto items = player.GetInventoryItems();
+    for (auto& item : items) {
         Print("ITEM QUANTITY: {}", item.quantity);
-        Print("Item Pointer: {:x}", item.ptr);
+        Print("ITEM PID: {}", item.item->prototypeID);
     }
 }
