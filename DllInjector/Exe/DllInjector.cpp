@@ -4,6 +4,7 @@
 #include <TlHelp32.h>
 
 #include <iostream>
+#include <format>
 
 DWORD GetProcId(const char* procName) {
     DWORD  procId = 0;
@@ -25,9 +26,19 @@ DWORD GetProcId(const char* procName) {
 }
 
 int main() {
+    std::cout << "main()" << std::endl;
+
     // update to be the name of your process
-    const char* dllPath  = "C:\\Code\\mrowrpurr\\Retro-RE-Playground\\Fallout1\\DllInjector\\build\\LibraryToInject";
-    auto        procName = "falloutwHR.exe";
+    auto dllPath = std::getenv("DLL_INJECT_DLL");
+    auto procName = std::getenv("DLL_INJECT_EXE");
+
+    std::cout << std::format("DLL: {}", dllPath) << std::endl;
+    std::cout << std::format("EXE: {}", procName) << std::endl;
+
+    if (!dllPath || !procName) {
+        std::cout << "Missing exe or dll" << std::endl;
+        return 1;
+    }
 
     auto procId = 0;
     while (!procId) {
@@ -40,6 +51,7 @@ int main() {
     if (hProc && hProc != INVALID_HANDLE_VALUE) {
         void* loc = VirtualAllocEx(hProc, 0, MAX_PATH, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
         WriteProcessMemory(hProc, loc, dllPath, strlen(dllPath) + 1, 0);
+        std::cout << "Creating remote thread..." << std::endl;
         HANDLE hThread = CreateRemoteThread(hProc, 0, 0, (LPTHREAD_START_ROUTINE)LoadLibraryA, loc, 0, 0);
         if (hThread) {
             CloseHandle(hThread);
