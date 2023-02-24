@@ -29,18 +29,8 @@ namespace DllInjector {
 
     uintptr_t MODULE_BASE;
 
-    // Find Dynamic Memory Allocation Address
-    uintptr_t GetAddress(uintptr_t base, const std::vector<uintptr_t>& offsets = {}) {
-        uintptr_t address = MODULE_BASE + base;
-        for (auto offset : offsets) {
-            address = *reinterpret_cast<uintptr_t*>(address) + offset;
-        }
-        return address;
-    }
-
     // Main Thread
     DWORD __stdcall MainThread(PVOID base) {
-        MessageBoxA(0, "Hello", "Hello", MB_OK);
         auto module = static_cast<HMODULE>(base);
 
         auto processName = std::getenv("DLL_INJECT_EXE");
