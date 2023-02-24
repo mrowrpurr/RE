@@ -513,6 +513,13 @@
               <VariableType>4 Bytes</VariableType>
               <Address>+14</Address>
             </CheatEntry>
+            <CheatEntry>
+              <ID>127</ID>
+              <Description>"Another Item Qty"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>4 Bytes</VariableType>
+              <Address>+24</Address>
+            </CheatEntry>
           </CheatEntries>
         </CheatEntry>
       </CheatEntries>
