@@ -7,8 +7,6 @@
 using namespace Fallout1;
 
 void PrintOutFalloutStuff() {
-    Fallout1::RE::MODULE_BASE = DllInjector::MODULE_BASE;
-
     auto& player = Fallout1::GetPlayer();
 
     Print("NAME: {}", player.GetName());
@@ -23,54 +21,26 @@ void PrintOutFalloutStuff() {
     }
 }
 
-bool Detour32(BYTE* src, const BYTE* dst, const uintptr_t len) {
+bool Detour32(BYTE* src, BYTE* dst, const uintptr_t len) {
     if (len < 5) return false;
-
-    // Write NOPs to the beginning of the function
     DWORD curProtection;
     VirtualProtect(src, len, PAGE_EXECUTE_READWRITE, &curProtection);
-
-    uintptr_t relativeAddress = dst - src - 5;  // 5 = JMP opcode size
-
-    *src                   = 0xE9;             // JMP opcode
-    *(uintptr_t*)(src + 1) = relativeAddress;  // JMP address
-
-    // Restore the original protection
-    DWORD temp;
-    VirtualProtect(src, len, curProtection, &temp);
-
+    uintptr_t relativeAddress         = dst - src - 5;
+    *src                              = 0xE9;
+    *(uintptr_t*)((uintptr_t)src + 1) = relativeAddress;
+    VirtualProtect(src, len, curProtection, &curProtection);
     return true;
 }
 
 BYTE* TrampolineHook32(BYTE* src, BYTE* dst, const uintptr_t len) {
     if (len < 5) return 0;
-
-    // Allocate memory for the gateway
     BYTE* gateway = (BYTE*)VirtualAlloc(0, len + 5, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
-
-    // Write the bytes that will be overwritten
-    memcpy(gateway, src, len);
-
-    // Get the gateway to destination address
-    uintptr_t gatewayRelativeAddr = src - gateway - 5;
-
-    // Write the JMP opcode
-    gateway[len] = 0xE9;
-
-    // Write the address
-    *(uintptr_t*)(gateway + len + 1) = gatewayRelativeAddr;
-
-    // Write the NOPs
-    for (uintptr_t i = 0; i < len; i++) {
-        src[i] = 0x90;
-    }
-
-    // Write the JMP opcode
-    *src = 0xE9;
-
-    // Write the address
-    *(uintptr_t*)(src + 1) = (uintptr_t)(dst - src) - 5;
-
+    memcpy_s(gateway, len, src, len);
+    uintptr_t gatewayRelativeAddress            = src - gateway - 5;
+    *(gateway + len)                            = 0xE9;
+    *(uintptr_t*)((uintptr_t)gateway + len + 1) = gatewayRelativeAddress;
+    Detour32(src, dst, len);
+    Print("Gateway at: {:x}", (uintptr_t)gateway);
     return gateway;
 }
 
@@ -78,15 +48,22 @@ typedef void (*WhateverThisMightContinueTheExistingCode)();
 
 WhateverThisMightContinueTheExistingCode originalCodez;
 
-void ThisIsOurHook() { Print("OMFG This is our hook!"); }
+void ThisIsOurHook() {
+    Print("OMFG This is our hook!");
+    originalCodez();
+}
 
 void DoHookingBadassery() {
     Print("This isn't goint to work...");
-    // Address of the AND instruction to insert our hook at
+
     WhateverThisMightContinueTheExistingCode addressOfTheAND =
-        (WhateverThisMightContinueTheExistingCode)RE::GetModuleAddress(0x18AA2);
+        (WhateverThisMightContinueTheExistingCode)RE::GetModuleAddress(0x80D15);
+
     originalCodez =
         (WhateverThisMightContinueTheExistingCode)TrampolineHook32((BYTE*)addressOfTheAND, (BYTE*)ThisIsOurHook, 5);
 }
 
-void Injected_DLL_Main() { DoHookingBadassery(); }
+void Injected_DLL_Main() {
+    Fallout1::RE::MODULE_BASE = DllInjector::MODULE_BASE;
+    DoHookingBadassery();
+}
