@@ -48,19 +48,23 @@ typedef void (*WhateverThisMightContinueTheExistingCode)();
 
 WhateverThisMightContinueTheExistingCode originalCodez;
 
-void ThisIsOurHook() {
-    Print("OMFG This is our hook!");
-    originalCodez();
+// Where to jump back to!
+DWORD jumpBackAddy;
+
+void __declspec(naked) HookFunction() {
+    Print("Hello from the hook!");
+    __asm {
+        jmp [jumpBackAddy]
+    }
 }
 
 void DoHookingBadassery() {
-    Print("This isn't goint to work...");
-
-    WhateverThisMightContinueTheExistingCode addressOfTheAND =
-        (WhateverThisMightContinueTheExistingCode)RE::GetModuleAddress(0x80D15);
-
-    originalCodez =
-        (WhateverThisMightContinueTheExistingCode)TrampolineHook32((BYTE*)addressOfTheAND, (BYTE*)ThisIsOurHook, 5);
+    Print("Hooking badassery");
+    auto hookLength      = 5;
+    auto hookAddress_AND = RE::GetModuleAddress(0x80D15);
+    jumpBackAddy         = (DWORD)hookAddress_AND + hookLength;
+    Detour32((BYTE*)hookAddress_AND, (BYTE*)HookFunction, 5);
+    Print("Detour added!");
 }
 
 void Injected_DLL_Main() {
