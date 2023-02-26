@@ -156,3 +156,6 @@ THIS SOFTWARE.
 
 Other (Misc)
   - [Hex Murder: How to find an Entity List / Object List | Cheat Engine](https://youtu.be/0Hr-8rH3nWs)
+
+Articles:
+  - https://www.thehackerwithin.com/blog/11-08-07/Steam_s_anti-debugging_code.aspx
