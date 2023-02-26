@@ -3,6 +3,8 @@
 #include <psapi.h>  // For MODULEINFO
 #include <unknwn.h>
 
+#include <unordered_map>
+
 #include "Print.h"
 
 using namespace Fallout1;
@@ -92,32 +94,65 @@ void __declspec(naked) HookFunction() {
     }
 }
 
+std::unordered_map<uintptr_t, bool> entityList;
+
+DWORD thisEntity = 0x0;
 DWORD collectEntitiesJumpBackAddy;
 
-void __declspec(naked) CollectEntitiesHookFunction() {
-    Print("Hello from the hook! Can we get entities????");
+// clang-format off
+__declspec(naked) void CollectEntitiesHookFunction() {
     __asm {
-        add esp,8
-        test edx,edx
-        jmp [jumpBackAddy]
+        xor eax,eax
+        mov ax,bx
+        mov thisEntity,edx
+        pushad
+    }
+
+    // I want edx
+    
+    if (! entityList.contains(thisEntity))
+        entityList[thisEntity] = true;
+
+    __asm {
+        popad
+        jmp[collectEntitiesJumpBackAddy]
     }
 }
+// clang-format on
 
 void FindEntityList() {
-    auto module              = L"falloutwHR.exe";
-    auto signature           = "\x8B\x72\x04\xEB\x11\xBB\x01\x00\x00\x00\xBA\x00\x00\x00\x00\x89\xC8";
-    auto mask                = "xxxxxxxxxxx????xx";
-    auto startOffset         = 0x10000;
-    auto signatureAddress    = FindPattern(module, startOffset, signature, mask);
-    auto detourTargetAddress = signatureAddress - 0x7;
-    jumpBackAddy             = signatureAddress - 0x2;
+    // 44D77A
+    auto module                 = L"falloutwHR.exe";
+    auto signature              = "\x89\xC2\x31\xC0\x66\x89\xD8\x80\xE4\xF7\xBE\xFF\xFF\xFF\xFF";
+    auto mask                   = "xxxxxxxxxxxxxxx";
+    auto startOffset            = 0x10000;
+    auto signatureAddress       = FindPattern(module, startOffset, signature, mask);
+    auto detourTargetAddress    = signatureAddress + 0x2;
+    collectEntitiesJumpBackAddy = detourTargetAddress + 0x5;
 
     Print("Signature address: {:x}", signatureAddress);
     Print("Detour target address: {:x}", detourTargetAddress);
-    Print("Jump back address: {:x}", jumpBackAddy);
+    Print("Jump back address: {:x}", collectEntitiesJumpBackAddy);
 
     Detour32((BYTE*)detourTargetAddress, (BYTE*)CollectEntitiesHookFunction);
     Print("Detour added!");
+}
+
+void InputLoop() {
+    while (true) {
+        if (GetAsyncKeyState(VK_HOME)) {
+            Print("HOME");
+            Print("Entity list size: {}", entityList.size());
+            for (auto& [key, value] : entityList) {
+                Print("Entity: {:x}", key);
+            }
+        } else if (GetAsyncKeyState(VK_PRIOR)) {
+            Print("Page Down");
+        } else if (GetAsyncKeyState(VK_NEXT)) {
+            Print("Page Up");
+        }
+        Sleep(1000);
+    }
 }
 
 void DoHookingBadassery() {
@@ -157,4 +192,5 @@ void Injected_DLL_Main() {
     // DoHookingBadassery();
     // PrintOutFalloutStuff();
     FindEntityList();
+    InputLoop();
 }
