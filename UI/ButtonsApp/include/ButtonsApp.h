@@ -6,8 +6,26 @@
 #include <nana/gui/widgets/label.hpp>
 #include <vector>
 
-// REMOVE THIS
-#include <format>
+/** Example
+int main() {
+    ButtonsApp::Setup([](ButtonsApp& app) {
+        app.SetTitle("Injected .dll - UI");
+        app.SetText("Hello, friends!");
+        app.AddButton("Rename Button", [&]() { app.ChangeButtonText("NEW BUTTON TEXT!"); });
+        app.AddButton("Print Output", [&]() { app.AppendOutput("Hello from button one!"); });
+        app.AddButton("Change Title", [&]() { app.SetTitle("NEW TITLE"); });
+        app.AddButton("Change Text", [&]() { app.SetText("NEW TEXT"); });
+        app.AddButton("Kaboom", [&]() { throw "Kaboom!"; });
+        app.AddButton("Change Size", [&]() {
+            app.SetHeight(800);
+            app.SetWidth(800);
+        });
+        app.AddButton("Rename Different Button", [&]() { app.ChangeButtonText("NEW !!! TEXT!"); });
+        app.AddButton("Clear", [&]() { app.ClearOutput(); });
+    });
+    ButtonsApp::Run();
+}
+ */
 
 class ButtonsApp {
     static std::atomic_bool                    _isSetup;
@@ -41,7 +59,7 @@ class ButtonsApp {
         for (auto& _ : _buttonInitialText) arrangement += ",25";
         arrangement += ",10000";
 
-        _place.div(std::format("<><width=90% <vertical fields gap=10 arrange=[{}]>><>", arrangement));
+        _place.div("<><width=90% <vertical fields gap=10 arrange=[" + arrangement + "]>><>");
 
         _place.field("fields") << lblTopPadding;
         if (!_headerLabel.caption().empty()) _place.field("fields") << _headerLabel;
@@ -108,24 +126,5 @@ public:
         Resize();
     }
 };
-
-int main() {
-    ButtonsApp::Setup([](ButtonsApp& app) {
-        app.SetTitle("Injected .dll - UI");
-        app.SetText("Hello, friends!");
-        app.AddButton("Rename Button", [&]() { app.ChangeButtonText("NEW BUTTON TEXT!"); });
-        app.AddButton("Print Output", [&]() { app.AppendOutput("Hello from button one!"); });
-        app.AddButton("Change Title", [&]() { app.SetTitle("NEW TITLE"); });
-        app.AddButton("Change Text", [&]() { app.SetText("NEW TEXT"); });
-        app.AddButton("Kaboom", [&]() { throw "Kaboom!"; });
-        app.AddButton("Change Size", [&]() {
-            app.SetHeight(800);
-            app.SetWidth(800);
-        });
-        app.AddButton("Rename Different Button", [&]() { app.ChangeButtonText("NEW !!! TEXT!"); });
-        app.AddButton("Clear", [&]() { app.ClearOutput(); });
-    });
-    ButtonsApp::Run();
-}
 
 std::atomic<bool> ButtonsApp::_isSetup{false};
