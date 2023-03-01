@@ -6,6 +6,7 @@
 #include <nana/gui/widgets/button.hpp>
 #include <nana/gui/widgets/label.hpp>
 #include <optional>
+#include <string_view>
 #include <vector>
 
 class ButtonsApp {
@@ -36,15 +37,16 @@ public:
         _buttonClickCallbacks.push_back(callback);
     }
 
+    void Print(const std::string& text) { _outputLabel.caption(_outputLabel.caption() + "\n" + text); }
+    void Clear() { _outputLabel.caption(""); }
+
     void Run() {
         nana::label lblTopPadding(_form, "");
-        nana::label lblHeader(_form, "Injected .dll");
-        nana::label lblOutputHeader(_form, "Output");
-        std::string arrangement{"5,25"};
+        std::string arrangement{"5"};
         for (auto& _ : _buttonInitialText) arrangement += ",25";
-        arrangement += ",25,10000";
+        arrangement += ",10000";
         _place.div(std::format("<><width=90% <vertical fields gap=10 arrange=[{}]>><>", arrangement));
-        _place.field("fields") << lblTopPadding << lblHeader;
+        _place.field("fields") << lblTopPadding;
 
         for (size_t i = 0; i < _buttonInitialText.size(); i++) {
             auto* btn = new nana::button(_form, _buttonInitialText[i]);
@@ -62,17 +64,31 @@ public:
             _place.field("fields") << *btn;
         }
 
-        _place.field("fields") << lblOutputHeader << _outputLabel;
+        _place.field("fields") << _outputLabel;
         _place.collocate();
         _form.show();
         nana::exec();
     }
 };
 
+template <class... Args>
+void Print(const std::string_view text, Args&&... args) {
+    auto message = std::vformat(text, std::make_format_args(args...));
+    ButtonsApp::GetSingleton().Print(message);
+    std::cout << message << std::endl;
+}
+void ClearOutput() { ButtonsApp::GetSingleton().Clear(); }
+
 int main() {
     auto& app = ButtonsApp::GetSingleton();
     app.SetTitle("Injected .dll - UI");
-    app.AddButton("dsfs", []() { return "Hello World!"; });
-    app.AddButton("sdfsdfsfsdfds", []() { return "Hello World!"; });
+    app.AddButton("dsfs", []() {
+        Print("1111");
+        return "Hello ONE!";
+    });
+    app.AddButton("sdfsdfsfsdfds", []() {
+        ClearOutput();
+        return "Hello TWO!";
+    });
     app.Run();
 }
