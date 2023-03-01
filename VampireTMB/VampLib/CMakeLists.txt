@@ -8,6 +8,5 @@ target_include_directories(${PROJECT_NAME} INTERFACE
     $<INSTALL_INTERFACE:include>
 )
 target_compile_definitions(${PROJECT_NAME} INTERFACE WIN32_LEAN_AND_MEAN NOMINMAX UNICODE _UNICODE MBCS _MBCS _CRT_SECURE_NO_WARNINGS)
-target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_23)
 
 # TODO: Export / Install

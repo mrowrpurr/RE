@@ -96,10 +96,14 @@ class ButtonsApp {
     }
 
 public:
-    static void Run() { GetSingleton().RunApp(); }
     static void Setup(std::function<void(ButtonsApp& app)> callback) {
         if (_isSetup.exchange(true)) return;
         callback(GetSingleton());
+    }
+    static void Run(std::function<void(ButtonsApp& app)> callback = [](auto&){}) {
+        auto& app = GetSingleton();
+        callback(app);
+        app.RunApp();
     }
 
     void SetTitle(const std::string& title) { _form.caption(title); }

@@ -1,4 +1,4 @@
-project(ButtonsApp.UI VERSION 0.1.0 LANGUAGES CXX)
+project(ButtonsApp VERSION 0.1.0 LANGUAGES CXX)
 
 find_package(unofficial-nana CONFIG REQUIRED)
 

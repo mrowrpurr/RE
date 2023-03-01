@@ -1,10 +1,8 @@
 #pragma once
 
-#include <windows.h>
-//
-
 #include <TlHelp32.h>
 #include <stdint.h>
+#include <windows.h>
 
 #include <iostream>
 #include <thread>

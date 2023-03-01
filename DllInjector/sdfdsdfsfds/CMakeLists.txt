@@ -1,0 +1,2 @@
+add_subdirectory(DLLInjector)
+add_subdirectory(InjectedDLL)
