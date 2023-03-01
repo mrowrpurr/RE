@@ -155,6 +155,7 @@ THIS SOFTWARE.
   - [GH: How To Hack Any Game With Cheat Engine - Pointers & EntityBase](https://youtu.be/fvv8IJGke1Q)
 
 Other (Misc)
+  - [Stephen Champan Hacking Videos - Playlist](https://www.youtube.com/playlist?list=PLNffuWEygffbJGq_cffRgEzFk6N1wrKtx)
   - [Hex Murder: How to find an Entity List / Object List | Cheat Engine](https://youtu.be/0Hr-8rH3nWs)
 
 Articles:
