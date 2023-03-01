@@ -6,29 +6,9 @@
 #include <nana/gui/widgets/label.hpp>
 #include <vector>
 
-/** Example
-int main() {
-    ButtonsApp::Setup([](ButtonsApp& app) {
-        app.SetTitle("Injected .dll - UI");
-        app.SetText("Hello, friends!");
-        app.AddButton("Rename Button", [&]() { app.ChangeButtonText("NEW BUTTON TEXT!"); });
-        app.AddButton("Print Output", [&]() { app.AppendOutput("Hello from button one!"); });
-        app.AddButton("Change Title", [&]() { app.SetTitle("NEW TITLE"); });
-        app.AddButton("Change Text", [&]() { app.SetText("NEW TEXT"); });
-        app.AddButton("Kaboom", [&]() { throw "Kaboom!"; });
-        app.AddButton("Change Size", [&]() {
-            app.SetHeight(800);
-            app.SetWidth(800);
-        });
-        app.AddButton("Rename Different Button", [&]() { app.ChangeButtonText("NEW !!! TEXT!"); });
-        app.AddButton("Clear", [&]() { app.ClearOutput(); });
-    });
-    ButtonsApp::Run();
-}
- */
-
 class ButtonsApp {
     static std::atomic_bool                    _isSetup;
+    size_t                                     _buttonHeight{25};
     size_t                                     _height{300};
     size_t                                     _width{250};
     std::atomic_bool                           _isRunning{false};
@@ -48,15 +28,15 @@ class ButtonsApp {
     ButtonsApp& operator=(const ButtonsApp&) = delete;
     ButtonsApp& operator=(ButtonsApp&&)      = delete;
 
-    void Resize() { _form.size({_width, _height + (_buttonInitialText.size() * 25)}); }
+    void Resize() { _form.size({_width, _height + (_buttonInitialText.size() * _buttonHeight)}); }
     void RunApp() {
         if (_isRunning.exchange(true)) return;
 
         nana::label lblTopPadding(_form, "");
 
         std::string arrangement{"5"};
-        if (!_headerLabel.caption().empty()) arrangement += ",25";
-        for (auto& _ : _buttonInitialText) arrangement += ",25";
+        if (!_headerLabel.caption().empty()) arrangement += "," + std::to_string(_buttonHeight);
+        for (auto& _ : _buttonInitialText) arrangement += "," + std::to_string(_buttonHeight);
         arrangement += ",10000";
 
         _place.div("<><width=90% <vertical fields gap=10 arrange=[" + arrangement + "]>><>");
@@ -100,7 +80,7 @@ public:
         if (_isSetup.exchange(true)) return;
         callback(GetSingleton());
     }
-    static void Run(std::function<void(ButtonsApp& app)> callback = [](auto&){}) {
+    static void Run(std::function<void(ButtonsApp& app)> callback = [](auto&) {}) {
         auto& app = GetSingleton();
         callback(app);
         app.RunApp();
@@ -108,6 +88,7 @@ public:
 
     void SetTitle(const std::string& title) { _form.caption(title); }
     void SetText(const std::string& text) { _headerLabel.caption(text); }
+    void SetButtonHeight(size_t height) { _buttonHeight = height; }
 
     void AddButton(const std::string& text, std::function<void()> callback) {
         _buttonInitialText.push_back(text);
@@ -129,6 +110,8 @@ public:
         _width = width;
         Resize();
     }
+
+    void Close() { nana::API::exit_all(); }
 };
 
 std::atomic<bool> ButtonsApp::_isSetup{false};
