@@ -10,3 +10,4 @@ Debug
 x86
 x64
 .cache
+.PTR*
