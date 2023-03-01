@@ -1,0 +1,33 @@
+# Repository Layout
+
+- Games
+  - [Game]
+    - Cheat Engine
+    - IDA
+    - Libraries
+      - [Cpp/Rust/Other]
+        - Lib[Game]
+    - Tools
+      - [Game].Cheats.UI
+
+- Libraries
+  - [Cpp/Rust/Other]
+    - UI
+        - ButtonsApp
+    - Logging
+        - BringYourOwnLogger
+    - Formatting
+        - FmtCompatibility
+    - RE
+        - LibRE
+
+- Tools
+    - DLLInjector
+        - CLI
+        - UI
+
+- ports
+- versions
+
+- Images
+- Fonts
