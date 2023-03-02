@@ -14,22 +14,43 @@
 #include <unordered_map>
 
 namespace RE::Hooks {
-    struct Hook {
+    class Hook {
+    public:
         std::string           name;
+        bool                  enabled = false;
         std::function<void()> install;
         std::function<void()> uninstall;
-        bool                  enabled = false;
-        // DWORD                address = 0;
-        // std::vector<DWORD>   bytes;
+        DWORD                 address               = 0;
+        DWORD                 detourFunctionAddress = 0;
+        std::function<void()> detourFunction;
+        std::vector<BYTE>     bytes;
     };
 
     inline std::unordered_map<std::string, Hook> RegisteredHooks;
 
     void Add(const std::string& name, std::function<void()> install, std::function<void()> uninstall) {
-        RegisteredHooks[name] = {name, install, uninstall};
+        RegisteredHooks[name] = {.name = name, .install = install, .uninstall = uninstall};
+    }
+
+    void Add(
+        const std::string& name, const std::string& signature, const std::string& mask, DWORD detourFunctionAddress
+    ) {
+        RegisteredHooks[name] = {
+            .name    = name,
+            .address = RE::Helpers::FindByteSignatureAddress(L"falloutwHR.exe", 0, signature.c_str(), mask.c_str()),
+            .detourFunctionAddress = detourFunctionAddress,
+        };
     }
 
     void Remove(const std::string& name) { RegisteredHooks.erase(name); }
+
+    void Install(const std::string& name) {
+        auto& hook = RegisteredHooks[name];
+        // if (!hook.enabled) {
+        //     hook.install();
+        //     hook.enabled = true;
+        // }
+    }
 
     bool Toggle(const std::string& name) {
         auto& hook = RegisteredHooks[name];
@@ -110,9 +131,7 @@ void Hook_CollectEntityList_Uninstall() {
         return;
     }
 
-    // unsigned int length = 5;
     DWORD curProtection;
-    // std::vector<BYTE> bytes = {0x89, 0x50, 0x04, 0x8B, 0x06};
     VirtualProtect((BYTE*)Hook_CollectEntityList_Detour_Address, bytes.size(), PAGE_EXECUTE_READWRITE, &curProtection);
 
     uintptr_t startAddress = Hook_CollectEntityList_Detour_Address;
@@ -126,7 +145,19 @@ void Hook_CollectEntityList_Uninstall() {
 }
 
 void SetupHooks() {
-    RE::Hooks::Add("Collect Entity List", Hook_CollectEntityList_Install, Hook_CollectEntityList_Uninstall);
+    // With install and uninstall functions
+    RE::Hooks::Add("Collect Entity List (fns)", Hook_CollectEntityList_Install, Hook_CollectEntityList_Uninstall);
+
+    // With a signature + mask + detour function ADDRESS
+    // RE::Hooks::Add(
+    //     "Collect Entity List (sig)",
+    //     "\x89\x50\x04\x8B\x06\x89\x58\x28\x8B\x06\xC7\x40\x08\x00\x00\x00\x00\x8B\x06\xC7\x40\x0C\x00\x00\x00\x00",
+    //     "xxxxxxxxxxxxxxxxxxxxxxxxxx", Hook_CollectEntityList_Detour
+    // );
+
+    // With a signature + mask + detour function (can be a lambda)
+
+    // With a signature + detour function
 }
 
 void RunUI() {
@@ -135,6 +166,9 @@ void RunUI() {
         "\x89\x50\x04\x8B\x06\x89\x58\x28\x8B\x06\xC7\x40\x08\x00\x00\x00\x00\x8B\x06\xC7\x40\x0C\x00\x00\x00\x00",
         "xxxxxxxxxxxxxxxxxxxxxxxxxx"
     );
+
+    // Hooks::Add("dsjfsdkl", []() {});
+
     FormApp::Run([&](FormApp& app) {
         app.SetTitle("Fallout 1 Trainer");
         app.SetText(string_format("Address: {:x}", address));
