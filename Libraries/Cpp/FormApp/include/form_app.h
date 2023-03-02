@@ -72,18 +72,18 @@ class FormApp {
         _form.show();
         nana::exec();
     }
-    static FormApp& GetSingleton() {
+
+public:
+    static FormApp& App() {
         static FormApp singleton;
         return singleton;
     }
-
-public:
     static void Setup(std::function<void(FormApp& app)> callback) {
         if (_isSetup.exchange(true)) return;
-        callback(GetSingleton());
+        callback(App());
     }
     static void Run(std::function<void(FormApp& app)> callback = [](auto&) {}) {
-        auto& app = GetSingleton();
+        auto& app = App();
         callback(app);
         app.RunApp();
     }
