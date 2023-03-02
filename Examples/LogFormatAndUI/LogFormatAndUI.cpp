@@ -1,12 +1,12 @@
 // 1. Formatting
+#include <string_format.h>
 // 2. Logging
 // 3. UI
 
-// #include <format>
 #include <iostream>
 
 int main() {
     auto num = 69;
-    std::cout << std::format("The number is: {}", num) << std::endl;
+    std::cout << string_format("FMT The number is: {}", num) << std::endl;
     return 0;
 }
