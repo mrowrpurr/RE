@@ -1,6 +1,6 @@
 # Repository Layout
 
-## Games
+- Games
   - [Game]
     - Cheat Engine
     - IDA
@@ -9,8 +9,7 @@
         - Lib[Game]
     - Tools
       - [Game].Cheats.UI
-
-## Libraries
+-# Libraries
   - [Cpp/Rust/Other]
     - UI
         - ButtonsApp
@@ -20,26 +19,14 @@
         - FmtCompatibility
     - RE
         - LibRE
-
-## Tools
-    - DLLInjector
-        - CLI
-        - UI
-
-## Resources
-
+- Tools
+  - DLLInjector
+      - CLI
+      - UI
+- Examples
 - Resources
   - Images
   - Fonts
-
-## vcpkg
-
-_This repo should be a valid vcpkg repo:_
 - ports
 - versions
-
-## C++
-
-_And has top-level vcpkg and CMake config etc_
-- CMakeLists/Presets/clang-tidy/clang-format/...
-- vcpkg.json/vcpkg-configuration/...
+- 
