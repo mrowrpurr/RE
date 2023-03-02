@@ -1,7 +1,4 @@
 project(Fallout1.ExamplePlugin)
 
-add_library(${PROJECT_NAME} SHARED fallout1Plugin.cpp)
-target_link_libraries(${PROJECT_NAME} PRIVATE FalloutLib DLLInjection ButtonsApp)
-
-# Move to CMake Presets!
-target_compile_definitions(${PROJECT_NAME} PRIVATE MBCS _MBCS _CRT_SECURE_NO_WARNINGS)
+add_library(${PROJECT_NAME} SHARED Fallout1Util.cpp)
+target_link_libraries(${PROJECT_NAME} PRIVATE FalloutLib LibRE FormApp Logging StringFormat)

@@ -1,2 +1,2 @@
-add_subdirectory(FalloutLib)
-add_subdirectory(ExamplePlugin)
+add_subdirectory(Libraries)
+add_subdirectory(Tools)
