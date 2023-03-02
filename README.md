@@ -1,4 +1,4 @@
-![Reverse Engineering](Images/Logo.png)
+![Reverse Engineering](Resources/Images/Logo.png)
 
 # Mrowr Purr's Reverse Engineering Journey
 
