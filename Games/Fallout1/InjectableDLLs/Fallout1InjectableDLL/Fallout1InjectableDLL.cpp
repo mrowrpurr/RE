@@ -45,30 +45,39 @@ namespace RE::Hooks {
 
 //
 std::unordered_map<uintptr_t, bool> entityList;
-DWORD                               entity;
+uintptr_t                           entity;
 DWORD                               thisEntity = 0x0;
 //
 
 DWORD Hook_CollectEntityList_Detour_Address;
 DWORD Hook_CollectEntityList_Detour_JumpBackAddress;
 
+// clang-format off
 void __declspec(naked) Hook_CollectEntityList_Detour() {
     __asm {
         mov [eax+04],edx
-        mov eax,[esi]
+        mov thisEntity,eax
         pushad
     }
 
-    // /// ///// //// ////
-    entity = *reinterpret_cast<uintptr_t*>(thisEntity);
-    if (!entityList.contains(entity)) entityList[entity] = true;
-    // /// ///// //// ////
+    if (thisEntity) {
+        entity = thisEntity;
+        if (entity) {
+            if (!entityList.contains(entity)) {
+                entityList[entity] = true;
+            }
+        }
+    }
+
+    // if (thisEntity && !entityList.contains(thisEntity)) entityList[thisEntity] = true;
 
     __asm {
         popad
+        mov eax,[esi]
         jmp[Hook_CollectEntityList_Detour_JumpBackAddress]
     }
 }
+// clang-format on
 
 void Hook_CollectEntityList_Install() {
     Hook_CollectEntityList_Detour_Address = RE::Helpers::FindByteSignatureAddress(
@@ -118,6 +127,7 @@ void RunUI() {
             });
         }
         app.AddButton("Print Entity List", [&]() {
+            app.AppendOutput(string_format("Entities {}", entityList.size()));
             for (auto& [entity, enabled] : entityList) {
                 app.AppendOutput(string_format("Entity: {:x}", entity));
             }
