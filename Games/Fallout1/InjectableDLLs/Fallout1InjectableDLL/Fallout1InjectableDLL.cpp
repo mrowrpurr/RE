@@ -79,6 +79,7 @@ void __declspec(naked) Hook_CollectEntityList_Detour() {
 }
 // clang-format on
 
+// \x89\x50\x04\x8B\x06
 void Hook_CollectEntityList_Install() {
     Hook_CollectEntityList_Detour_Address = RE::Helpers::FindByteSignatureAddress(
         L"falloutwHR.exe", 0x10000,
@@ -93,18 +94,17 @@ void Hook_CollectEntityList_Install() {
 }
 
 void Hook_CollectEntityList_Uninstall() {
-    // .......
-    // DWORD curProtection;
-    // VirtualProtect(Hook_CollectEntityList_Detour_Address, 0x5, PAGE_EXECUTE_READWRITE, &curProtection);
-
-    // // ...
-
-    // VirtualProtect(Hook_CollectEntityList_Detour_Address, 0x5, curProtection, &curProtection);
-
-    FormApp::App().AppendOutput("This *will* UNINSTALL the Collect Entity List hook");
-
-    //
-    // FormApp::App().AppendOutput("Uninstalled the Collect Entity List hook");
+    unsigned int      length = 5;
+    DWORD             curProtection;
+    std::vector<BYTE> bytes = {0x89, 0x50, 0x04, 0x8B, 0x06};
+    VirtualProtect((BYTE*)Hook_CollectEntityList_Detour_Address, bytes.size(), PAGE_EXECUTE_READWRITE, &curProtection);
+    uintptr_t startAddress = Hook_CollectEntityList_Detour_Address;
+    for (auto& byte : bytes) {
+        *(BYTE*)startAddress = byte;
+        startAddress++;
+    }
+    VirtualProtect((BYTE*)Hook_CollectEntityList_Detour_Address, bytes.size(), curProtection, &curProtection);
+    FormApp::App().AppendOutput("Uninstalled the Collect Entity List hook");
 }
 
 void SetupHooks() {
@@ -113,8 +113,14 @@ void SetupHooks() {
 }
 
 void RunUI() {
+    auto address = RE::Helpers::FindByteSignatureAddress(
+        L"falloutwHR.exe", 0x10000,
+        "\x89\x50\x04\x8B\x06\x89\x58\x28\x8B\x06\xC7\x40\x08\x00\x00\x00\x00\x8B\x06\xC7\x40\x0C\x00\x00\x00\x00",
+        "xxxxxxxxxxxxxxxxxxxxxxxxxx"
+    );
     FormApp::Run([&](FormApp& app) {
         app.SetTitle("Fallout 1 Trainer");
+        app.SetText(string_format("Address: {:x}", address));
         app.SetButtonHeight(50);
         app.SetHeight(500);
         app.SetWidth(500);
