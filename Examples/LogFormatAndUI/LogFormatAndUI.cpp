@@ -1,12 +1,11 @@
-// 1. Formatting
+#include <logging.h>
 #include <string_format.h>
-// 2. Logging
+
 // 3. UI
 
-#include <iostream>
+LogFile("THIS_IS_THE_LOG.log");
 
 int main() {
-    auto num = 69;
-    std::cout << string_format("FMT The number is: {}", num) << std::endl;
+    Log("Hello World!");
     return 0;
 }
