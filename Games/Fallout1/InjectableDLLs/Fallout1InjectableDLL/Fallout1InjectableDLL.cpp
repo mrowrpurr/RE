@@ -18,6 +18,8 @@ namespace RE::Hooks {
         std::function<void()> install;
         std::function<void()> uninstall;
         bool                  enabled = false;
+        // DWORD                address = 0;
+        // std::vector<DWORD>   bytes;
     };
 
     inline std::unordered_map<std::string, Hook> RegisteredHooks;
@@ -41,22 +43,59 @@ namespace RE::Hooks {
     }
 }
 
-void Hook_CollectEntityList_Detour() {
-    //
+//
+std::unordered_map<uintptr_t, bool> entityList;
+DWORD                               entity;
+DWORD                               thisEntity = 0x0;
+//
+
+DWORD Hook_CollectEntityList_Detour_Address;
+DWORD Hook_CollectEntityList_Detour_JumpBackAddress;
+
+void __declspec(naked) Hook_CollectEntityList_Detour() {
+    __asm {
+        mov [eax+04],edx
+        mov eax,[esi]
+        pushad
+    }
+
+    // /// ///// //// ////
+    entity = *reinterpret_cast<uintptr_t*>(thisEntity);
+    if (!entityList.contains(entity)) entityList[entity] = true;
+    // /// ///// //// ////
+
+    __asm {
+        popad
+        jmp[Hook_CollectEntityList_Detour_JumpBackAddress]
+    }
 }
 
 void Hook_CollectEntityList_Install() {
-    // auto address = RE::Helpers::FindByteSignatureAddress(
-    //     L"falloutwHR.exe", 0x10000,
-    //     "\x89\x50\x04\x8B\x06\x89\x58\x28\x8B\x06\xC7\x40\x08\x00\x00\x00\x00\x8B\x06\xC7\x40\x0C\x00\x00\x00\x00",
-    //     "xxxxxxxxxxxxxxxxxxxxxxxxxx"
-    // );
-    // RE::Hooks::Detour32(BYTE *src, BYTE *dst)
-    FormApp::App().AppendOutput("This will install the Collect Entity List hook");
+    Hook_CollectEntityList_Detour_Address = RE::Helpers::FindByteSignatureAddress(
+        L"falloutwHR.exe", 0x10000,
+        "\x89\x50\x04\x8B\x06\x89\x58\x28\x8B\x06\xC7\x40\x08\x00\x00\x00\x00\x8B\x06\xC7\x40\x0C\x00\x00\x00\x00",
+        "xxxxxxxxxxxxxxxxxxxxxxxxxx"
+    );
+    Hook_CollectEntityList_Detour_JumpBackAddress = Hook_CollectEntityList_Detour_Address + 0x5;
+    RE::Hooks::Detour32((BYTE*)Hook_CollectEntityList_Detour_Address, (BYTE*)Hook_CollectEntityList_Detour);
+    FormApp::App().AppendOutput(string_format(
+        "This will INSTALL the Collect Entity List hook at address: {:x}", Hook_CollectEntityList_Detour_Address
+    ));
 }
 
 void Hook_CollectEntityList_Uninstall() {
-    FormApp::App().AppendOutput("This will UNINSTALL the Collect Entity List hook");
+    // .......
+    // DWORD curProtection;
+    // VirtualProtect(Hook_CollectEntityList_Detour_Address, 0x5, PAGE_EXECUTE_READWRITE, &curProtection);
+
+    // // ...
+
+    // VirtualProtect(Hook_CollectEntityList_Detour_Address, 0x5, curProtection, &curProtection);
+
+    FormApp::App().AppendOutput("This *will* UNINSTALL the Collect Entity List hook");
+
+    //
+    // FormApp::App().AppendOutput("Uninstalled the Collect Entity List hook");
 }
 
 void SetupHooks() {
@@ -78,6 +117,12 @@ void RunUI() {
                     app.ChangeButtonText(string_format("Enable: {}", name));
             });
         }
+        app.AddButton("Print Entity List", [&]() {
+            for (auto& [entity, enabled] : entityList) {
+                app.AppendOutput(string_format("Entity: {:x}", entity));
+            }
+        });
+        app.AddButton("Clear", [&]() { app.ClearOutput(); });
         app.AddButton("Eject DLL", [&]() { app.Close(); });
     });
 }

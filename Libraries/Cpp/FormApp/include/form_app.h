@@ -6,6 +6,7 @@
 #include <nana/gui.hpp>
 #include <nana/gui/widgets/button.hpp>
 #include <nana/gui/widgets/label.hpp>
+#include <nana/gui/widgets/textbox.hpp>
 #include <vector>
 
 class FormApp {
@@ -16,7 +17,7 @@ class FormApp {
     std::atomic_bool                           _isRunning{false};
     nana::form                                 _form;
     nana::place                                _place;
-    nana::label                                _outputLabel;
+    nana::textbox                              _outputLabel;
     nana::label                                _headerLabel;
     std::vector<std::string>                   _buttonInitialText;
     std::vector<std::function<void()>>         _buttonClickCallbacks;
