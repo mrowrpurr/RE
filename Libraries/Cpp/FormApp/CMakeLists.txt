@@ -1,4 +1,4 @@
-project(ButtonsApp VERSION 0.1.0 LANGUAGES CXX)
+project(FormApp)
 
 find_package(unofficial-nana CONFIG REQUIRED)
 

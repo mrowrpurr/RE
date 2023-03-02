@@ -11,14 +11,10 @@
       - [Game].Cheats.UI
 -# Libraries
   - [Cpp/Rust/Other]
-    - UI
-        - ButtonsApp
     - Logging
-        - BringYourOwnLogger
-    - Formatting
-        - FmtCompatibility
-    - RE
-        - LibRE
+    - StringFormat
+    - LibRE
+    - MiniUI
 - Tools
   - DLLInjector
       - CLI

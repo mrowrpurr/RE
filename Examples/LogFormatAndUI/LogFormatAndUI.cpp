@@ -1,11 +1,15 @@
+#include <form_app.h>
 #include <logging.h>
 #include <string_format.h>
 
-// 3. UI
+LogFile("log-format-ui-example.log");
 
-LogFile("THIS_IS_THE_LOG.log");
-
-int main() {
-    Log("Hello World!");
-    return 0;
+int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
+    FormApp::Run([](FormApp& app) {
+        app.SetTitle("This is the title");
+        app.AddButton("Click Me", [&]() {
+            Log("You clicked the button");
+            app.AppendOutput("Click!");
+        });
+    });
 }

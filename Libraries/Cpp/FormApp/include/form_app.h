@@ -1,3 +1,5 @@
+#pragma once
+
 #include <atomic>
 #include <functional>
 #include <memory>
@@ -6,7 +8,7 @@
 #include <nana/gui/widgets/label.hpp>
 #include <vector>
 
-class ButtonsApp {
+class FormApp {
     static std::atomic_bool                    _isSetup;
     size_t                                     _buttonHeight{25};
     size_t                                     _height{300};
@@ -21,12 +23,12 @@ class ButtonsApp {
     std::vector<std::shared_ptr<nana::button>> _buttons;
     std::shared_ptr<nana::button>              _currentButtonBeingClicked{nullptr};
 
-    ButtonsApp() : _place(_form), _outputLabel(_form, ""), _headerLabel(_form, "") {}
-    ~ButtonsApp()                            = default;
-    ButtonsApp(const ButtonsApp&)            = delete;
-    ButtonsApp(ButtonsApp&&)                 = delete;
-    ButtonsApp& operator=(const ButtonsApp&) = delete;
-    ButtonsApp& operator=(ButtonsApp&&)      = delete;
+    FormApp() : _place(_form), _outputLabel(_form, ""), _headerLabel(_form, "") {}
+    ~FormApp()                         = default;
+    FormApp(const FormApp&)            = delete;
+    FormApp(FormApp&&)                 = delete;
+    FormApp& operator=(const FormApp&) = delete;
+    FormApp& operator=(FormApp&&)      = delete;
 
     void Resize() { _form.size({_width, _height + (_buttonInitialText.size() * _buttonHeight)}); }
     void RunApp() {
@@ -70,17 +72,17 @@ class ButtonsApp {
         _form.show();
         nana::exec();
     }
-    static ButtonsApp& GetSingleton() {
-        static ButtonsApp singleton;
+    static FormApp& GetSingleton() {
+        static FormApp singleton;
         return singleton;
     }
 
 public:
-    static void Setup(std::function<void(ButtonsApp& app)> callback) {
+    static void Setup(std::function<void(FormApp& app)> callback) {
         if (_isSetup.exchange(true)) return;
         callback(GetSingleton());
     }
-    static void Run(std::function<void(ButtonsApp& app)> callback = [](auto&) {}) {
+    static void Run(std::function<void(FormApp& app)> callback = [](auto&) {}) {
         auto& app = GetSingleton();
         callback(app);
         app.RunApp();
@@ -114,4 +116,4 @@ public:
     void Close() { nana::API::exit_all(); }
 };
 
-std::atomic<bool> ButtonsApp::_isSetup{false};
+std::atomic<bool> FormApp::_isSetup{false};
