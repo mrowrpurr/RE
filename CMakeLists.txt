@@ -4,8 +4,4 @@ project(ReverseEngineeringPlayground LANGUAGES CXX)
 
 add_subdirectory(Libraries)
 add_subdirectory(Examples)
-
-# add_subdirectory(UI)
-# add_subdirectory(DllInjector)
-# add_subdirectory(Fallout1)
-# add_subdirectory(VampireTMB)
+add_subdirectory(Tools)

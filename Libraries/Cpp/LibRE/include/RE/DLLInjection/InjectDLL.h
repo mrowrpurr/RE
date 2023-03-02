@@ -7,9 +7,9 @@
 
 #include <string>
 
-#include "DLLInjection/Util.h"
+#include "RE/Util.h"
 
-namespace DLLInjection {
+namespace RE::DLLInjection {
     void InjectDLL_CreateRemoteThread_LoadLibraryA(const wchar_t* exeName, const char* dllPath) {
         auto procId = Util::WaitForProcId(exeName);
 

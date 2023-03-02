@@ -1,5 +1,5 @@
-#include <ButtonsApp.h>
-#include <DLLInjection/DLLInjector.h>
+#include <RE/DLLInjection.h>
+#include <form_app.h>
 
 constexpr auto Fallout1_EXE = L"falloutwHR.exe";
 constexpr auto Fallout1_DLL =
@@ -9,13 +9,13 @@ constexpr auto Vampire_EXE = L"Vampire.exe";
 constexpr auto Vampire_DLL = "REBUILD ME!";
 
 void Run() {
-    ButtonsApp::Run([](ButtonsApp& app) {
+    FormApp::Run([](FormApp& app) {
         app.SetTitle("Choose DLL to Inject");
         app.SetWidth(600);
         app.SetHeight(50);
-        app.AddButton("Fallout 1", [&]() { DLLInjection::InjectDLL(Fallout1_EXE, Fallout1_DLL); });
+        app.AddButton("Fallout 1", [&]() { RE::DLLInjection::InjectDLL(Fallout1_EXE, Fallout1_DLL); });
         app.AddButton("Vampire the Masquerade: Bloodlines", []() {
-            DLLInjection::InjectDLL(Vampire_EXE, Vampire_DLL);
+            RE::DLLInjection::InjectDLL(Vampire_EXE, Vampire_DLL);
         });
     });
 }

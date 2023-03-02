@@ -2,9 +2,9 @@
 
 #include <Windows.h>
 
-#include "DLLInjection/Hooks/Detour32.h"
+#include "RE/Hooks/Detour32.h"
 
-namespace DLLInjection::Hooks {
+namespace RE::Hooks {
 
     BYTE* TrampolineHook32(BYTE* src, BYTE* dst, const uintptr_t len) {
         if (len < 5) return 0;

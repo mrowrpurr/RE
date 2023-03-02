@@ -5,9 +5,11 @@
 
 #include <psapi.h>  // For MODULEINFO
 
-namespace DLLInjection {
+namespace RE::DLLInjection {
 
-    DWORD FindSignture(const wchar_t* moduleName, unsigned int startOffset, const char* pattern, const char* mask) {
+    DWORD FindByteSignatureAddress(
+        const wchar_t* moduleName, unsigned int startOffset, const char* pattern, const char* mask
+    ) {
         // Get all module related information
         MODULEINFO modInfo = {0};
         HMODULE    hModule = GetModuleHandle(moduleName);

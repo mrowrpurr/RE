@@ -2,6 +2,6 @@
 
 #include <Windows.h>
 
-namespace DLLInjection {
+namespace RE::InjectedDLL {
     HMODULE InjectedIntoModule;
 }

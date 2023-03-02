@@ -1,4 +1,4 @@
-// auto wideProcessName = Util::GetWideCharPtr(processName);
+// auto wideProcessName = Util::GetWideCharArray(processName);
 
 // // AllocConsole();
 // // FILE* f;

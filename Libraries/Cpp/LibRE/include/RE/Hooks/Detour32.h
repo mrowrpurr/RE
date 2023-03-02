@@ -2,7 +2,7 @@
 
 #include <Windows.h>
 
-namespace DLLInjection::Hooks {
+namespace RE::Hooks {
 
     bool Detour32(BYTE* src, BYTE* dst, const uintptr_t len = 5) {
         if (len < 5) return false;

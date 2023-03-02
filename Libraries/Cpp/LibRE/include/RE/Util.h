@@ -5,11 +5,11 @@
 
 #include <TlHelp32.h>
 
-namespace DLLInjection::Util {
+namespace RE::Util {
 
     // https://stackoverflow.com/a/8032108
     // CC BY-SA 3.0
-    const wchar_t* GetWideCharPtr(const char* c) {
+    const wchar_t* GetWideCharArray(const char* c) {
         const size_t cSize = strlen(c) + 1;
         wchar_t*     wc    = new wchar_t[cSize];
         mbstowcs(wc, c, cSize);
@@ -26,7 +26,7 @@ namespace DLLInjection::Util {
             procEntry.dwSize = sizeof(procEntry);
             if (Process32First(hSnap, &procEntry)) {
                 do {
-                    if (!_wcsicmp(procEntry.szExeFile, exeName)) {
+                    if (!_wcsicmp(GetWideCharArray(procEntry.szExeFile), exeName)) {
                         procId = procEntry.th32ProcessID;
                         break;
                     }
