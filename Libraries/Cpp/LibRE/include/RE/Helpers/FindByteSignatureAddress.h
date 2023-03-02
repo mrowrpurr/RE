@@ -5,14 +5,14 @@
 
 #include <psapi.h>  // For MODULEINFO
 
-namespace RE::DLLInjection {
+namespace RE::Helpers {
 
     DWORD FindByteSignatureAddress(
         const wchar_t* moduleName, unsigned int startOffset, const char* pattern, const char* mask
     ) {
         // Get all module related information
         MODULEINFO modInfo = {0};
-        HMODULE    hModule = GetModuleHandle(moduleName);
+        HMODULE    hModule = GetModuleHandleW(moduleName);
         GetModuleInformation(GetCurrentProcess(), hModule, &modInfo, sizeof(MODULEINFO));
 
         // Assign our base and module size

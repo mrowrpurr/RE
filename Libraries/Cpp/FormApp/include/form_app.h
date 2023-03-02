@@ -38,7 +38,7 @@ class FormApp {
 
         std::string arrangement{"5"};
         if (!_headerLabel.caption().empty()) arrangement += "," + std::to_string(_buttonHeight);
-        for (auto& _ : _buttonInitialText) arrangement += "," + std::to_string(_buttonHeight);
+        for (size_t i = 0; i < _buttonInitialText.size(); i++) arrangement += "," + std::to_string(_buttonHeight);
         arrangement += ",10000";
 
         _place.div("<><width=90% <vertical fields gap=10 arrange=[" + arrangement + "]>><>");

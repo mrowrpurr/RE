@@ -2,6 +2,6 @@
 
 #include "RE/InjectedDLL/Module.h"
 
-namespace RE::InjectedDll {
+namespace RE::InjectedDLL {
     void EjectDLL() { FreeLibraryAndExitThread(InjectedIntoModule, 0); }
 }

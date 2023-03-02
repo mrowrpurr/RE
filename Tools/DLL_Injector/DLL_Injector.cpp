@@ -3,7 +3,8 @@
 
 constexpr auto Fallout1_EXE = L"falloutwHR.exe";
 constexpr auto Fallout1_DLL =
-    "C:/Code/mrowrpurr/Retro-RE-Playground/build/debug/Fallout1/ExamplePlugin/Fallout1.ExamplePlugin.dll";
+    "C:/Code/mrowrpurr/Retro-RE-Playground/build/debug/Games/Fallout1/InjectableDLLs/Fallout1InjectableDLL/"
+    "Fallout1InjectableDLL.dll";
 
 constexpr auto Vampire_EXE = L"Vampire.exe";
 constexpr auto Vampire_DLL = "REBUILD ME!";
