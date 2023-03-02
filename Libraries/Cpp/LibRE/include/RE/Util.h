@@ -45,4 +45,16 @@ namespace RE::Util {
         }
         return procId;
     }
+
+    // https://stackoverflow.com/a/27809744
+    // CC BY-SA 3.0
+    typedef void (*function_ptr)();
+    void JIT(LPBYTE bytes, DWORD len_bytes) {
+        LPBYTE exec_region    = (LPBYTE)VirtualAlloc(NULL, len_bytes, MEM_RESERVE | MEM_COMMIT, PAGE_EXECUTE_READWRITE);
+        function_ptr function = (function_ptr)exec_region;
+        function();
+        VirtualFree(exec_region, 0, MEM_RELEASE);
+        exec_region = NULL;
+        function    = NULL;
+    }
 }

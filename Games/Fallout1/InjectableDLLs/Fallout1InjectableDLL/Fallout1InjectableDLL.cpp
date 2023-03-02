@@ -1,6 +1,7 @@
 #include <RE/Helpers/FindByteSignatureAddress.h>
 #include <RE/Hooks.h>
 #include <RE/InjectedDLL.h>
+#include <RE/Util.h>
 #include <form_app.h>
 #include <string_format.h>
 
@@ -69,8 +70,6 @@ void __declspec(naked) Hook_CollectEntityList_Detour() {
         }
     }
 
-    // if (thisEntity && !entityList.contains(thisEntity)) entityList[thisEntity] = true;
-
     __asm {
         popad
         mov eax,[esi]
@@ -79,13 +78,25 @@ void __declspec(naked) Hook_CollectEntityList_Detour() {
 }
 // clang-format on
 
+std::vector<BYTE> bytes;
+
 // \x89\x50\x04\x8B\x06
 void Hook_CollectEntityList_Install() {
-    Hook_CollectEntityList_Detour_Address = RE::Helpers::FindByteSignatureAddress(
-        L"falloutwHR.exe", 0x10000,
-        "\x89\x50\x04\x8B\x06\x89\x58\x28\x8B\x06\xC7\x40\x08\x00\x00\x00\x00\x8B\x06\xC7\x40\x0C\x00\x00\x00\x00",
-        "xxxxxxxxxxxxxxxxxxxxxxxxxx"
-    );
+    if (!Hook_CollectEntityList_Detour_Address)
+        Hook_CollectEntityList_Detour_Address = RE::Helpers::FindByteSignatureAddress(
+            L"falloutwHR.exe", 0x10000,
+            "\x89\x50\x04\x8B\x06\x89\x58\x28\x8B\x06\xC7\x40\x08\x00\x00\x00\x00\x8B\x06\xC7\x40\x0C\x00\x00\x00\x00",
+            "xxxxxxxxxxxxxxxxxxxxxxxxxx"
+        );
+
+    // Read into the bytes!
+    // memcpy_s(originalBytes, 5, (BYTE*)Hook_CollectEntityList_Detour_Address, 5);
+    uintptr_t startAddress = Hook_CollectEntityList_Detour_Address;
+    for (int i = 0; i < 5; i++) {
+        bytes.push_back(*(BYTE*)startAddress);
+        startAddress++;
+    }
+
     Hook_CollectEntityList_Detour_JumpBackAddress = Hook_CollectEntityList_Detour_Address + 0x5;
     RE::Hooks::Detour32((BYTE*)Hook_CollectEntityList_Detour_Address, (BYTE*)Hook_CollectEntityList_Detour);
     FormApp::App().AppendOutput(string_format(
@@ -94,22 +105,28 @@ void Hook_CollectEntityList_Install() {
 }
 
 void Hook_CollectEntityList_Uninstall() {
-    unsigned int      length = 5;
-    DWORD             curProtection;
-    std::vector<BYTE> bytes = {0x89, 0x50, 0x04, 0x8B, 0x06};
+    if (bytes.empty()) {
+        FormApp::App().AppendOutput("THE BYTES ARE EMPTY!");
+        return;
+    }
+
+    // unsigned int length = 5;
+    DWORD curProtection;
+    // std::vector<BYTE> bytes = {0x89, 0x50, 0x04, 0x8B, 0x06};
     VirtualProtect((BYTE*)Hook_CollectEntityList_Detour_Address, bytes.size(), PAGE_EXECUTE_READWRITE, &curProtection);
+
     uintptr_t startAddress = Hook_CollectEntityList_Detour_Address;
     for (auto& byte : bytes) {
         *(BYTE*)startAddress = byte;
         startAddress++;
     }
+
     VirtualProtect((BYTE*)Hook_CollectEntityList_Detour_Address, bytes.size(), curProtection, &curProtection);
     FormApp::App().AppendOutput("Uninstalled the Collect Entity List hook");
 }
 
 void SetupHooks() {
     RE::Hooks::Add("Collect Entity List", Hook_CollectEntityList_Install, Hook_CollectEntityList_Uninstall);
-    RE::Hooks::Add("Another Hook", Hook_CollectEntityList_Install, Hook_CollectEntityList_Uninstall);
 }
 
 void RunUI() {
