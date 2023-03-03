@@ -4,9 +4,11 @@
 #include <logging.h>
 #include <string_format.h>
 
-void TryToMakeMeALambdaLOL() { FormApp::App().AppendOutput("Hook ran!"); }
-
-void SetupHooks() { RE::Hooks::Add(0x47f6ba, (BYTE*)TryToMakeMeALambdaLOL); }
+void SetupHooks() {
+    RE::Hooks::Add(0x47f6ba, []() {
+        FormApp::App().AppendOutput("LOLOLOLOLOLOL I am a lambda triggered via some assembly hook.");
+    });
+}
 
 void RunUI() {
     auto        bytes = RE::Hooks::Get("0x47f6ba").GetBytes();
