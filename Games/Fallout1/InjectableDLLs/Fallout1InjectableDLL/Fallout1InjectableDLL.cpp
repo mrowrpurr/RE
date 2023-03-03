@@ -4,9 +4,9 @@
 #include <logging.h>
 #include <string_format.h>
 
-void SetupHooks() {
-    RE::Hooks::Add(0x47f6ba, []() { FormApp::App().AppendOutput("Hook ran!"); });
-}
+void TryToMakeMeALambdaLOL() { FormApp::App().AppendOutput("Hook ran!"); }
+
+void SetupHooks() { RE::Hooks::Add(0x47f6ba, (BYTE*)TryToMakeMeALambdaLOL); }
 
 void RunUI() {
     auto        bytes = RE::Hooks::Get("0x47f6ba").GetBytes();

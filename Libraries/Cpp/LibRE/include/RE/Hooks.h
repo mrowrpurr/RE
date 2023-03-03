@@ -33,7 +33,10 @@ namespace RE::Hooks {
         std::vector<BYTE> _bytes;
 
         // A function to call when the hook is executed
-        std::function<void()> _detourFunction;
+        // std::function<void()> _detourFunction;
+
+        // Address of a detour function to call when the hook is executed
+        BYTE* _detourFunctionAddress = 0;
 
         void FindBytes() {
             if (!_bytes.empty()) return;
@@ -42,7 +45,13 @@ namespace RE::Hooks {
 
     public:
         Hook() = default;
-        Hook(const std::string& name, DWORD address) : _name(name), _address(address) {}
+        Hook(const std::string& name, DWORD address, BYTE* detourFunctionAddress)
+            : _name(name), _address(address), _detourFunctionAddress(detourFunctionAddress) {}
+
+        // Hook(const std::string& name, DWORD address) : _name(name), _address(address) {}
+
+        // Hook(const std::string& name, DWORD address, std::function<void()> detourFunction)
+        //     : _name(name), _address(address), _detourFunction(detourFunction) {}
 
         void Install() {
             if (!_enabled) {
@@ -50,6 +59,10 @@ namespace RE::Hooks {
 
                 // Ok, but first, let's get the bytes...
                 FindBytes();
+
+                // TODO: overloads for detour please! like uintptr_t
+                // Now, I guess write a jump to the function
+                Detour32((BYTE*)_address, _detourFunctionAddress, _length);
 
                 //
                 _enabled = true;
@@ -79,10 +92,15 @@ namespace RE::Hooks {
 
     inline std::unordered_map<std::string, Hook> RegisteredHooks;
 
-    void Add(DWORD offset, std::function<void()> hook) {
+    void Add(DWORD offset, BYTE* detourFunctionAddress) {
         auto name             = string_format("0x{:x}", offset);
-        RegisteredHooks[name] = Hook(name, offset);
+        RegisteredHooks[name] = Hook(name, offset, detourFunctionAddress);
     }
+
+    // void Add(DWORD offset, std::function<void()> hook) {
+    //     auto name             = string_format("0x{:x}", offset);
+    //     RegisteredHooks[name] = Hook(name, offset);
+    // }
 
     Hook& Get(const std::string& name) { return RegisteredHooks[name]; }
 }

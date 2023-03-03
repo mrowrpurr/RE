@@ -7,6 +7,7 @@
 
 namespace RE::Helpers {
 
+    // Scan for AOB (Array Of Bytes)
     DWORD FindByteSignatureAddress(
         const wchar_t* moduleName, unsigned int startOffset, const char* pattern, const char* mask
     ) {
