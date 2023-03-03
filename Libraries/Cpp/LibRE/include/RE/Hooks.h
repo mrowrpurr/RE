@@ -22,11 +22,22 @@ namespace RE::Hooks {
     DWORD    MODULE_BASE_ADDRESS = 0;
 
     namespace {
+        DWORD CurrentJumpBackAddressForHookFunctionWrapper = 0;
 
         // TODO jump back etc!
-        void HookFunctionWrapper() {
-            //
-            FormApp::App().AppendOutput("HookFunctionWrapper() called");
+        void __declspec(naked) HookFunctionWrapper() {
+            // __asm {
+            //     mov eax,0x69
+            //     mov ebx,0x420
+            // }
+
+            // JIT bytes
+
+            // FormApp::App().AppendOutput("HookFunctionWrapper() called");
+
+            __asm {
+                jmp[CurrentJumpBackAddressForHookFunctionWrapper]
+            }
         }
     }
 
@@ -42,6 +53,9 @@ namespace RE::Hooks {
 
         // Start address for a hook
         DWORD _address = 0;
+
+        // Address to jump back to after the hook is executed
+        DWORD _jumpBackAddress = 0;
 
         // The bytes to be overwritten by the hook
         std::vector<BYTE> _bytes;
@@ -77,6 +91,7 @@ namespace RE::Hooks {
 
                 // TODO: overloads for detour please! like uintptr_t
                 // Now, I guess write a jump to the function
+                CurrentJumpBackAddressForHookFunctionWrapper = _address + _length;
                 Detour32((BYTE*)_address, (BYTE*)HookFunctionWrapper, _length);
 
                 // if (_detourFunctionAddress) {
