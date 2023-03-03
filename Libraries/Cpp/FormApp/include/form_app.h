@@ -17,14 +17,14 @@ class FormApp {
     std::atomic_bool                           _isRunning{false};
     nana::form                                 _form;
     nana::place                                _place;
-    nana::textbox                              _outputLabel;
+    nana::textbox                              _outputTextBox;
     nana::label                                _headerLabel;
     std::vector<std::string>                   _buttonInitialText;
     std::vector<std::function<void()>>         _buttonClickCallbacks;
     std::vector<std::shared_ptr<nana::button>> _buttons;
     std::shared_ptr<nana::button>              _currentButtonBeingClicked{nullptr};
 
-    FormApp() : _place(_form), _outputLabel(_form, ""), _headerLabel(_form, "") {}
+    FormApp() : _place(_form), _outputTextBox(_form, ""), _headerLabel(_form, "") {}
     ~FormApp()                         = default;
     FormApp(const FormApp&)            = delete;
     FormApp(FormApp&&)                 = delete;
@@ -34,6 +34,8 @@ class FormApp {
     void Resize() { _form.size({_width, _height + (_buttonInitialText.size() * _buttonHeight)}); }
     void RunApp() {
         if (_isRunning.exchange(true)) return;
+
+        _outputTextBox.editable(false);
 
         nana::label lblTopPadding(_form, "");
 
@@ -57,17 +59,17 @@ class FormApp {
                     _currentButtonBeingClicked = btnPtr;
                     callback();
                 } catch (const std::exception& e) {
-                    _outputLabel.caption(_outputLabel.caption() + "\n" + "Exception: " + e.what());
+                    _outputTextBox.caption(_outputTextBox.caption() + "\n" + "Exception: " + e.what());
                 } catch (const char* e) {
-                    _outputLabel.caption(_outputLabel.caption() + "\n" + "Exception: " + e);
+                    _outputTextBox.caption(_outputTextBox.caption() + "\n" + "Exception: " + e);
                 } catch (...) {
-                    _outputLabel.caption(_outputLabel.caption() + "\n" + "Unknown exception");
+                    _outputTextBox.caption(_outputTextBox.caption() + "\n" + "Unknown exception");
                 }
             });
             _place.field("fields") << *btn;
         }
 
-        _place.field("fields") << _outputLabel;
+        _place.field("fields") << _outputTextBox;
         Resize();
         _place.collocate();
         _form.show();
@@ -102,9 +104,9 @@ public:
         if (_currentButtonBeingClicked) _currentButtonBeingClicked->caption(text);
     }
 
-    void AppendOutput(const std::string& text) { _outputLabel.caption(_outputLabel.caption() + "\n" + text); }
-    void SetOutput(const std::string& text) { _outputLabel.caption(text); }
-    void ClearOutput() { _outputLabel.caption(""); }
+    void AppendOutput(const std::string& text) { _outputTextBox.caption(_outputTextBox.caption() + "\n" + text); }
+    void SetOutput(const std::string& text) { _outputTextBox.caption(text); }
+    void ClearOutput() { _outputTextBox.caption(""); }
     void SetHeight(short height) {
         _height = height;
         Resize();
