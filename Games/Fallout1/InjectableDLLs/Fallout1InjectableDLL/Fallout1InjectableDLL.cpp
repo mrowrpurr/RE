@@ -4,14 +4,16 @@
 #include <logging.h>
 #include <string_format.h>
 
+// 0x47f6ba
+
 void SetupHooks() {
-    RE::Hooks::Add(0x47f6ba, []() {
+    RE::Hooks::Add(0x47f6a7, []() {
         FormApp::App().AppendOutput("LOLOLOLOLOLOL I am a lambda triggered via some assembly hook.");
     });
 }
 
 void RunUI() {
-    auto        bytes = RE::Hooks::Get("0x47f6ba").GetBytes();
+    auto        bytes = RE::Hooks::Get("0x47f6a7").GetBytes();
     std::string bytesString;
     for (auto& byte : bytes) {
         bytesString += string_format("{:02x} ", byte);
