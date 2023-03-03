@@ -4,6 +4,37 @@
 #include <logging.h>
 #include <string_format.h>
 
+/*
+    # Run Original Bytes First
+
+                [ADDRESS to HOOK]       jmp HOOK_BYTES_LOCATION
+
+                [HOOK_BYTES_LOCATION]   aa bb cc dd ee   <---- Original Bytes
+                                        pushad
+                                        call <hook function>
+                                        popad
+                                        jmp <jump back address>
+
+    # Run Original Bytes Last
+
+                [ADDRESS to HOOK]       jmp HOOK_BYTES_LOCATION
+
+                [HOOK_BYTES_LOCATION]   pushad
+                                        call jmp <hook function>
+                                        popad
+                                        aa bb cc dd ee   <---- Original Bytes
+                                        jmp <jump back address>
+
+    # Run Original Bytes NEVER
+
+                [ADDRESS to HOOK]       jmp HOOK_BYTES_LOCATION
+
+                [HOOK_BYTES_LOCATION]   pushad
+                                        call jmp <hook function>
+                                        popad
+                                        jmp <jump back address>
+*/
+
 void SetupHooks() {
     RE::Hooks::Add(0x47f6ba, []() {
         FormApp::App().AppendOutput("LOLOLOLOLOLOL I am a lambda triggered via some assembly hook.");
