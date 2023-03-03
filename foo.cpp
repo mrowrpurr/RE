@@ -23,48 +23,38 @@ namespace RE::Hooks {
     wchar_t* MODULE_NAME;
     DWORD    MODULE_BASE_ADDRESS = 0;
 
+    /*
+        [HOOK]
+        -->
+        --> < codez >
+        -->
+        --> JMP [ADDITONAL BYTES]
+
+        [HOOK]                  (hold on to BYTES)
+        [ADDITIONAL BYTES]
+    */
+
     namespace {
 
-        DWORD CurrentJumpBackAddressForHookFunctionWrapper = 0;
+        DWORD HookFunctionWrapper_Address_Self     = 0;
+        DWORD HookFunctionWrapper_Address_JumpBack = 0;
+
+        bool HookFunctionWrapper_RunOverwrittenBytes_Ran     = false;
+        bool HookFunctionWrapper_RunOverwrittenBytes_AtStart = false;
+        bool HookFunctionWrapper_RunOverwrittenBytes_AtEnd   = false;
+
+        bool HookFunctionWrapper_ShouldRunCodeBody = false;
+
+        DWORD CurrentJumpBackAddressForHookFunctionWrapper = 1;
 
         struct HookFunctionWrapper_JumpBackCode : Xbyak::CodeGenerator {
-            HookFunctionWrapper_JumpBackCode() {
-                // mov(eax, 0x69);
-                jmp((void*)CurrentJumpBackAddressForHookFunctionWrapper);
-            }
+            HookFunctionWrapper_JumpBackCode() { jmp((void*)CurrentJumpBackAddressForHookFunctionWrapper); }
         };
 
-        // falloutwHR.exe+7F6BA - 89 50 04
-        // falloutwHR.exe+7F6BD - 8B 06
-
-        // std::vector<BYTE> someBytes = {0xB8, 0x69, 0x00, 0x00, 0x00};
-        std::vector<BYTE> someBytes = {0x89, 0x50, 0x04, 0x8B, 0x06, 0xC3};
-
-        // TODO jump back etc!
         void HookFunctionWrapper() {
-            // FormApp::App().AppendOutput("HookFunctionWrapper() called");
-
-            // \x89\x50\x04
-            // \x8B\x06
-
-            Util::JIT(someBytes);
-
             HookFunctionWrapper_JumpBackCode jitFactory;
             void (*jitCode)() = jitFactory.getCode<void (*)()>();
             jitCode();
-
-            // printf("ret=%d\n", f()); // ret = 5
-
-            // __asm {
-            //     mov eax,0x69
-            //     mov ebx,0x420
-            // }
-
-            // JIT bytes
-
-            // __asm {
-            //     jmp[CurrentJumpBackAddressForHookFunctionWrapper]
-            // }
         }
     }
 
@@ -100,11 +90,6 @@ namespace RE::Hooks {
 
     public:
         Hook() = default;
-
-        // Hook(const std::string& name, DWORD address, BYTE* detourFunctionAddress)
-        //     : _name(name), _address(address), _detourFunctionAddress(detourFunctionAddress) {}
-
-        // Hook(const std::string& name, DWORD address) : _name(name), _address(address) {}
 
         Hook(const std::string& name, DWORD address, std::function<void()> detourFunction)
             : _name(name), _address(address), _detourFunction(detourFunction) {}
@@ -155,12 +140,7 @@ namespace RE::Hooks {
         }
     };
 
-    inline std::unordered_map<std::string, Hook> RegisteredHooks;
-
-    // void Add(DWORD offset, BYTE* detourFunctionAddress) {
-    //     auto name             = string_format("0x{:x}", offset);
-    //     RegisteredHooks[name] = Hook(name, offset, detourFunctionAddress);
-    // }
+    std::unordered_map<std::string, Hook> RegisteredHooks;
 
     void Add(DWORD offset, std::function<void()> detourFunction) {
         auto name             = string_format("0x{:x}", offset);
