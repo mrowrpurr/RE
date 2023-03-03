@@ -5,6 +5,9 @@
 
 #include <TlHelp32.h>
 
+#include <string>
+#include <vector>
+
 namespace RE::Util {
 
     // https://stackoverflow.com/a/8032108
@@ -26,7 +29,9 @@ namespace RE::Util {
             procEntry.dwSize = sizeof(procEntry);
             if (Process32First(hSnap, &procEntry)) {
                 do {
-                    if (!_wcsicmp(GetWideCharArray(procEntry.szExeFile), exeName)) {
+                    // if (!_wcsicmp(GetWideCharArray(procEntry.szExeFile), exeName)) {
+                    // if (!_stricmp(procEntry.szExeFile, exeName)) {
+                    if (!_wcsicmp(procEntry.szExeFile, exeName)) {
                         procId = procEntry.th32ProcessID;
                         break;
                     }
@@ -48,11 +53,18 @@ namespace RE::Util {
 
     // https://stackoverflow.com/a/27809744
     // CC BY-SA 3.0
-    typedef void (*function_ptr)();
-    void JIT(LPBYTE bytes, DWORD len_bytes) {
-        LPBYTE exec_region    = (LPBYTE)VirtualAlloc(NULL, len_bytes, MEM_RESERVE | MEM_COMMIT, PAGE_EXECUTE_READWRITE);
-        function_ptr function = (function_ptr)exec_region;
+    void JIT(std::vector<BYTE> bytes) {
+        // Get some memory
+        LPBYTE exec_region = (LPBYTE)VirtualAlloc(NULL, bytes.size(), MEM_RESERVE | MEM_COMMIT, PAGE_EXECUTE_READWRITE);
+
+        // Copy the bytes into the memory
+        memcpy(exec_region, bytes.data(), bytes.size());
+
+        // Cast the memory to a function pointer and call it
+        void (*function)() = (void (*)())exec_region;
         function();
+
+        // Free the memory
         VirtualFree(exec_region, 0, MEM_RELEASE);
         exec_region = NULL;
         function    = NULL;

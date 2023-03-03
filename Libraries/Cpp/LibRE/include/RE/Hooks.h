@@ -6,6 +6,7 @@
 
 #include <RE/Helpers/FindByteSignatureAddress.h>
 #include <string_format.h>
+#include <xbyak/xbyak.h>
 
 #include <functional>
 #include <optional>
@@ -15,6 +16,7 @@
 
 #include "RE/Hooks/Detour32.h"
 #include "RE/Hooks/Trampoline32.h"
+#include "RE/Util.h"
 
 namespace RE::Hooks {
 
@@ -24,8 +26,34 @@ namespace RE::Hooks {
     namespace {
         DWORD CurrentJumpBackAddressForHookFunctionWrapper = 0;
 
+        struct HookFunctionWrapper_JumpBackCode : Xbyak::CodeGenerator {
+            HookFunctionWrapper_JumpBackCode() {
+                // mov(eax, 0x69);
+                jmp((void*)CurrentJumpBackAddressForHookFunctionWrapper);
+            }
+        };
+
+        // falloutwHR.exe+7F6BA - 89 50 04
+        // falloutwHR.exe+7F6BD - 8B 06
+
+        // std::vector<BYTE> someBytes = {0xB8, 0x69, 0x00, 0x00, 0x00};
+        std::vector<BYTE> someBytes = {0x89, 0x50, 0x04, 0x8B, 0x06, 0xC3};
+
         // TODO jump back etc!
-        void __declspec(naked) HookFunctionWrapper() {
+        void HookFunctionWrapper() {
+            // FormApp::App().AppendOutput("HookFunctionWrapper() called");
+
+            // \x89\x50\x04
+            // \x8B\x06
+
+            Util::JIT(someBytes);
+
+            HookFunctionWrapper_JumpBackCode jitFactory;
+            void (*jitCode)() = jitFactory.getCode<void (*)()>();
+            jitCode();
+
+            // printf("ret=%d\n", f()); // ret = 5
+
             // __asm {
             //     mov eax,0x69
             //     mov ebx,0x420
@@ -33,11 +61,9 @@ namespace RE::Hooks {
 
             // JIT bytes
 
-            // FormApp::App().AppendOutput("HookFunctionWrapper() called");
-
-            __asm {
-                jmp[CurrentJumpBackAddressForHookFunctionWrapper]
-            }
+            // __asm {
+            //     jmp[CurrentJumpBackAddressForHookFunctionWrapper]
+            // }
         }
     }
 
