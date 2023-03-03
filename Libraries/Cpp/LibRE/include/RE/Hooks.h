@@ -17,9 +17,28 @@ namespace RE::Hooks {
     DWORD    MODULE_BASE_ADDRESS = 0;
 
     class Hook {
+        // An arbitrary name for the hook (must be unique)
         std::string _name;
-        DWORD       _address;
-        bool        _enabled = false;
+
+        // Whether or not the hook is enabled
+        bool _enabled = false;
+
+        // The length of the hook (number of bytes)
+        unsigned int _length = 5;
+
+        // Start address for a hook
+        DWORD _address = 0;
+
+        // The bytes to be overwritten by the hook
+        std::vector<BYTE> _bytes;
+
+        // A function to call when the hook is executed
+        std::function<void()> _detourFunction;
+
+        void FindBytes() {
+            if (!_bytes.empty()) return;
+            for (unsigned int i = 0; i < _length; i++) _bytes.push_back(*(BYTE*)(_address + i));
+        }
 
     public:
         Hook() = default;
@@ -27,6 +46,12 @@ namespace RE::Hooks {
 
         void Install() {
             if (!_enabled) {
+                // BLINDLY Overwrite the address with a jump to the detour function
+
+                // Ok, but first, let's get the bytes...
+                FindBytes();
+
+                //
                 _enabled = true;
             }
         }
@@ -44,6 +69,11 @@ namespace RE::Hooks {
                 Install();
             }
             return _enabled;
+        }
+
+        std::vector<BYTE> GetBytes() {
+            FindBytes();
+            return _bytes;
         }
     };
 
