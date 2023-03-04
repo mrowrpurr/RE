@@ -55,10 +55,10 @@ void SetupHooks() {
     // RE::Hooks::Add(0x47f6ba, reinterpret_cast<DWORD_PTR>(TheHook));
 
     // Ha, almost lazy-ish function
-    RE::Hooks::Add(0x47f6ba, reinterpret_cast<DWORD_PTR>(TheHook));
+    // RE::Hooks::Add(0x47f6ba, reinterpret_cast<DWORD_PTR>(TheHook));
 
     // Haha, lazy f'n lambda!
-    // RE::Hooks::Add(0x47f6ba, []() { FormApp::App().AppendOutput("HAHAHA THE LAMBDA RAN!"); });
+    RE::Hooks::Add(0x47f6ba, []() { FormApp::App().AppendOutput("HAHAHA THE LAMBDA RAN!"); });
 
     // MuHaHaHaHa, my Lambda has Registers, byach!!
     // RE::Hooks::Add(0x47f6ba, [](Registers& regs) { FormApp::App().AppendOutput("... {}", regs.eax()); });

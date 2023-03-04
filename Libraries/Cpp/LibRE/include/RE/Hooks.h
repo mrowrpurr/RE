@@ -20,6 +20,10 @@
 
 namespace RE::Hooks {
 
+    std::function<void()> THE_HOOK_LAMBDA;
+
+    void RUN_THE_LAMBDA() { THE_HOOK_LAMBDA(); }
+
     wchar_t* MODULE_NAME;
     DWORD    MODULE_BASE_ADDRESS = 0;
 
@@ -71,7 +75,7 @@ namespace RE::Hooks {
         std::optional<std::function<void()>> _detourFunction;
 
         // Address of a detour function to call when the hook is executed
-        DWORD_PTR _detourFunctionAddress = 0;
+        // DWORD_PTR _detourFunctionAddress = 0;
 
         void ReadOriginalBytes() {
             if (!_bytes.empty()) return;
@@ -81,8 +85,11 @@ namespace RE::Hooks {
     public:
         Hook() = default;
 
-        Hook(const std::string& name, DWORD address, DWORD_PTR detourFunctionAddress)
-            : _name(name), _address(address), _detourFunctionAddress(detourFunctionAddress) {}
+        Hook(const std::string& name, DWORD address, std::function<void()> detourFunction)
+            : _name(name), _address(address), _detourFunction(detourFunction) {}
+
+        // Hook(const std::string& name, DWORD address, DWORD_PTR detourFunctionAddress)
+        //     : _name(name), _address(address), _detourFunctionAddress(detourFunctionAddress) {}
 
         void Install() {
             if (!_enabled) {
@@ -102,7 +109,10 @@ namespace RE::Hooks {
                 memory[offset] = 0xE8;  // call
                 offset++;
 
-                auto relativeDetourFunctionAddress        = _detourFunctionAddress - ((DWORD)memory + offset - 1) - 5;
+                THE_HOOK_LAMBDA             = _detourFunction.value();
+                DWORD_PTR myFunctionAddress = reinterpret_cast<DWORD_PTR>(RUN_THE_LAMBDA);
+
+                auto relativeDetourFunctionAddress        = myFunctionAddress - ((DWORD)memory + offset - 1) - 5;
                 *(uintptr_t*)((uintptr_t)&memory[offset]) = (uintptr_t)relativeDetourFunctionAddress;
                 offset += 4;
 
@@ -150,15 +160,15 @@ namespace RE::Hooks {
 
     inline std::unordered_map<std::string, Hook> RegisteredHooks;
 
-    void Add(DWORD offset, DWORD_PTR detourFunctionAddress) {
-        auto name             = string_format("0x{:x}", offset);
-        RegisteredHooks[name] = Hook(name, offset, detourFunctionAddress);
-    }
-
-    // void Add(DWORD offset, std::function<void()> detourFunction) {
+    // void Add(DWORD offset, DWORD_PTR detourFunctionAddress) {
     //     auto name             = string_format("0x{:x}", offset);
-    //     RegisteredHooks[name] = Hook(name, offset, detourFunction);
+    //     RegisteredHooks[name] = Hook(name, offset, detourFunctionAddress);
     // }
+
+    void Add(DWORD offset, std::function<void()> detourFunction) {
+        auto name             = string_format("0x{:x}", offset);
+        RegisteredHooks[name] = Hook(name, offset, detourFunction);
+    }
 
     Hook& Get(const std::string& name) { return RegisteredHooks[name]; }
 }
