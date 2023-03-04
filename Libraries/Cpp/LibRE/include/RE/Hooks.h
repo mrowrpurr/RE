@@ -66,22 +66,141 @@ namespace RE::Hooks {
         }
 
         DWORD eax() { return CURRENT_REGISTER_VALUE_EAX; }
+
+        template <typename T>
+        T eax() {
+            return (T)CURRENT_REGISTER_VALUE_EAX;
+        }
+
+        template <typename T>
+        T eax(uint32_t offset) {
+            return *reinterpret_cast<T*>(CURRENT_REGISTER_VALUE_EAX + offset);
+        }
+
+        template <typename T>
+        T eax(std::vector<uint32_t> offsets) {
+            if (offsets.empty()) return static_cast<T>(CURRENT_REGISTER_VALUE_EAX);
+            DWORD_PTR address = CURRENT_REGISTER_VALUE_EAX;
+            for (size_t i = 0; i < offsets.size() - 1; i++)
+                address = *reinterpret_cast<DWORD_PTR*>(address + offsets[i]);
+            return *reinterpret_cast<T*>(address + offsets.back());
+        }
+
         DWORD ebx() { return CURRENT_REGISTER_VALUE_EBX; }
+
+        template <typename T>
+        T ebx() {
+            return (T)CURRENT_REGISTER_VALUE_EBX;
+        }
+
+        template <typename T>
+        T ebx(uint32_t offset) {
+            return *reinterpret_cast<T*>(CURRENT_REGISTER_VALUE_EBX + offset);
+        }
+
+        template <typename T>
+        T ebx(std::vector<uint32_t> offsets) {
+            if (offsets.empty()) return static_cast<T>(CURRENT_REGISTER_VALUE_EBX);
+            DWORD_PTR address = CURRENT_REGISTER_VALUE_EBX;
+            for (size_t i = 0; i < offsets.size() - 1; i++)
+                address = *reinterpret_cast<DWORD_PTR*>(address + offsets[i]);
+            return *reinterpret_cast<T*>(address + offsets.back());
+        }
+
         DWORD ecx() { return CURRENT_REGISTER_VALUE_ECX; }
+
+        template <typename T>
+        T ecx() {
+            return (T)CURRENT_REGISTER_VALUE_ECX;
+        }
+
+        template <typename T>
+        T ecx(uint32_t offset) {
+            return *reinterpret_cast<T*>(CURRENT_REGISTER_VALUE_ECX + offset);
+        }
+
+        template <typename T>
+        T ecx(std::vector<uint32_t> offsets) {
+            if (offsets.empty()) return static_cast<T>(CURRENT_REGISTER_VALUE_ECX);
+            DWORD_PTR address = CURRENT_REGISTER_VALUE_ECX;
+            for (size_t i = 0; i < offsets.size() - 1; i++)
+                address = *reinterpret_cast<DWORD_PTR*>(address + offsets[i]);
+            return *reinterpret_cast<T*>(address + offsets.back());
+        }
+
         DWORD edx() { return CURRENT_REGISTER_VALUE_EDX; }
+
+        template <typename T>
+        T edx() {
+            return (T)CURRENT_REGISTER_VALUE_EDX;
+        }
+
+        template <typename T>
+        T edx(uint32_t offset) {
+            return *reinterpret_cast<T*>(CURRENT_REGISTER_VALUE_EDX + offset);
+        }
+
+        template <typename T>
+        T edx(std::vector<uint32_t> offsets) {
+            if (offsets.empty()) return static_cast<T>(CURRENT_REGISTER_VALUE_EDX);
+            DWORD_PTR address = CURRENT_REGISTER_VALUE_EDX;
+            for (size_t i = 0; i < offsets.size() - 1; i++)
+                address = *reinterpret_cast<DWORD_PTR*>(address + offsets[i]);
+            return *reinterpret_cast<T*>(address + offsets.back());
+        }
+
         DWORD esi() { return CURRENT_REGISTER_VALUE_ESI; }
+
+        template <typename T>
+        T esi() {
+            return (T)CURRENT_REGISTER_VALUE_ESI;
+        }
+
+        template <typename T>
+        T esi(uint32_t offset) {
+            return *reinterpret_cast<T*>(CURRENT_REGISTER_VALUE_ESI + offset);
+        }
+
+        template <typename T>
+        T esi(std::vector<uint32_t> offsets) {
+            if (offsets.empty()) return static_cast<T>(CURRENT_REGISTER_VALUE_ESI);
+            DWORD_PTR address = CURRENT_REGISTER_VALUE_ESI;
+            for (size_t i = 0; i < offsets.size() - 1; i++)
+                address = *reinterpret_cast<DWORD_PTR*>(address + offsets[i]);
+            return *reinterpret_cast<T*>(address + offsets.back());
+        }
+
         DWORD edi() { return CURRENT_REGISTER_VALUE_EDI; }
-        DWORD ebp() { return CURRENT_REGISTER_VALUE_EBP; }
-        DWORD esp() { return CURRENT_REGISTER_VALUE_ESP; }
 
         template <typename T>
         T edi() {
-            return reinterpret_cast<T>(CURRENT_REGISTER_VALUE_EDI);
+            return (T)CURRENT_REGISTER_VALUE_EDI;
         }
 
         template <typename T>
         T edi(uint32_t offset) {
             return *reinterpret_cast<T*>(CURRENT_REGISTER_VALUE_EDI + offset);
+        }
+
+        template <typename T>
+        T edi(std::vector<uint32_t> offsets) {
+            if (offsets.empty()) return static_cast<T>(CURRENT_REGISTER_VALUE_EDI);
+            DWORD_PTR address = CURRENT_REGISTER_VALUE_EDI;
+            for (size_t i = 0; i < offsets.size() - 1; i++)
+                address = *reinterpret_cast<DWORD_PTR*>(address + offsets[i]);
+            return *reinterpret_cast<T*>(address + offsets.back());
+        }
+
+        DWORD ebp() { return CURRENT_REGISTER_VALUE_EBP; }
+
+        template <typename T>
+        T ebp() {
+            return (T)CURRENT_REGISTER_VALUE_EBP;
+        }
+
+        template <typename T>
+        T ebp(uint32_t offset) {
+            return *reinterpret_cast<T*>(CURRENT_REGISTER_VALUE_EBP + offset);
         }
 
         template <typename T>
@@ -93,10 +212,22 @@ namespace RE::Hooks {
             return *reinterpret_cast<T*>(address + offsets.back());
         }
 
+        DWORD esp() { return CURRENT_REGISTER_VALUE_ESP; }
+
         template <typename T>
-        T eax(std::vector<uint32_t> offsets) {
-            if (offsets.empty()) return static_cast<T>(CURRENT_REGISTER_VALUE_EAX);
-            DWORD_PTR address = CURRENT_REGISTER_VALUE_EAX;
+        T esp() {
+            return (T)CURRENT_REGISTER_VALUE_ESP;
+        }
+
+        template <typename T>
+        T esp(uint32_t offset) {
+            return *reinterpret_cast<T*>(CURRENT_REGISTER_VALUE_ESP + offset);
+        }
+
+        template <typename T>
+        T esp(std::vector<uint32_t> offsets) {
+            if (offsets.empty()) return static_cast<T>(CURRENT_REGISTER_VALUE_ESP);
+            DWORD_PTR address = CURRENT_REGISTER_VALUE_ESP;
             for (size_t i = 0; i < offsets.size() - 1; i++)
                 address = *reinterpret_cast<DWORD_PTR*>(address + offsets[i]);
             return *reinterpret_cast<T*>(address + offsets.back());
