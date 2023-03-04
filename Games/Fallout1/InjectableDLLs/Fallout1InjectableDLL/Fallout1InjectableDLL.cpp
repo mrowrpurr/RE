@@ -43,6 +43,8 @@ void TheHook() {
 }
 
 void SetupHooks() {
+    using namespace RE::Hooks;
+
     // Totally Custom
     // RE::Hooks::Add("Cool Hook", 0x123, installFn, uninstallFn)
 
@@ -62,8 +64,9 @@ void SetupHooks() {
     // });
 
     // Haha, lazy f'n lambda!
-    RE::Hooks::Add("Update Tile Number", 0x47f6ba, [](auto&) { FormApp::App().AppendOutput("SOMEONE MOVED"); });
-    RE::Hooks::Add("Pickup Item", 0x46a2ba, 7, [](RE::Hooks::Registers& regs) {
+    // RE::Hooks::Add("Update Tile Number", 0x47f6ba, [](auto&) { FormApp::App().AppendOutput("SOMEONE MOVED"); });
+
+    RE::Hooks::Add("Pickup Item (Existing)", 0x46a2ba, 7, [](Registers& regs) {
         // auto x = regs.eax<RE::TESObjectREFR*>();
         // auto x = regs.eax<int>({ 0x4, 0x64 });
 
@@ -71,7 +74,17 @@ void SetupHooks() {
         DWORD_PTR    item        = regs.edi();  // 0x4 is the tile, 0x64 is the item pid
         DWORD_PTR    player      = regs.ebp();  // 0x4 is the tile
         uint32_t*    tile        = reinterpret_cast<uint32_t*>(player + 0x4);
-        FormApp::App().AppendOutput(string_format("Picked up item: {} from tile: {}", prototypeId, *tile));
+        FormApp::App().AppendOutput(string_format("[Existing] Picked up item: {} from tile: {}", prototypeId, *tile));
+    });
+
+    RE::Hooks::Add("Pickup Item (New)", 0x46a3bb, [](Registers& regs) {
+        DWORD_PTR item = regs.edi();  // 0x4 is the tile, 0x64 is the item pid
+        uint32_t* pid  = reinterpret_cast<uint32_t*>(item + 0x64);
+
+        DWORD_PTR player = regs.ebp();  // 0x4 is the tile
+        uint32_t* tile   = reinterpret_cast<uint32_t*>(player + 0x4);
+
+        FormApp::App().AppendOutput(string_format("[First Time] Picked up item: {} from tile: {}", *pid, *tile));
     });
 
     // MuHaHaHaHa, my Lambda has Registers, byach!!
