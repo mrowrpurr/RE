@@ -35,7 +35,7 @@ class FormApp {
     void RunApp() {
         if (_isRunning.exchange(true)) return;
 
-        _outputTextBox.editable(false);
+        // _outputTextBox.editable(false);
 
         nana::label lblTopPadding(_form, "");
 
