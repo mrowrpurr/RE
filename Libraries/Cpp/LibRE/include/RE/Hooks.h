@@ -73,12 +73,11 @@ namespace RE::Hooks {
         DWORD ebp() { return CURRENT_REGISTER_VALUE_EBP; }
         DWORD esp() { return CURRENT_REGISTER_VALUE_ESP; }
     };
-    // std::unordered_map<unsigned int, std::function<void(Registers&)>> THE_HOOK_LAMBDAS;
-    std::function<void(Registers&)> THE_HOOK_LAMBDA;
-
-    void RUN_A_LAMBDA(uint32_t hookId) {
-        // THE_HOOK_LAMBDA(Registers::GetCurrent());
-        FormApp::App().AppendOutput(string_format("RUN_A_LAMBDA() called by hook: {}", hookId));
+    std::unordered_map<unsigned int, std::function<void(Registers&)>> THE_HOOK_LAMBDAS;
+    void                                                              RUN_A_LAMBDA(uint32_t hookId) {
+        if (THE_HOOK_LAMBDAS.find(hookId) != THE_HOOK_LAMBDAS.end()) {
+            THE_HOOK_LAMBDAS[hookId](Registers::GetCurrent());
+        }
     }
     /** [END] Refactor me! */
 
@@ -244,7 +243,7 @@ namespace RE::Hooks {
                 memory[offset] = 0xE8;  // call
                 offset++;
 
-                THE_HOOK_LAMBDA             = _detourFunction.value();
+                THE_HOOK_LAMBDAS[_hookId]   = _detourFunction.value();
                 DWORD_PTR myFunctionAddress = reinterpret_cast<DWORD_PTR>(RUN_A_LAMBDA);
 
                 auto relativeDetourFunctionAddress        = myFunctionAddress - ((DWORD)memory + offset - 1) - 5;

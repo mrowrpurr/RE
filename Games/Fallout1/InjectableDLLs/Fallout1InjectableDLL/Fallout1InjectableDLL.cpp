@@ -73,7 +73,7 @@ void SetupHooks() {
         unsigned int prototypeId = regs.eax();
         DWORD_PTR    item        = regs.edi();  // 0x4 is the tile, 0x64 is the item pid
         DWORD_PTR    player      = regs.ebp();  // 0x4 is the tile
-        uint32_t*    tile        = reinterpret_cast<uint32_t*>(player + 0x4);
+        uint32_t*    tile        = reinterpret_cast<uint32_t*>(item + 0x4);
         FormApp::App().AppendOutput(string_format("[Existing] Picked up item: {} from tile: {}", prototypeId, *tile));
     });
 
@@ -82,7 +82,7 @@ void SetupHooks() {
         uint32_t* pid  = reinterpret_cast<uint32_t*>(item + 0x64);
 
         DWORD_PTR player = regs.ebp();  // 0x4 is the tile
-        uint32_t* tile   = reinterpret_cast<uint32_t*>(player + 0x4);
+        uint32_t* tile   = reinterpret_cast<uint32_t*>(item + 0x4);
 
         FormApp::App().AppendOutput(string_format("[First Time] Picked up item: {} from tile: {}", *pid, *tile));
     });
