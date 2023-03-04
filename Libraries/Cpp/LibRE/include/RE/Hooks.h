@@ -71,7 +71,7 @@ namespace RE::Hooks {
         std::optional<std::function<void()>> _detourFunction;
 
         // Address of a detour function to call when the hook is executed
-        BYTE* _detourFunctionAddress = 0;
+        DWORD_PTR _detourFunctionAddress = 0;
 
         void ReadOriginalBytes() {
             if (!_bytes.empty()) return;
@@ -81,15 +81,15 @@ namespace RE::Hooks {
     public:
         Hook() = default;
 
-        Hook(const std::string& name, DWORD address, std::function<void()> detourFunction)
-            : _name(name), _address(address), _detourFunction(detourFunction) {}
+        Hook(const std::string& name, DWORD address, DWORD_PTR detourFunctionAddress)
+            : _name(name), _address(address), _detourFunctionAddress(detourFunctionAddress) {}
 
         void Install() {
             if (!_enabled) {
                 ReadOriginalBytes();
 
-                // auto size = _bytes.size() + 1 + 5 + 1 + 5; // 1 byte for pushad, 5 bytes for call, 1 byte for popad,
-                auto size = _bytes.size() + 1 + 1 + 5;  // 1 byte for pushad, 1 byte for popad, 5 bytes for jmp
+                auto size = _bytes.size() + 1 + 5 + 1 + 5;  // 1 byte for pushad, 5 bytes for call, 1 byte for popad,
+                // auto size = _bytes.size() + 1 + 1 + 5;  // 1 byte for pushad, 1 byte for popad, 5 bytes for jmp
 
                 auto memory = (LPBYTE)VirtualAlloc(NULL, size, MEM_RESERVE | MEM_COMMIT, PAGE_EXECUTE_READWRITE);
                 memcpy_s(memory, _bytes.size(), _bytes.data(), _bytes.size());
@@ -99,19 +99,21 @@ namespace RE::Hooks {
                 memory[offset] = 0x60;  // pushad
                 offset++;
 
+                memory[offset] = 0xE8;  // call
+                offset++;
+
+                auto relativeDetourFunctionAddress        = _detourFunctionAddress - ((DWORD)memory + offset - 1) - 5;
+                *(uintptr_t*)((uintptr_t)&memory[offset]) = (uintptr_t)relativeDetourFunctionAddress;
+                offset += 4;
+
                 memory[offset] = 0x61;  // popad
                 offset++;
 
                 memory[offset] = 0xE9;  // jmp
                 offset++;
 
-                auto relativeAddress                      = (_address + 5) - ((DWORD)memory + offset - 1) - 5;
+                auto relativeAddress = (_address + 5) - ((DWORD)memory + offset - 1) - 5;  // cause we're adding 5 bytes
                 *(uintptr_t*)((uintptr_t)&memory[offset]) = (uintptr_t)relativeAddress;
-
-                // <--- SOMEWHERE!!>!>!>!?!?!?!?!??!?!?!
-
-                // 0x0400000  address+5     = location where I want to jump to
-                // 0x0999999  memory+offset = location of the jump
 
                 // [HOOK_BYTES_LOCATION]   aa bb cc dd ee   <---- Original Bytes
                 //         pushad
@@ -148,15 +150,15 @@ namespace RE::Hooks {
 
     inline std::unordered_map<std::string, Hook> RegisteredHooks;
 
-    // void Add(DWORD offset, BYTE* detourFunctionAddress) {
-    //     auto name             = string_format("0x{:x}", offset);
-    //     RegisteredHooks[name] = Hook(name, offset, detourFunctionAddress);
-    // }
-
-    void Add(DWORD offset, std::function<void()> detourFunction) {
+    void Add(DWORD offset, DWORD_PTR detourFunctionAddress) {
         auto name             = string_format("0x{:x}", offset);
-        RegisteredHooks[name] = Hook(name, offset, detourFunction);
+        RegisteredHooks[name] = Hook(name, offset, detourFunctionAddress);
     }
+
+    // void Add(DWORD offset, std::function<void()> detourFunction) {
+    //     auto name             = string_format("0x{:x}", offset);
+    //     RegisteredHooks[name] = Hook(name, offset, detourFunction);
+    // }
 
     Hook& Get(const std::string& name) { return RegisteredHooks[name]; }
 }

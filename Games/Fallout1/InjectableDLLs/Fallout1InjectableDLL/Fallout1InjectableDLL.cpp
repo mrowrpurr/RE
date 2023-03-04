@@ -35,10 +35,33 @@
                                         jmp <jump back address>
 */
 
+int lovely;
+
+void TheHook() {
+    lovely = 0x69;
+    // FormApp::App().AppendOutput("HAHAHA TheHook() function RAN!");
+}
+
 void SetupHooks() {
-    RE::Hooks::Add(0x47f6ba, []() {
-        FormApp::App().AppendOutput("LOLOLOLOLOLOL I am a lambda triggered via some assembly hook.");
-    });
+    // Totally Custom
+    // RE::Hooks::Add("Cool Hook", 0x123, installFn, uninstallFn)
+
+    // Detour Function
+    // RE::Hooks::Add("Cool Hook", 0x123, detourFnAddress, runOriginalBytes = false)
+    // RE::Hooks::Add("Cool Hook", 0x123, detourFnAddress, runOriginalBytesFirst = true)
+    // RE::Hooks::Add("Cool Hook", 0x123, detourFnAddress, runOriginalBytesLast = true)
+
+    // Ha, almost lazy-ish function -- IF NAKED, NEED TO ADD A ret
+    // RE::Hooks::Add(0x47f6ba, reinterpret_cast<DWORD_PTR>(TheHook));
+
+    // Ha, almost lazy-ish function
+    RE::Hooks::Add(0x47f6ba, reinterpret_cast<DWORD_PTR>(TheHook));
+
+    // Haha, lazy f'n lambda!
+    // RE::Hooks::Add(0x47f6ba, []() { FormApp::App().AppendOutput("HAHAHA THE LAMBDA RAN!"); });
+
+    // MuHaHaHaHa, my Lambda has Registers, byach!!
+    // RE::Hooks::Add(0x47f6ba, [](Registers& regs) { FormApp::App().AppendOutput("... {}", regs.eax()); });
 }
 
 void RunUI() {
