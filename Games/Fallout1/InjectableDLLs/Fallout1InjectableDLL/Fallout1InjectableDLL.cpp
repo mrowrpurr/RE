@@ -62,8 +62,13 @@ void SetupHooks() {
     // });
 
     // Haha, lazy f'n lambda!
-    RE::Hooks::Add("Update Tile Number", 0x47f6ba, []() { FormApp::App().AppendOutput("SOMEONE MOVED"); });
-    RE::Hooks::Add("Pickup Item", 0x46a2c6, 7, []() { FormApp::App().AppendOutput("YOU PICKED UP AN ITEM"); });
+    RE::Hooks::Add("Update Tile Number", 0x47f6ba, [](auto&) { FormApp::App().AppendOutput("SOMEONE MOVED"); });
+    RE::Hooks::Add("Pickup Item", 0x46a2ba, 7, [](RE::Hooks::Registers& regs) {
+        FormApp::App().AppendOutput("YOU PICKED UP AN ITEM!");
+        auto prototypeId = regs.eax();
+        auto item        = regs.edi();  // 0x4 is the tile
+        auto player      = regs.ebp();  // 0x4 is the tile
+    });
 
     // MuHaHaHaHa, my Lambda has Registers, byach!!
     // RE::Hooks::Add(0x47f6ba, [](Registers& regs) { FormApp::App().AppendOutput("... {}", regs.eax()); });
