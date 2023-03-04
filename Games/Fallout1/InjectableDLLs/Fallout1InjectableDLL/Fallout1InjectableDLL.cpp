@@ -57,9 +57,13 @@ void SetupHooks() {
     // Ha, almost lazy-ish function
     // RE::Hooks::Add(0x47f6ba, reinterpret_cast<DWORD_PTR>(TheHook));
 
+    // RE::Hooks::Add<0x123>([](){
+    //     // yummy yummy yum
+    // });
+
     // Haha, lazy f'n lambda!
     RE::Hooks::Add("Update Tile Number", 0x47f6ba, []() { FormApp::App().AppendOutput("SOMEONE MOVED"); });
-    RE::Hooks::Add("Pickup Item", 0x46a2c1, []() { FormApp::App().AppendOutput("YOU PICKED UP AN ITEM"); });
+    RE::Hooks::Add("Pickup Item", 0x46a2c6, 7, []() { FormApp::App().AppendOutput("YOU PICKED UP AN ITEM"); });
 
     // MuHaHaHaHa, my Lambda has Registers, byach!!
     // RE::Hooks::Add(0x47f6ba, [](Registers& regs) { FormApp::App().AppendOutput("... {}", regs.eax()); });
