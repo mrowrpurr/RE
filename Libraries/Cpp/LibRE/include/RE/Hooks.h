@@ -21,6 +21,8 @@
 
 namespace RE::Hooks {
 
+    constexpr auto DEFAULT_HOOK_LENGTH = 5;
+
     std::function<void()> THE_HOOK_LAMBDA;
 
     void RUN_THE_LAMBDA() { THE_HOOK_LAMBDA(); }
@@ -58,7 +60,7 @@ namespace RE::Hooks {
         bool _enabled = false;
 
         // The length of the hook (number of bytes)
-        unsigned long _length = 5;
+        unsigned int _length = 0;
 
         // Start address for a hook
         DWORD _address = 0;
@@ -84,8 +86,8 @@ namespace RE::Hooks {
         }
 
     public:
-        Hook(const std::string& name, DWORD address, std::function<void()> detourFunction)
-            : _name(name), _address(address), _detourFunction(detourFunction) {}
+        Hook(const std::string& name, DWORD address, unsigned int length, std::function<void()> detourFunction)
+            : _name(name), _address(address), _length(length), _detourFunction(detourFunction) {}
 
         // Hook(const std::string& name, DWORD address, DWORD_PTR detourFunctionAddress)
         //     : _name(name), _address(address), _detourFunctionAddress(detourFunctionAddress) {}
@@ -129,7 +131,7 @@ namespace RE::Hooks {
                 //         popad
                 //         jmp <jump back address>
 
-                Detour32((BYTE*)_address, (BYTE*)memory, 5);
+                Detour32((BYTE*)_address, (BYTE*)memory, _length);
 
                 _enabled = true;
             }
@@ -165,8 +167,16 @@ namespace RE::Hooks {
     //     RegisteredHooks[name] = Hook(name, offset, detourFunctionAddress);
     // }
 
-    void Add(const std::string& name, DWORD offset, std::function<void()> detourFunction) {
-        RegisteredHooks[name] = std::make_shared<Hook>(name, offset, detourFunction);
+    std::shared_ptr<Hook> Add(
+        const std::string& name, DWORD offset, unsigned int length, std::function<void()> detourFunction
+    ) {
+        auto hook             = std::make_shared<Hook>(name, offset, length, detourFunction);
+        RegisteredHooks[name] = hook;
+        return hook;
+    }
+
+    std::shared_ptr<Hook> Add(const std::string& name, DWORD offset, std::function<void()> detourFunction) {
+        return Add(name, offset, DEFAULT_HOOK_LENGTH, detourFunction);
     }
 
     // void Add(DWORD offset, std::function<void()> detourFunction) {
