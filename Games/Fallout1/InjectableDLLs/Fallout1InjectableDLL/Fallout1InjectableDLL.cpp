@@ -88,28 +88,25 @@ void SetupHooks() {
         FormApp::App().AppendOutput(string_format("[MULTIPLE OFFSETS] First Item PID: {}", firstItemPID));
 
         // 1 offset
-        auto itemTile2 = regs.edi<int>({0x4});
+        auto itemTile2 = regs.edi<int>(0x4);
         FormApp::App().AppendOutput(string_format("[1 OFFSET] Item Tile: {}", itemTile2));
 
         // No offsets
-        auto prototypeId2 = regs.eax<int>({});
+        auto prototypeId2 = regs.eax<int>();
         FormApp::App().AppendOutput(string_format("[NO OFFSETS] Prototype ID: {}", prototypeId2));
-
-        // TODO try to break the static_cast!
     });
 
     RE::Hooks::Add("Pickup Item (New)", 0x46a3bb, [](Registers& regs) {
-        DWORD_PTR item = regs.edi();  // 0x4 is the tile, 0x64 is the item pid
-        uint32_t* pid  = reinterpret_cast<uint32_t*>(item + 0x64);
-
-        DWORD_PTR player = regs.ebp();  // 0x4 is the tile
-        uint32_t* tile   = reinterpret_cast<uint32_t*>(item + 0x4);
-
-        FormApp::App().AppendOutput(string_format("[First Time] Picked up item: {} from tile: {}", *pid, *tile));
+        auto pid  = regs.edi<int>(0x64);
+        auto tile = regs.ebp<int>(0x4);
+        FormApp::App().AppendOutput(string_format("[First Time] Picked up item: {} from tile: {}", pid, tile));
     });
 
-    // MuHaHaHaHa, my Lambda has Registers, byach!!
-    // RE::Hooks::Add(0x47f6ba, [](Registers& regs) { FormApp::App().AppendOutput("... {}", regs.eax()); });
+    RE::Hooks::Add("Drop Item", 0x46a41c, [](Registers& regs) {
+        auto tile = regs.eax<int>(0x4);
+        auto pid  = regs.edx<int>(0x64);
+        FormApp::App().AppendOutput(string_format("NEW! [Dropped] Dropped item: {} on tile: {}", pid, tile));
+    });
 }
 
 void RunUI() {
