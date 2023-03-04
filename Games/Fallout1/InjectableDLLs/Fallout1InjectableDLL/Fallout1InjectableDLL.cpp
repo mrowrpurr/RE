@@ -58,32 +58,29 @@ void SetupHooks() {
     // RE::Hooks::Add(0x47f6ba, reinterpret_cast<DWORD_PTR>(TheHook));
 
     // Haha, lazy f'n lambda!
-    RE::Hooks::Add(0x47f6ba, []() { FormApp::App().AppendOutput("HAHAHA THE LAMBDA RAN!"); });
+    RE::Hooks::Add("Update Tile Number", 0x47f6ba, []() { FormApp::App().AppendOutput("SOMEONE MOVED"); });
+    RE::Hooks::Add("Pickup Item", 0x46a2c1, []() { FormApp::App().AppendOutput("YOU PICKED UP AN ITEM"); });
 
     // MuHaHaHaHa, my Lambda has Registers, byach!!
     // RE::Hooks::Add(0x47f6ba, [](Registers& regs) { FormApp::App().AppendOutput("... {}", regs.eax()); });
 }
 
 void RunUI() {
-    auto        bytes = RE::Hooks::Get("0x47f6ba").GetBytes();
-    std::string bytesString;
-    for (auto& byte : bytes) {
-        bytesString += string_format("{:02x} ", byte);
-    }
-
     FormApp::Run([&](FormApp& app) {
         app.SetTitle("Fallout 1 Trainer");
         app.SetButtonHeight(50);
         app.SetHeight(500);
         app.SetWidth(500);
-        app.SetText(string_format("Bytes: {}", bytesString));
         for (auto& [name, hook] : RE::Hooks::RegisteredHooks) {
             app.AddButton(string_format("Enable: {}", name), [&, name]() {
-                if (hook.Toggle())
+                if (hook->Toggle())
                     app.ChangeButtonText(string_format("Disable: {}", name));
                 else
                     app.ChangeButtonText(string_format("Enable: {}", name));
             });
+            std::string bytesString{};
+            for (auto& byte : hook->GetBytes()) bytesString += string_format("{:02x} ", byte);
+            app.AppendOutput(string_format("Hook: {} Address: {:x} Bytes: {}", name, hook->GetAddress(), bytesString));
         }
         app.AddButton("Clear", [&]() { app.ClearOutput(); });
         app.AddButton("Eject DLL", [&]() { app.Close(); });

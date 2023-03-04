@@ -9,6 +9,7 @@
 #include <xbyak/xbyak.h>
 
 #include <functional>
+#include <memory>
 #include <optional>
 #include <string>
 #include <unordered_map>
@@ -83,8 +84,6 @@ namespace RE::Hooks {
         }
 
     public:
-        Hook() = default;
-
         Hook(const std::string& name, DWORD address, std::function<void()> detourFunction)
             : _name(name), _address(address), _detourFunction(detourFunction) {}
 
@@ -96,7 +95,6 @@ namespace RE::Hooks {
                 ReadOriginalBytes();
 
                 auto size = _bytes.size() + 1 + 5 + 1 + 5;  // 1 byte for pushad, 5 bytes for call, 1 byte for popad,
-                // auto size = _bytes.size() + 1 + 1 + 5;  // 1 byte for pushad, 1 byte for popad, 5 bytes for jmp
 
                 auto memory = (LPBYTE)VirtualAlloc(NULL, size, MEM_RESERVE | MEM_COMMIT, PAGE_EXECUTE_READWRITE);
                 memcpy_s(memory, _bytes.size(), _bytes.data(), _bytes.size());
@@ -152,25 +150,30 @@ namespace RE::Hooks {
             return _enabled;
         }
 
+        DWORD_PTR GetAddress() { return _address; }
+
         std::vector<BYTE> GetBytes() {
             ReadOriginalBytes();
             return _bytes;
         }
     };
 
-    inline std::unordered_map<std::string, Hook> RegisteredHooks;
+    std::unordered_map<std::string, std::shared_ptr<Hook>> RegisteredHooks;
 
     // void Add(DWORD offset, DWORD_PTR detourFunctionAddress) {
     //     auto name             = string_format("0x{:x}", offset);
     //     RegisteredHooks[name] = Hook(name, offset, detourFunctionAddress);
     // }
 
-    void Add(DWORD offset, std::function<void()> detourFunction) {
-        auto name             = string_format("0x{:x}", offset);
-        RegisteredHooks[name] = Hook(name, offset, detourFunction);
+    void Add(const std::string& name, DWORD offset, std::function<void()> detourFunction) {
+        RegisteredHooks[name] = std::make_shared<Hook>(name, offset, detourFunction);
     }
 
-    Hook& Get(const std::string& name) { return RegisteredHooks[name]; }
+    // void Add(DWORD offset, std::function<void()> detourFunction) {
+    //     Add(string_format("0x{:x}", offset), offset, detourFunction);
+    // }
+
+    std::shared_ptr<Hook> Get(const std::string& name) { return RegisteredHooks.at(name); }
 }
 
 // Util::JIT(someBytes);
