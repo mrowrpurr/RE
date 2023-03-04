@@ -79,7 +79,6 @@ namespace RE::Hooks {
 
         template <typename T>
         T eax(std::vector<uint32_t> offsets) {
-            if (offsets.empty()) return static_cast<T>(CURRENT_REGISTER_VALUE_EAX);
             DWORD_PTR address = CURRENT_REGISTER_VALUE_EAX;
             for (size_t i = 0; i < offsets.size() - 1; i++)
                 address = *reinterpret_cast<DWORD_PTR*>(address + offsets[i]);
@@ -100,7 +99,6 @@ namespace RE::Hooks {
 
         template <typename T>
         T ebx(std::vector<uint32_t> offsets) {
-            if (offsets.empty()) return static_cast<T>(CURRENT_REGISTER_VALUE_EBX);
             DWORD_PTR address = CURRENT_REGISTER_VALUE_EBX;
             for (size_t i = 0; i < offsets.size() - 1; i++)
                 address = *reinterpret_cast<DWORD_PTR*>(address + offsets[i]);
@@ -121,7 +119,6 @@ namespace RE::Hooks {
 
         template <typename T>
         T ecx(std::vector<uint32_t> offsets) {
-            if (offsets.empty()) return static_cast<T>(CURRENT_REGISTER_VALUE_ECX);
             DWORD_PTR address = CURRENT_REGISTER_VALUE_ECX;
             for (size_t i = 0; i < offsets.size() - 1; i++)
                 address = *reinterpret_cast<DWORD_PTR*>(address + offsets[i]);
@@ -142,7 +139,6 @@ namespace RE::Hooks {
 
         template <typename T>
         T edx(std::vector<uint32_t> offsets) {
-            if (offsets.empty()) return static_cast<T>(CURRENT_REGISTER_VALUE_EDX);
             DWORD_PTR address = CURRENT_REGISTER_VALUE_EDX;
             for (size_t i = 0; i < offsets.size() - 1; i++)
                 address = *reinterpret_cast<DWORD_PTR*>(address + offsets[i]);
@@ -163,7 +159,6 @@ namespace RE::Hooks {
 
         template <typename T>
         T esi(std::vector<uint32_t> offsets) {
-            if (offsets.empty()) return static_cast<T>(CURRENT_REGISTER_VALUE_ESI);
             DWORD_PTR address = CURRENT_REGISTER_VALUE_ESI;
             for (size_t i = 0; i < offsets.size() - 1; i++)
                 address = *reinterpret_cast<DWORD_PTR*>(address + offsets[i]);
@@ -184,7 +179,6 @@ namespace RE::Hooks {
 
         template <typename T>
         T edi(std::vector<uint32_t> offsets) {
-            if (offsets.empty()) return static_cast<T>(CURRENT_REGISTER_VALUE_EDI);
             DWORD_PTR address = CURRENT_REGISTER_VALUE_EDI;
             for (size_t i = 0; i < offsets.size() - 1; i++)
                 address = *reinterpret_cast<DWORD_PTR*>(address + offsets[i]);
@@ -205,7 +199,6 @@ namespace RE::Hooks {
 
         template <typename T>
         T ebp(std::vector<uint32_t> offsets) {
-            if (offsets.empty()) return static_cast<T>(CURRENT_REGISTER_VALUE_EBP);
             DWORD_PTR address = CURRENT_REGISTER_VALUE_EBP;
             for (size_t i = 0; i < offsets.size() - 1; i++)
                 address = *reinterpret_cast<DWORD_PTR*>(address + offsets[i]);
@@ -226,7 +219,6 @@ namespace RE::Hooks {
 
         template <typename T>
         T esp(std::vector<uint32_t> offsets) {
-            if (offsets.empty()) return static_cast<T>(CURRENT_REGISTER_VALUE_ESP);
             DWORD_PTR address = CURRENT_REGISTER_VALUE_ESP;
             for (size_t i = 0; i < offsets.size() - 1; i++)
                 address = *reinterpret_cast<DWORD_PTR*>(address + offsets[i]);
