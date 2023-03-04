@@ -64,10 +64,14 @@ void SetupHooks() {
     // Haha, lazy f'n lambda!
     RE::Hooks::Add("Update Tile Number", 0x47f6ba, [](auto&) { FormApp::App().AppendOutput("SOMEONE MOVED"); });
     RE::Hooks::Add("Pickup Item", 0x46a2ba, 7, [](RE::Hooks::Registers& regs) {
-        FormApp::App().AppendOutput("YOU PICKED UP AN ITEM!");
-        auto prototypeId = regs.eax();
-        auto item        = regs.edi();  // 0x4 is the tile
-        auto player      = regs.ebp();  // 0x4 is the tile
+        // auto x = regs.eax<RE::TESObjectREFR*>();
+        // auto x = regs.eax<int>({ 0x4, 0x64 });
+
+        unsigned int prototypeId = regs.eax();
+        DWORD_PTR    item        = regs.edi();  // 0x4 is the tile, 0x64 is the item pid
+        DWORD_PTR    player      = regs.ebp();  // 0x4 is the tile
+        uint32_t*    tile        = reinterpret_cast<uint32_t*>(player + 0x4);
+        FormApp::App().AppendOutput(string_format("Picked up item: {} from tile: {}", prototypeId, *tile));
     });
 
     // MuHaHaHaHa, my Lambda has Registers, byach!!
