@@ -42,6 +42,11 @@ void TheHook() {
     // FormApp::App().AppendOutput("HAHAHA TheHook() function RAN!");
 }
 
+struct FalloutItem {
+    DWORD instanceId;
+    DWORD tileNumber;
+};
+
 void SetupHooks() {
     using namespace RE::Hooks;
 
@@ -67,14 +72,30 @@ void SetupHooks() {
     // RE::Hooks::Add("Update Tile Number", 0x47f6ba, [](auto&) { FormApp::App().AppendOutput("SOMEONE MOVED"); });
 
     RE::Hooks::Add("Pickup Item (Existing)", 0x46a2ba, 7, [](Registers& regs) {
-        // auto x = regs.eax<RE::TESObjectREFR*>();
-        // auto x = regs.eax<int>({ 0x4, 0x64 });
+        auto prototypeId = regs.eax();
+        auto itemTile    = regs.edi<int>(0x4);
+        FormApp::App().AppendOutput(string_format("[Existing] Picked up item: {} from tile: {}", prototypeId, itemTile)
+        );
 
-        unsigned int prototypeId = regs.eax();
-        DWORD_PTR    item        = regs.edi();  // 0x4 is the tile, 0x64 is the item pid
-        DWORD_PTR    player      = regs.ebp();  // 0x4 is the tile
-        uint32_t*    tile        = reinterpret_cast<uint32_t*>(item + 0x4);
-        FormApp::App().AppendOutput(string_format("[Existing] Picked up item: {} from tile: {}", prototypeId, *tile));
+        // get registers from the stack AS A STRUCT*
+        auto* item = regs.edi<FalloutItem*>();
+        FormApp::App().AppendOutput(string_format(
+            "[USING STRUCT*] Picked up item instance# {} from tile: {}", item->instanceId, item->tileNumber
+        ));
+
+        // Multiple offsets
+        auto firstItemPID = regs.ebp<int>({0x34, 0x0, 0x64});
+        FormApp::App().AppendOutput(string_format("[MULTIPLE OFFSETS] First Item PID: {}", firstItemPID));
+
+        // 1 offset
+        auto itemTile2 = regs.edi<int>({0x4});
+        FormApp::App().AppendOutput(string_format("[1 OFFSET] Item Tile: {}", itemTile2));
+
+        // No offsets
+        auto prototypeId2 = regs.eax<int>({});
+        FormApp::App().AppendOutput(string_format("[NO OFFSETS] Prototype ID: {}", prototypeId2));
+
+        // TODO try to break the static_cast!
     });
 
     RE::Hooks::Add("Pickup Item (New)", 0x46a3bb, [](Registers& regs) {

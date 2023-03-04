@@ -64,6 +64,7 @@ namespace RE::Hooks {
             static Registers singleton;
             return singleton;
         }
+
         DWORD eax() { return CURRENT_REGISTER_VALUE_EAX; }
         DWORD ebx() { return CURRENT_REGISTER_VALUE_EBX; }
         DWORD ecx() { return CURRENT_REGISTER_VALUE_ECX; }
@@ -72,6 +73,34 @@ namespace RE::Hooks {
         DWORD edi() { return CURRENT_REGISTER_VALUE_EDI; }
         DWORD ebp() { return CURRENT_REGISTER_VALUE_EBP; }
         DWORD esp() { return CURRENT_REGISTER_VALUE_ESP; }
+
+        template <typename T>
+        T edi() {
+            return reinterpret_cast<T>(CURRENT_REGISTER_VALUE_EDI);
+        }
+
+        template <typename T>
+        T edi(uint32_t offset) {
+            return *reinterpret_cast<T*>(CURRENT_REGISTER_VALUE_EDI + offset);
+        }
+
+        template <typename T>
+        T ebp(std::vector<uint32_t> offsets) {
+            if (offsets.empty()) return static_cast<T>(CURRENT_REGISTER_VALUE_EBP);
+            DWORD_PTR address = CURRENT_REGISTER_VALUE_EBP;
+            for (size_t i = 0; i < offsets.size() - 1; i++)
+                address = *reinterpret_cast<DWORD_PTR*>(address + offsets[i]);
+            return *reinterpret_cast<T*>(address + offsets.back());
+        }
+
+        template <typename T>
+        T eax(std::vector<uint32_t> offsets) {
+            if (offsets.empty()) return static_cast<T>(CURRENT_REGISTER_VALUE_EAX);
+            DWORD_PTR address = CURRENT_REGISTER_VALUE_EAX;
+            for (size_t i = 0; i < offsets.size() - 1; i++)
+                address = *reinterpret_cast<DWORD_PTR*>(address + offsets[i]);
+            return *reinterpret_cast<T*>(address + offsets.back());
+        }
     };
     std::unordered_map<unsigned int, std::function<void(Registers&)>> THE_HOOK_LAMBDAS;
     void                                                              RUN_A_LAMBDA(uint32_t hookId) {
