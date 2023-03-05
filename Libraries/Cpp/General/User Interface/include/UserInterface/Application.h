@@ -11,7 +11,7 @@
 
 namespace UserInterface {
     class Application {
-        static std::atomic_bool                    _isSetup;
+        bool                                       _showOutputTextBox{false};
         size_t                                     _buttonHeight{25};
         size_t                                     _height{300};
         size_t                                     _width{250};
@@ -36,14 +36,12 @@ namespace UserInterface {
         void RunApp() {
             if (_isRunning.exchange(true)) return;
 
-            // _outputTextBox.editable(false);
-
             nana::label lblTopPadding(_form, "");
 
             std::string arrangement{"5"};
             if (!_headerLabel.caption().empty()) arrangement += "," + std::to_string(_buttonHeight);
             for (size_t i = 0; i < _buttonInitialText.size(); i++) arrangement += "," + std::to_string(_buttonHeight);
-            arrangement += ",10000";
+            if (_showOutputTextBox) arrangement += ",10000";
 
             _place.div("<><width=90% <vertical fields gap=10 arrange=[" + arrangement + "]>><>");
 
@@ -70,7 +68,7 @@ namespace UserInterface {
                 _place.field("fields") << *btn;
             }
 
-            _place.field("fields") << _outputTextBox;
+            if (_showOutputTextBox) _place.field("fields") << _outputTextBox;
             Resize();
             _place.collocate();
             _form.show();
@@ -82,43 +80,60 @@ namespace UserInterface {
             static Application singleton;
             return singleton;
         }
-        static void Setup(std::function<void(Application& app)> callback) {
-            if (_isSetup.exchange(true)) return;
-            callback(Current());
-        }
         static void Run(std::function<void(Application& app)> callback = [](auto&) {}) {
             auto& app = Current();
             callback(app);
             app.RunApp();
         }
 
-        void SetTitle(const std::string& title) { _form.caption(title); }
-        void SetText(const std::string& text) { _headerLabel.caption(text); }
-        void SetButtonHeight(size_t height) { _buttonHeight = height; }
-
-        void AddButton(const std::string& text, std::function<void()> callback) {
+        Application& SetTitle(const std::string& title) {
+            _form.caption(title);
+            return *this;
+        }
+        Application& SetText(const std::string& text) {
+            _headerLabel.caption(text);
+            return *this;
+        }
+        Application& SetButtonHeight(size_t height) {
+            _buttonHeight = height;
+            return *this;
+        }
+        Application& AddButton(const std::string& text, std::function<void()> callback) {
             _buttonInitialText.push_back(text);
             _buttonClickCallbacks.push_back(callback);
+            return *this;
         }
-
-        void ChangeButtonText(const std::string& text) {
+        Application& ChangeButtonText(const std::string& text) {
             if (_currentButtonBeingClicked) _currentButtonBeingClicked->caption(text);
+            return *this;
         }
-
-        void AppendOutput(const std::string& text) { _outputTextBox.caption(_outputTextBox.caption() + "\n" + text); }
-        void SetOutput(const std::string& text) { _outputTextBox.caption(text); }
-        void ClearOutput() { _outputTextBox.caption(""); }
-        void SetHeight(short height) {
+        Application& AppendOutput(const std::string& text) {
+            _outputTextBox.caption(_outputTextBox.caption() + "\n" + text);
+            return *this;
+        }
+        Application& SetOutput(const std::string& text) {
+            _outputTextBox.caption(text);
+            return *this;
+        }
+        Application& ClearOutput() {
+            _outputTextBox.caption("");
+            return *this;
+        }
+        Application& SetHeight(short height) {
             _height = height;
             Resize();
+            return *this;
         }
-        void SetWidth(short width) {
+        Application& ShowOutputTextBox(bool show = true) {
+            _showOutputTextBox = show;
+            return *this;
+        }
+        Application& SetWidth(short width) {
             _width = width;
             Resize();
+            return *this;
         }
 
         void Close() { nana::API::exit_all(); }
     };
 }
-
-std::atomic<bool> UserInterface::Application::_isSetup{false};

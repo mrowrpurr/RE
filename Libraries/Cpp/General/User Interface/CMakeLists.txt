@@ -1,4 +1,4 @@
-project(User_Interface)
+project(UserInterface)
 
 find_package(unofficial-nana CONFIG REQUIRED)
 
