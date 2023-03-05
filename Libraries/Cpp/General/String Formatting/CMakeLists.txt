@@ -1,4 +1,4 @@
-project(StringFormat)
+project(String_Formatting)
 
 find_package(fmt CONFIG REQUIRED)
 

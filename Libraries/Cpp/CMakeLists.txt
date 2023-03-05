@@ -1,4 +1,3 @@
-add_subdirectory(StringFormat)
-add_subdirectory(Logging)
-add_subdirectory(FormApp)
-add_subdirectory(LibRE)
+add_subdirectory(General)
+add_subdirectory(Hooking)
+add_subdirectory("DLL Injection")

@@ -1,4 +1,4 @@
-project(FormApp)
+project(User_Interface)
 
 find_package(unofficial-nana CONFIG REQUIRED)
 
