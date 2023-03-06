@@ -4,6 +4,7 @@
 #include <functional>
 #include <memory>
 #include <nana/gui.hpp>
+#include <nana/gui/detail/bedrock.hpp>
 #include <nana/gui/widgets/button.hpp>
 #include <nana/gui/widgets/label.hpp>
 #include <nana/gui/widgets/textbox.hpp>
@@ -134,6 +135,20 @@ namespace UserInterface {
             return *this;
         }
 
-        void Close() { nana::API::exit_all(); }
+        // void Close(size_t threadId) { nana::detail::bedrock::instance().close_thread_window(threadId); }
+
+        void Close() {
+            // _currentButtonBeingClicked = nullptr;
+            // _buttons                   = {};
+            _form.close();
+            // auto threadId = std::hash<std::thread::id>{}(std::this_thread::get_id());
+            // nana::detail::bedrock::instance().close_thread_window(threadId);
+            nana::API::exit_all();
+        }
     };
 }
+
+// std::atexit([]() {
+//     UserInterface::Application::Current().Close(Injected_DLL::InjectedIntoThreadIDT);
+//     UserInterface::Close();
+// });

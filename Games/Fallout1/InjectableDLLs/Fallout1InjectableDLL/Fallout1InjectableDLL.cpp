@@ -1,17 +1,12 @@
-// #include <RE/Hooks.h>
-#include <RE/InjectedDLL.h>
-#include <form_app.h>
-// #include <logging.h>
-// #include <string_format.h>
+#include <Injected_DLL.h>
+#include <Logging.h>
+#include <UserInterface.h>
 
-// void SetupHooks() {}
+void SetupHooks() {}
 
 void RunUI() {
-    FormApp::Run([&](FormApp& app) {
-        app.SetTitle("Fallout 1 Trainer");
-        app.SetButtonHeight(50);
-        app.SetHeight(500);
-        app.SetWidth(500);
+    UserInterface::Run([&](auto& app) {
+        app.SetTitle("Fallout 1").SetButtonHeight(50).SetHeight(500).SetWidth(500).ShowOutputTextBox();
         //     for (auto& [name, hook] : RE::Hooks::RegisteredHooks) {
         //         app.AddButton(string_format("Enable: {}", name), [&, name]() {
         //             if (hook->Toggle())
@@ -29,8 +24,8 @@ void RunUI() {
     });
 }
 
-void OnDllInjection() {
-    // SetupHooks();
+DLL_Main {
+    SetupHooks();
     RunUI();
-    RE::InjectedDLL::EjectDLL();
+    Injected_DLL::EjectDLL();
 }
