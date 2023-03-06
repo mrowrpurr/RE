@@ -11,7 +11,9 @@
 namespace Hooks::Memory {
 
     uint32_t AllocateBytes(uint32_t length) {
-        if (length == 0) throw std::runtime_error("Length cannot be 0");
+        // HACK TODO FIXME BLAH I HATE THIS...
+        length = 255;
+        // if (length == 0) throw std::runtime_error("Length cannot be 0");
         auto address =
             VirtualAlloc(nullptr, length, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
         if (address == nullptr) throw std::runtime_error("Failed to allocate memory");
@@ -23,15 +25,13 @@ namespace Hooks::Memory {
             throw std::runtime_error("Failed to free memory");
     }
 
-    void WriteBytes(uint32_t address, const std::vector<uint8_t>& bytes) {
-        memcpy_s(reinterpret_cast<BYTE*>(address), bytes.size(), bytes.data(), bytes.size());
-        for (uint32_t i = 0; i < bytes.size(); i++)
-            Log("memcpy_s 0x{:x}: {:x}", address + i, bytes[i]);
+    void WriteByte(uint32_t address, uint8_t byte) {
+        *reinterpret_cast<uint8_t*>(address) = byte;
+        Log("0x{:x}: {:x}", address, byte);
     }
 
-    void WriteByte(uint32_t address, uint8_t byte) {
-        memcpy_s(reinterpret_cast<BYTE*>(address), 1, &byte, 1);
-        Log("memcpy_s 0x{:x}: {:x}", address, byte);
+    void WriteBytes(uint32_t address, const std::vector<uint8_t>& bytes) {
+        for (uint32_t i = 0; i < bytes.size(); i++) WriteByte(address + i, bytes[i]);
     }
 
     void FreeProtectedBytes(uint32_t address, uint32_t length) {

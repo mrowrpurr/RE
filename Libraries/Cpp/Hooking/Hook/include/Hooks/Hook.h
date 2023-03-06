@@ -118,10 +118,9 @@ namespace Hooks {
         Bytes ReadOriginalBytes() { return Memory::ReadBytes(_address, _addressReplaceBytesCount); }
 
         void WriteNewBytes() {
-            if (_newBytes_writeOriginalBytesAtStart) {
-                _newBytes.WriteBytes(ReadOriginalBytes());
-            }
-            _newBytes.WriteJmp(GetJumpBackAddress());
+            if (_newBytes_writeOriginalBytesAtStart)
+                _newBytes.WriteProtectedBytes(ReadOriginalBytes());
+            _newBytes.WriteProtectedJmp(GetJumpBackAddress());
         }
 
         void OverwriteOriginalBytes() {
@@ -130,15 +129,3 @@ namespace Hooks {
         }
     };
 }
-
-// // Get the original bytes
-// _addressOriginalReplacedBytes = ReadOriginalBytes();
-
-// // Get a reference to the bytes we're going to overwrite
-// _targetAddressBytes.SetAddress(_address);
-
-// // Setup the bytes to overwrite
-// _targetAddressBytes.SetBytes(GenerateOverwriteJumpBytes(_newBytes.GetAddress()));
-
-// // Overwrite the original bytes with a JMP to the new bytes
-// _targetAddressBytes.WriteProtected();

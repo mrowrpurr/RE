@@ -57,15 +57,13 @@ namespace Hooks {
         void WriteJmp(uint32_t address) {
             AllocateIfNotAllocated();
             WriteByte(0xE9);
-            AddByte(0xE9);
-            auto                 relativeAddress = address - (_address + _bytes.size());
+            auto                 relativeAddress = address + 5 - CurrentAddress() - 5;
             std::vector<uint8_t> bytes;
             bytes.push_back(relativeAddress & 0xFF);
             bytes.push_back((relativeAddress >> 8) & 0xFF);
             bytes.push_back((relativeAddress >> 16) & 0xFF);
             bytes.push_back((relativeAddress >> 24) & 0xFF);
             WriteBytes(bytes);
-            AddBytes(bytes);
         }
 
         void WriteProtected() {
@@ -77,6 +75,16 @@ namespace Hooks {
             Memory::WriteProtectedBytes(CurrentAddress(), bytes);
             AddBytes(bytes);
         }
+        void WriteProtectedBytes(Bytes& bytes) {
+            AllocateIfNotAllocated();
+            Memory::WriteProtectedBytes(CurrentAddress(), bytes.GetBytes());
+            AddBytes(bytes.GetBytes());
+        }
+        void WriteProtectedBytes(Bytes bytes) {
+            AllocateIfNotAllocated();
+            Memory::WriteProtectedBytes(CurrentAddress(), bytes.GetBytes());
+            AddBytes(bytes.GetBytes());
+        }
         void WriteProtectedByte(uint8_t byte) {
             AllocateIfNotAllocated();
             Memory::WriteProtectedByte(CurrentAddress(), byte);
@@ -85,15 +93,13 @@ namespace Hooks {
         void WriteProtectedJmp(uint32_t address) {
             AllocateIfNotAllocated();
             WriteProtectedByte(0xE9);
-            AddByte(0xE9);
-            auto                 relativeAddress = address - (_address + _bytes.size());
+            auto relativeAddress = address - CurrentAddress() - 4;  // 4 is the JMP address
             std::vector<uint8_t> bytes;
             bytes.push_back(relativeAddress & 0xFF);
             bytes.push_back((relativeAddress >> 8) & 0xFF);
             bytes.push_back((relativeAddress >> 16) & 0xFF);
             bytes.push_back((relativeAddress >> 24) & 0xFF);
             WriteProtectedBytes(bytes);
-            AddBytes(bytes);
         }
 
         void Free() { Memory::FreeBytes(_address, GetSize()); }
