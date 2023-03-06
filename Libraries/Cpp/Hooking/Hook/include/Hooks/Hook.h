@@ -48,13 +48,13 @@ namespace Hooks {
             }
         }
 
-        Bytes& GetDetourBytes() { return _detour.ReadBytes(_detourByteCount); }
+        Bytes GetDetourBytes() { return _detour.GetBytes(_detourByteCount); }
 
         // TODO : do this on the actual _detour!
-        MemoryBytes _targetAddressBytes;
-        void        WriteDetour() {
-            _targetAddressBytes.SetAddress(_detour.GetAddress());
-            _targetAddressBytes.WriteProtectedJmp(_trampoline.GetAddress());
+        void WriteDetour() {
+            _detour.WriteProtectedJmp(_trampoline.GetAddress());
+            if (_detourByteCount > 5)
+                for (auto i = 5; i < _detourByteCount; i++) _detour.WriteProtectedByte(0x90);
         }
 
     public:

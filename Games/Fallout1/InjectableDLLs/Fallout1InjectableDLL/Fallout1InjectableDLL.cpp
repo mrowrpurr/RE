@@ -17,8 +17,12 @@ void DropItem_Detour2() {
 }
 
 void SetupHooks() {
+    // Make a nice alias!
+    // Add AOB (with option mask support)
+
     RegisterHook("Drop Item")
         .SetAddress(0x46a41c)
+        .SetByteCount(11)
         .CallOriginalBytes()
         .SaveRegisters()
         .Call([](Registers& reg) {
@@ -31,8 +35,6 @@ void SetupHooks() {
         })
         .RestoreRegisters()
         .JumpBack();
-
-    //  .SetByteCount(11)
 }
 
 void RunUI() {
