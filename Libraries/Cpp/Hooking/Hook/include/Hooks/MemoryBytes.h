@@ -59,6 +59,15 @@ namespace Hooks {
             Memory::WriteByte(CurrentAddress(), byte);
             AddByte(byte);
         }
+        void WriteDword(uint32_t dword) {
+            EnsureAllocatedMemoryAddress();
+            std::vector<uint8_t> bytes;
+            bytes.push_back(dword & 0xFF);
+            bytes.push_back((dword >> 8) & 0xFF);
+            bytes.push_back((dword >> 16) & 0xFF);
+            bytes.push_back((dword >> 24) & 0xFF);
+            WriteBytes(bytes);
+        }
         void WriteJmp(uint32_t address) {
             EnsureAllocatedMemoryAddress();
             WriteByte(0xE9);
@@ -100,6 +109,15 @@ namespace Hooks {
             EnsureAllocatedMemoryAddress();
             Memory::WriteProtectedBytes(CurrentAddress(), bytes.GetBytes());
             AddBytes(bytes.GetBytes());
+        }
+        void WriteProtectedDword(uint32_t dword) {
+            EnsureAllocatedMemoryAddress();
+            std::vector<uint8_t> bytes;
+            bytes.push_back(dword & 0xFF);
+            bytes.push_back((dword >> 8) & 0xFF);
+            bytes.push_back((dword >> 16) & 0xFF);
+            bytes.push_back((dword >> 24) & 0xFF);
+            WriteProtectedBytes(bytes);
         }
         void WriteProtectedNops(size_t count) {
             EnsureAllocatedMemoryAddress();

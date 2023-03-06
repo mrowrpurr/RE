@@ -25,11 +25,9 @@ namespace Hooks::Memory {
         *reinterpret_cast<uint8_t*>(address) = byte;
         Log("0x{:x}: {:x}", address, byte);
     }
-
     void WriteBytes(uint32_t address, const std::vector<uint8_t>& bytes) {
         for (uint32_t i = 0; i < bytes.size(); i++) WriteByte(address + i, bytes[i]);
     }
-
     void WriteNops(uint32_t address, uint32_t length) {
         for (uint32_t i = 0; i < length; i++) WriteByte(address + i, 0x90);
     }

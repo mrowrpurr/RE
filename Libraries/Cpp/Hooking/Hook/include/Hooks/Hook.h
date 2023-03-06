@@ -65,7 +65,6 @@ namespace Hooks {
         void WriteDetour() {
             _targetAddressBytes.SetAddress(_detour.GetAddress());
             _targetAddressBytes.WriteProtectedJmp(_trampoline.GetAddress());
-            if (_detourByteCount > 5) _targetAddressBytes.WriteProtectedNops(_detourByteCount - 5);
         }
 
     public:
@@ -147,13 +146,25 @@ namespace Hooks {
             return *this;
         }
 
+        Hook& Call(uint32_t address) {
+            _hookActions.push_back(HookAction{HookActionType::CALL, address});
+            return *this;
+        }
+
+        Hook& Jmp(uint32_t address) {
+            _hookActions.push_back(HookAction{HookActionType::JMP, address});
+            return *this;
+        }
+
         Hook& CallFunction(FunctionTypes::Void functionPtr) {
-            _hookActions.push_back(HookAction{HookActionType::CALL, functionPtr});
+            _hookActions.push_back(HookAction{
+                HookActionType::CALL_FN, reinterpret_cast<uint32_t>(functionPtr)});
             return *this;
         }
 
         Hook& JmpToFunction(FunctionTypes::Void functionPtr) {
-            _hookActions.push_back(HookAction{HookActionType::JMP, functionPtr});
+            _hookActions.push_back(HookAction{
+                HookActionType::JMP_FN, reinterpret_cast<uint32_t>(functionPtr)});
             return *this;
         }
 
@@ -175,7 +186,7 @@ namespace Hooks {
         Hook& JumpBack() {
             _hookActions.push_back(HookAction{
                 HookActionType::JMP,
-            });
+                _detour.GetAddress() + _detour.GetSize() + _detourJumpBackOffset});
             return *this;
         }
     };
