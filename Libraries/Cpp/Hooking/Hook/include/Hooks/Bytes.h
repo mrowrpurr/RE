@@ -40,6 +40,8 @@ namespace Hooks {
             _bytes.push_back((dword >> 16) & 0xFF);
             _bytes.push_back((dword >> 24) & 0xFF);
         }
+
         size_t size() const { return _bytes.size(); }
+        void   clear() { _bytes.clear(); }
     };
 }

@@ -21,6 +21,12 @@ namespace Hooks {
         void     AddByte(uint8_t byte) { _bytes.WriteByte(byte); }
         size_t   GetSize() const { return _bytes.size(); }
         uint32_t CurrentAddress() const { return _address + _bytes.size(); }
+        Bytes&   ReadBytes(size_t count) {
+            if (_address == 0) throw std::runtime_error("Cannot read from address 0");
+            Memory::ReadBytes(_address, count);
+            return _bytes;
+        }
+        void ClearBytes() { _bytes.clear(); }
 
         void Allocate() {
             if (GetSize() == 0) return;
