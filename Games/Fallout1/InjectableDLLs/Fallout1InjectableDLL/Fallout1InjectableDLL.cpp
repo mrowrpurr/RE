@@ -6,19 +6,14 @@
 
 #define Output(...) UserInterface::App().AppendOutput(string_format(__VA_ARGS__))
 
-uint32_t _dropItem_jumpBackAddress;
-void __declspec(naked) DropItem_Detour() {
-    __asm {
-        jmp[_dropItem_jumpBackAddress]
-    }
-}
+void DropItem_Detour() { int x = 0x69; }
 
 void SetupHooks() {
     auto& hook = RegisterHook("Drop Item")
                      .SetAddress(0x46a41c)
                      .SetJumpOffset(0x5)
+                     .AddFunctionPtrToJmpTo(DropItem_Detour)
                      .WriteOriginalBytesAtStart();
-    _dropItem_jumpBackAddress = hook.GetJumpBackAddress();
 }
 
 void RunUI() {

@@ -13,12 +13,16 @@ namespace Hooks {
 
     // Represents a hook to a specific address implemented via a JMP
     class Hook {
+        typedef void (*FunctionPtr)();
+
         constexpr static auto MINIMUM_REPLACE_BYTES_LENGTH = 5;
 
         std::string                          _name;
         bool                                 _installed = false;
         std::optional<std::function<void()>> _installFunction;
         std::optional<std::function<void()>> _uninstallFunction;
+        std::vector<FunctionPtr>             _functionPtrsToCall;
+        std::vector<FunctionPtr>             _functionPtrsToJmpTo;
         uint32_t                             _address = 0;
         uint32_t    _addressReplaceBytesCount         = MINIMUM_REPLACE_BYTES_LENGTH;
         Bytes       _addressOriginalReplacedBytes;
@@ -26,7 +30,8 @@ namespace Hooks {
         uint32_t    _jumpOffset = MINIMUM_REPLACE_BYTES_LENGTH;
         uint32_t    _newMemoryAddress;
         MemoryBytes _newBytes;
-        bool        _newBytes_writeOriginalBytesAtStart = false;
+        bool        _newBytes_writeOriginalBytesAtStart      = false;
+        bool        _newBytes_jumpBackToOriginalAddressAtEnd = true;
 
     public:
         const std::string& GetName() const { return _name; }
@@ -106,6 +111,26 @@ namespace Hooks {
             return *this;
         }
 
+        bool DoesJumpBackToOriginalAddressAtEnd() const {
+            return _newBytes_jumpBackToOriginalAddressAtEnd;
+        }
+        Hook& JumpBackToOriginalAddressAtEnd(bool newBytes_jumpBackToOriginalAddressAtEnd = true) {
+            _newBytes_jumpBackToOriginalAddressAtEnd = newBytes_jumpBackToOriginalAddressAtEnd;
+            return *this;
+        }
+
+        std::vector<FunctionPtr>& GetFunctionPtrsToCall() { return _functionPtrsToCall; }
+        Hook&                     AddFunctionPtrToCall(FunctionPtr functionPtrToCall) {
+            _functionPtrsToCall.push_back(functionPtrToCall);
+            return *this;
+        }
+
+        std::vector<FunctionPtr>& GetFunctionPtrsToJmpTo() { return _functionPtrsToJmpTo; }
+        Hook&                     AddFunctionPtrToJmpTo(FunctionPtr functionPtrToJmpTo) {
+            _functionPtrsToJmpTo.push_back(functionPtrToJmpTo);
+            return *this;
+        }
+
         uint32_t GetJumpBackAddress() const { return _address + _jumpOffset; }
 
         bool  DoesWriteOriginalBytesAtStart() const { return _newBytes_writeOriginalBytesAtStart; }
@@ -120,7 +145,12 @@ namespace Hooks {
         void WriteNewBytes() {
             if (_newBytes_writeOriginalBytesAtStart)
                 _newBytes.WriteProtectedBytes(ReadOriginalBytes());
-            _newBytes.WriteProtectedJmp(GetJumpBackAddress());
+            for (auto functionPtrToCall : _functionPtrsToCall)
+                _newBytes.WriteProtectedCall((uint32_t)((BYTE*)functionPtrToCall));
+            for (auto functionPtrToJmpTo : _functionPtrsToJmpTo)
+                _newBytes.WriteProtectedJmp((uint32_t)((BYTE*)functionPtrToJmpTo));
+            if (_newBytes_jumpBackToOriginalAddressAtEnd)
+                _newBytes.WriteProtectedJmp(GetJumpBackAddress());
         }
 
         void OverwriteOriginalBytes() {

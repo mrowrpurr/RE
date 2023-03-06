@@ -65,6 +65,17 @@ namespace Hooks {
             bytes.push_back((relativeAddress >> 24) & 0xFF);
             WriteBytes(bytes);
         }
+        void WriteCall(uint32_t address) {
+            AllocateIfNotAllocated();
+            WriteByte(0xE8);
+            auto                 relativeAddress = address + 5 - CurrentAddress() - 5;
+            std::vector<uint8_t> bytes;
+            bytes.push_back(relativeAddress & 0xFF);
+            bytes.push_back((relativeAddress >> 8) & 0xFF);
+            bytes.push_back((relativeAddress >> 16) & 0xFF);
+            bytes.push_back((relativeAddress >> 24) & 0xFF);
+            WriteBytes(bytes);
+        }
 
         void WriteProtected() {
             if (_address == 0) _address = Memory::AllocateBytes(_bytes.GetBytes().size());
@@ -92,7 +103,18 @@ namespace Hooks {
         }
         void WriteProtectedJmp(uint32_t address) {
             AllocateIfNotAllocated();
-            WriteProtectedByte(0xE9);
+            WriteProtectedByte(0xE9);                               // JMP
+            auto relativeAddress = address - CurrentAddress() - 4;  // 4 is the JMP address
+            std::vector<uint8_t> bytes;
+            bytes.push_back(relativeAddress & 0xFF);
+            bytes.push_back((relativeAddress >> 8) & 0xFF);
+            bytes.push_back((relativeAddress >> 16) & 0xFF);
+            bytes.push_back((relativeAddress >> 24) & 0xFF);
+            WriteProtectedBytes(bytes);
+        }
+        void WriteProtectedCall(uint32_t address) {
+            AllocateIfNotAllocated();
+            WriteProtectedByte(0xE8);                               // CALL
             auto relativeAddress = address - CurrentAddress() - 4;  // 4 is the JMP address
             std::vector<uint8_t> bytes;
             bytes.push_back(relativeAddress & 0xFF);
