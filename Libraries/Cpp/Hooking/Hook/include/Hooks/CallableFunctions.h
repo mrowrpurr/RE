@@ -20,6 +20,6 @@ namespace Hooks::CallableFunctions {
 
     void CallHookFunction(uint32_t functionId) {
         auto function = FunctionRegistry[functionId];
-        if (function) function(Registers::RegistersReader::GetCurrent());
+        if (function) function(Registers::RegistersReader::Current());
     }
 }

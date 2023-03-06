@@ -176,38 +176,25 @@ namespace Hooks {
         Hook& JumpBack() {
             _hookActions.push_back(HookAction{
                 HookActionType::JMP,
-                _detour.GetAddress() + _detour.GetSize() + _detourJumpBackOffset});
+                _detour.GetAddress() + _detourByteCount + _detourJumpBackOffset});
             return *this;
         }
 
-        Hook& Ret() {
-            _hookActions.push_back(HookAction{Bytes{{0xC3}}});
+        Hook& WriteByte(uint8_t byte) {
+            _hookActions.push_back(HookAction{Bytes{{byte}}});
             return *this;
         }
 
-        Hook& Nop() {
-            _hookActions.push_back(HookAction{Bytes{{0x90}}});
+        Hook& WriteBytes(std::vector<uint8_t> bytes) {
+            _hookActions.push_back(HookAction{Bytes{bytes}});
             return *this;
         }
 
-        Hook& Pushad() {
-            _hookActions.push_back(HookAction{Bytes{{0x60}}});
-            return *this;
-        }
-
-        Hook& Popad() {
-            _hookActions.push_back(HookAction{Bytes{{0x61}}});
-            return *this;
-        }
-
-        Hook& Pushfd() {
-            _hookActions.push_back(HookAction{Bytes{{0x9C}}});
-            return *this;
-        }
-
-        Hook& Popfd() {
-            _hookActions.push_back(HookAction{Bytes{{0x9D}}});
-            return *this;
-        }
+        Hook& Ret() { return WriteByte(0xC3); }
+        Hook& Nop() { return WriteByte(0x90); }
+        Hook& Pushad() { return WriteBytes({0x60}); }
+        Hook& Popad() { return WriteBytes({0x61}); }
+        Hook& Pushfd() { return WriteBytes({0x9C}); }
+        Hook& Popfd() { return WriteBytes({0x9D}); }
     };
 }

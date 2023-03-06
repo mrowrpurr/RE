@@ -6,35 +6,20 @@
 
 #define Output(...) UserInterface::App().AppendOutput(string_format(__VA_ARGS__))
 
-void DropItem_Detour1() {
-    // READ THE REGISTERS
-    int x = 0x69;
-}
-
-void DropItem_Detour2() {
-    // READ THE REGISTERS
-    int x = 0x420;
+void DropItem_Detour() {
+    auto& reg = Registers::Current();
+    Output(
+        "[FUNCTION] Drop Item: eax: {}, ebx: {}, ecx: {}, edx: {}, esi: {}, edi: {}, "
+        "ebp: {}, esp: {}",
+        reg.eax(), reg.ebx(), reg.ecx(), reg.edx(), reg.esi(), reg.edi(), reg.ebp(), reg.esp()
+    );
 }
 
 void SetupHooks() {
     // Make a nice alias!
     // Add AOB (with option mask support)
 
-    RegisterHook("Drop Item")
-        .SetAddress(0x46a41c)
-        .SetByteCount(11)
-        .CallOriginalBytes()
-        .SaveRegisters()
-        .Call([](Registers& reg) {
-            Output(
-                "Drop Item: eax: {}, ebx: {}, ecx: {}, edx: {}, esi: {}, edi: {}, "
-                "ebp: {}, esp: {}",
-                reg.eax(), reg.ebx(), reg.ecx(), reg.edx(), reg.esi(), reg.edi(), reg.ebp(),
-                reg.esp()
-            );
-        })
-        .RestoreRegisters()
-        .JumpBack();
+    RegisterHook(0x46a41c, DropItem_Detour);
 }
 
 void RunUI() {

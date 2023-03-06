@@ -90,7 +90,7 @@ namespace Hooks::Registers {
         RegistersReader& operator=(RegistersReader&&)      = delete;
 
     public:
-        static RegistersReader& GetCurrent() {
+        static RegistersReader& Current() {
             static RegistersReader singleton;
             return singleton;
         }
