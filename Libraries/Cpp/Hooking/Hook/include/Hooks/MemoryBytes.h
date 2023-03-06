@@ -27,41 +27,40 @@ namespace Hooks {
             return _bytes;
         }
         void ClearBytes() { _bytes.clear(); }
-
-        void Allocate() {
-            if (GetSize() == 0) return;
-            _address = Memory::AllocateBytes(_bytes.GetBytes().size());
+        void Allocate(uint32_t size = 0) {
+            if (size == 0) size = GetSize();
+            _address = Memory::AllocateBytes(size);
         }
-        void AllocateIfNotAllocated() {
-            if (_address == 0) _address = Memory::AllocateBytes(_bytes.GetBytes().size());
+        void EnsureAllocatedMemoryAddress() {
+            if (_address == 0) throw std::runtime_error("Memory address not allocated");
         }
 
         void Write() {
-            AllocateIfNotAllocated();
+            EnsureAllocatedMemoryAddress();
             Memory::WriteBytes(CurrentAddress(), _bytes.GetBytes());
         }
         void WriteBytes(std::vector<uint8_t>& bytes) {
-            AllocateIfNotAllocated();
+            EnsureAllocatedMemoryAddress();
             Memory::WriteBytes(CurrentAddress(), bytes);
             AddBytes(bytes);
         }
         void WriteBytes(Bytes& bytes) {
-            AllocateIfNotAllocated();
+            EnsureAllocatedMemoryAddress();
             Memory::WriteBytes(CurrentAddress(), bytes.GetBytes());
             AddBytes(bytes.GetBytes());
         }
         void WriteBytes(Bytes bytes) {
-            AllocateIfNotAllocated();
+            EnsureAllocatedMemoryAddress();
             Memory::WriteBytes(CurrentAddress(), bytes.GetBytes());
             AddBytes(bytes.GetBytes());
         }
         void WriteByte(uint8_t byte) {
-            AllocateIfNotAllocated();
+            EnsureAllocatedMemoryAddress();
             Memory::WriteByte(CurrentAddress(), byte);
             AddByte(byte);
         }
         void WriteJmp(uint32_t address) {
-            AllocateIfNotAllocated();
+            EnsureAllocatedMemoryAddress();
             WriteByte(0xE9);
             auto                 relativeAddress = address + 5 - CurrentAddress() - 5;
             std::vector<uint8_t> bytes;
@@ -72,7 +71,7 @@ namespace Hooks {
             WriteBytes(bytes);
         }
         void WriteCall(uint32_t address) {
-            AllocateIfNotAllocated();
+            EnsureAllocatedMemoryAddress();
             WriteByte(0xE8);
             auto                 relativeAddress = address + 5 - CurrentAddress() - 5;
             std::vector<uint8_t> bytes;
@@ -87,28 +86,28 @@ namespace Hooks {
             if (_address == 0) _address = Memory::AllocateBytes(_bytes.GetBytes().size());
             Memory::WriteProtectedBytes(CurrentAddress(), _bytes.GetBytes());
         }
-        void WriteProtectedBytes(std::vector<uint8_t>& bytes) {
-            AllocateIfNotAllocated();
-            Memory::WriteProtectedBytes(CurrentAddress(), bytes);
-            AddBytes(bytes);
-        }
-        void WriteProtectedBytes(Bytes& bytes) {
-            AllocateIfNotAllocated();
-            Memory::WriteProtectedBytes(CurrentAddress(), bytes.GetBytes());
-            AddBytes(bytes.GetBytes());
-        }
-        void WriteProtectedBytes(Bytes bytes) {
-            AllocateIfNotAllocated();
-            Memory::WriteProtectedBytes(CurrentAddress(), bytes.GetBytes());
-            AddBytes(bytes.GetBytes());
-        }
         void WriteProtectedByte(uint8_t byte) {
-            AllocateIfNotAllocated();
+            EnsureAllocatedMemoryAddress();
             Memory::WriteProtectedByte(CurrentAddress(), byte);
             AddByte(byte);
         }
+        void WriteProtectedBytes(std::vector<uint8_t>& bytes) {
+            EnsureAllocatedMemoryAddress();
+            Memory::WriteProtectedBytes(CurrentAddress(), bytes);
+            AddBytes(bytes);
+        }
+        void WriteProtectedBytes(Bytes bytes) {
+            EnsureAllocatedMemoryAddress();
+            Memory::WriteProtectedBytes(CurrentAddress(), bytes.GetBytes());
+            AddBytes(bytes.GetBytes());
+        }
+        void WriteProtectedNops(size_t count) {
+            EnsureAllocatedMemoryAddress();
+            Memory::WriteProtectedNops(CurrentAddress(), count);
+            for (size_t i = 0; i < count; i++) AddByte(0x90);
+        }
         void WriteProtectedJmp(uint32_t address) {
-            AllocateIfNotAllocated();
+            EnsureAllocatedMemoryAddress();
             WriteProtectedByte(0xE9);                               // JMP
             auto relativeAddress = address - CurrentAddress() - 4;  // 4 is the JMP address
             std::vector<uint8_t> bytes;
@@ -119,7 +118,7 @@ namespace Hooks {
             WriteProtectedBytes(bytes);
         }
         void WriteProtectedCall(uint32_t address) {
-            AllocateIfNotAllocated();
+            EnsureAllocatedMemoryAddress();
             WriteProtectedByte(0xE8);                               // CALL
             auto relativeAddress = address - CurrentAddress() - 4;  // 4 is the JMP address
             std::vector<uint8_t> bytes;

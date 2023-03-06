@@ -20,10 +20,13 @@ namespace Hooks {
         std::optional<std::function<void()>> _installFunction;
         std::optional<std::function<void()>> _uninstallFunction;
 
+        Bytes _replacedBytes;
+
         MemoryBytes _detour;
-        uint32_t    _detourByteCount = 5;
+        uint32_t    _detourByteCount = 5;  // JMP
+        uint32_t    _detourJumpBackOffset;
+
         MemoryBytes _trampoline;
-        Bytes       _replacedBytes;
 
         std::vector<HookAction> _hookActions;
 
@@ -31,41 +34,38 @@ namespace Hooks {
 
         uint32_t _detourAddressReplaceBytesCount = 5;
         Bytes    _detourAddressOriginalReplacedBytes;
-        uint32_t _jumpOffset = 5;
 
         // THIS STUFF WILL GO AWAY
         MemoryBytes _targetAddressBytes;
-        uint32_t    _newMemoryAddress;
-        // std::vector<FunctionTypes::Void> _functionPtrsToCall;
-        // std::vector<FuncionType> _functionPtrsToJmpTo;
-        bool _trampoline_storeRegistersAtStart          = false;
-        bool _trampoline_jumpBackToOriginalAddressAtEnd = true;
-        bool _trampoline_writeOriginalBytesAtStart      = false;
+        bool        _trampoline_storeRegistersAtStart          = false;
+        bool        _trampoline_jumpBackToOriginalAddressAtEnd = true;
+        bool        _trampoline_writeOriginalBytesAtStart      = false;
+        // ^^^^^^^^^^^^^^
 
         void WriteTrampoline() {
             auto requiredSize = 0;
             for (auto& hookAction : _hookActions) {
-                Log("Action byte count: {}", hookAction.CalculateByteCount());
+                Log("Action {} byte count: {}", hookAction.GetTypeName(),
+                    hookAction.CalculateByteCount());
                 requiredSize += hookAction.CalculateByteCount();
             }
             Log("Total required size: {}", requiredSize);
 
-            // if (_trampoline_writeOriginalBytesAtStart)
-            //     _trampoline.WriteProtectedBytes(ReadOriginalBytes());
-            // for (auto functionPtrToCall : _functionPtrsToCall)
-            //     _trampoline.WriteProtectedCall((uint32_t)((BYTE*)functionPtrToCall));
-            // for (auto functionPtrToJmpTo : _functionPtrsCalculateToJmpTo)
-            //     _trampoline.WriteProtectedJmp((uint32_t)((BYTE*)functionPtrToJmpTo));
-            // if (_trampoline_jumpBackToOriginalAddressAtEnd)
-            //     _trampoline.WriteProtectedJmp(GetJumpBackAddress());
+            _trampoline.Allocate(requiredSize);
+
+            for (auto& hookAction : _hookActions) {
+                Log("Writing action: {}", hookAction.GetTypeName());
+                hookAction.Write(_trampoline);
+                Log("Wrote action: {}", hookAction.GetTypeName());
+            }
         }
 
         Bytes& GetDetourBytes() { return _detour.ReadBytes(_detourByteCount); }
 
         void WriteDetour() {
-            // TODO !!!! WRITE NOPs FOR EXTRA BYTES !!!!
             _targetAddressBytes.SetAddress(_detour.GetAddress());
             _targetAddressBytes.WriteProtectedJmp(_trampoline.GetAddress());
+            if (_detourByteCount > 5) _targetAddressBytes.WriteProtectedNops(_detourByteCount - 5);
         }
 
     public:
@@ -134,6 +134,12 @@ namespace Hooks {
             return *this;
         }
 
+        uint32_t GetJumpBackOffset() const { return _detourJumpBackOffset; }
+        Hook&    SetJumpBackOffset(uint32_t detourJumpBackOffset) {
+            _detourJumpBackOffset = detourJumpBackOffset;
+            return *this;
+        }
+
         /** Hook Actions */
 
         Hook& Call(std::function<void()> callable) {
@@ -156,7 +162,7 @@ namespace Hooks {
             return *this;
         }
 
-        Hook& SaveRegisters(bool storeRegistersAtStart) {
+        Hook& SaveRegisters() {
             _hookActions.push_back(HookAction{HookActionType::SAVE_REGISTERS});
             return *this;
         }
@@ -166,42 +172,11 @@ namespace Hooks {
             return *this;
         }
 
-        //////////////////////////////
-        // CLEANUP
-
-        uint32_t GetAddressReplaceBytesCount() const { return _detourAddressReplaceBytesCount; }
-        Hook&    SetAddressReplaceBytesCount(uint32_t addressReplaceBytesCount) {
-            _detourAddressReplaceBytesCount = addressReplaceBytesCount;
+        Hook& JumpBack() {
+            _hookActions.push_back(HookAction{
+                HookActionType::JMP,
+            });
             return *this;
         }
-        Bytes& GetAddressOriginalReplacedBytes() { return _detourAddressOriginalReplacedBytes; }
-        Hook&  SetAddressOriginalReplacedBytes(std::vector<uint8_t> addressOriginalReplacedBytes) {
-            _detourAddressOriginalReplacedBytes = Bytes{addressOriginalReplacedBytes};
-            return *this;
-        }
-        MemoryBytes GetTargetAddressBytes() { return _targetAddressBytes; }
-        Hook&       SetTargetAddressBytes(const MemoryBytes& targetAddressBytes) {
-            _targetAddressBytes = targetAddressBytes;
-            return *this;
-        }
-        uint32_t GetJumpOffset() const { return _jumpOffset; }
-        Hook&    SetJumpOffset(uint32_t jumpOffset) {
-            _jumpOffset = jumpOffset;
-            return *this;
-        }
-        bool DoesJumpBackToOriginalAddressAtEnd() const {
-            return _trampoline_jumpBackToOriginalAddressAtEnd;
-        }
-        Hook& JumpBackToOriginalAddressAtEnd(bool newBytes_jumpBackToOriginalAddressAtEnd = true) {
-            _trampoline_jumpBackToOriginalAddressAtEnd = newBytes_jumpBackToOriginalAddressAtEnd;
-            return *this;
-        }
-        uint32_t GetJumpBackAddress() const { return _detour.GetAddress() + _jumpOffset; }
-        bool DoesWriteOriginalBytesAtStart() const { return _trampoline_writeOriginalBytesAtStart; }
-        Hook& WriteOriginalBytesAtStart(bool newBytes_writeOriginalBytesAtStart = true) {
-            _trampoline_writeOriginalBytesAtStart = newBytes_writeOriginalBytesAtStart;
-            return *this;
-        }
-        //////////////////////////////
     };
 }

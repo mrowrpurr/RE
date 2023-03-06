@@ -20,9 +20,13 @@ void SetupHooks() {
     auto& hook = RegisterHook("Drop Item")
                      .SetAddress(0x46a41c)
                      .SetByteCount(11)
+                     .SaveRegisters()
                      .CallFunction(DropItem_Detour1)
+                     .RestoreRegisters()
                      .CallOriginalBytes()
-                     .CallFunction(DropItem_Detour1);
+                     .RestoreRegisters()
+                     .CallFunction(DropItem_Detour2)
+                     .JumpBack();
 }
 
 void RunUI() {
