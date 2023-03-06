@@ -8,8 +8,8 @@
 #include "Hooks/Bytes.h"
 #include "Hooks/FunctionTypes.h"
 #include "Hooks/HookAction.h"
-#include "Hooks/Memory.h"
 #include "Hooks/MemoryBytes.h"
+#include "Hooks/Registers.h"
 
 namespace Hooks {
 
@@ -23,24 +23,12 @@ namespace Hooks {
         Bytes _replacedBytes;
 
         MemoryBytes _detour;
-        uint32_t    _detourByteCount = 5;  // JMP
+        uint32_t    _detourByteCount = 5;  // JMP is 5 bytes
         uint32_t    _detourJumpBackOffset;
 
         MemoryBytes _trampoline;
 
         std::vector<HookAction> _hookActions;
-
-        // ...
-
-        uint32_t _detourAddressReplaceBytesCount = 5;
-        Bytes    _detourAddressOriginalReplacedBytes;
-
-        // THIS STUFF WILL GO AWAY
-        MemoryBytes _targetAddressBytes;
-        bool        _trampoline_storeRegistersAtStart          = false;
-        bool        _trampoline_jumpBackToOriginalAddressAtEnd = true;
-        bool        _trampoline_writeOriginalBytesAtStart      = false;
-        // ^^^^^^^^^^^^^^
 
         void WriteTrampoline() {
             auto requiredSize = 0;
@@ -62,7 +50,9 @@ namespace Hooks {
 
         Bytes& GetDetourBytes() { return _detour.ReadBytes(_detourByteCount); }
 
-        void WriteDetour() {
+        // TODO : do this on the actual _detour!
+        MemoryBytes _targetAddressBytes;
+        void        WriteDetour() {
             _targetAddressBytes.SetAddress(_detour.GetAddress());
             _targetAddressBytes.WriteProtectedJmp(_trampoline.GetAddress());
         }
@@ -141,7 +131,7 @@ namespace Hooks {
 
         /** Hook Actions */
 
-        Hook& Call(std::function<void()> callable) {
+        Hook& Call(std::function<void(Registers::RegistersReader&)> callable) {
             _hookActions.push_back(HookAction{callable});
             return *this;
         }
@@ -187,6 +177,36 @@ namespace Hooks {
             _hookActions.push_back(HookAction{
                 HookActionType::JMP,
                 _detour.GetAddress() + _detour.GetSize() + _detourJumpBackOffset});
+            return *this;
+        }
+
+        Hook& Ret() {
+            _hookActions.push_back(HookAction{Bytes{{0xC3}}});
+            return *this;
+        }
+
+        Hook& Nop() {
+            _hookActions.push_back(HookAction{Bytes{{0x90}}});
+            return *this;
+        }
+
+        Hook& Pushad() {
+            _hookActions.push_back(HookAction{Bytes{{0x60}}});
+            return *this;
+        }
+
+        Hook& Popad() {
+            _hookActions.push_back(HookAction{Bytes{{0x61}}});
+            return *this;
+        }
+
+        Hook& Pushfd() {
+            _hookActions.push_back(HookAction{Bytes{{0x9C}}});
+            return *this;
+        }
+
+        Hook& Popfd() {
+            _hookActions.push_back(HookAction{Bytes{{0x9D}}});
             return *this;
         }
     };

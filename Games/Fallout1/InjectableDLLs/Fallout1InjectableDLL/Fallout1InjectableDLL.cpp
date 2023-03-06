@@ -17,15 +17,21 @@ void DropItem_Detour2() {
 }
 
 void SetupHooks() {
-    auto& hook = RegisterHook("Drop Item")
-                     .SetAddress(0x46a41c)
-                     .SaveRegisters()
-                     .CallFunction(&DropItem_Detour1)
-                     .RestoreRegisters()
-                     .CallOriginalBytes()
-                     .RestoreRegisters()
-                     .CallFunction(&DropItem_Detour2)
-                     .JumpBack();
+    RegisterHook("Drop Item")
+        .SetAddress(0x46a41c)
+        .CallOriginalBytes()
+        .SaveRegisters()
+        .Call([](Registers& reg) {
+            Output(
+                "Drop Item: eax: {}, ebx: {}, ecx: {}, edx: {}, esi: {}, edi: {}, "
+                "ebp: {}, esp: {}",
+                reg.eax(), reg.ebx(), reg.ecx(), reg.edx(), reg.esi(), reg.edi(), reg.ebp(),
+                reg.esp()
+            );
+        })
+        .RestoreRegisters()
+        .JumpBack();
+
     //  .SetByteCount(11)
 }
 
