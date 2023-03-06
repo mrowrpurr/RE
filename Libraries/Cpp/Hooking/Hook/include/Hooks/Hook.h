@@ -11,6 +11,13 @@
 
 namespace Hooks {
 
+    /*
+        TODO
+            AddFoo()
+            AddBar() <-- these are actually done IN ORDER
+            AddBaz()
+    */
+
     // Represents a hook to a specific address implemented via a JMP
     class Hook {
         typedef void (*FunctionPtr)();
@@ -32,6 +39,7 @@ namespace Hooks {
         MemoryBytes _newBytes;
         bool        _newBytes_writeOriginalBytesAtStart      = false;
         bool        _newBytes_jumpBackToOriginalAddressAtEnd = true;
+        bool        _newBytes_storeRegistersAtStart          = false;
 
     public:
         const std::string& GetName() const { return _name; }
@@ -120,13 +128,13 @@ namespace Hooks {
         }
 
         std::vector<FunctionPtr>& GetFunctionPtrsToCall() { return _functionPtrsToCall; }
-        Hook&                     AddFunctionPtrToCall(FunctionPtr functionPtrToCall) {
+        Hook&                     AddFunctionToCall(FunctionPtr functionPtrToCall) {
             _functionPtrsToCall.push_back(functionPtrToCall);
             return *this;
         }
 
         std::vector<FunctionPtr>& GetFunctionPtrsToJmpTo() { return _functionPtrsToJmpTo; }
-        Hook&                     AddFunctionPtrToJmpTo(FunctionPtr functionPtrToJmpTo) {
+        Hook&                     AddFunctionToJmpTo(FunctionPtr functionPtrToJmpTo) {
             _functionPtrsToJmpTo.push_back(functionPtrToJmpTo);
             return *this;
         }

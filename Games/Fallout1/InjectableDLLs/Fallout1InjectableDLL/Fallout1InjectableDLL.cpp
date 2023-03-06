@@ -6,13 +6,16 @@
 
 #define Output(...) UserInterface::App().AppendOutput(string_format(__VA_ARGS__))
 
-void DropItem_Detour() { int x = 0x69; }
+void DropItem_Detour() {
+    // READ THE REGISTERS
+    int x = 0x69;
+}
 
 void SetupHooks() {
     auto& hook = RegisterHook("Drop Item")
                      .SetAddress(0x46a41c)
                      .SetJumpOffset(0x5)
-                     .AddFunctionPtrToJmpTo(DropItem_Detour)
+                     .AddFunctionToCall(DropItem_Detour)
                      .WriteOriginalBytesAtStart();
 }
 
