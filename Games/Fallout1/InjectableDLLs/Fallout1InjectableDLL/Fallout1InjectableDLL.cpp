@@ -19,6 +19,7 @@ void DropItem_Detour2() {
 void SetupHooks() {
     auto& hook = RegisterHook("Drop Item")
                      .SetAddress(0x46a41c)
+                     .SetByteCount(11)
                      .CallFunction(DropItem_Detour1)
                      .CallOriginalBytes()
                      .CallFunction(DropItem_Detour1);

@@ -23,7 +23,7 @@ namespace Hooks {
         uint32_t CurrentAddress() const { return _address + _bytes.size(); }
         Bytes&   ReadBytes(size_t count) {
             if (_address == 0) throw std::runtime_error("Cannot read from address 0");
-            Memory::ReadBytes(_address, count);
+            _bytes = Memory::ReadBytes(_address, count);
             return _bytes;
         }
         void ClearBytes() { _bytes.clear(); }

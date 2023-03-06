@@ -136,13 +136,33 @@ namespace Hooks {
 
         /** Hook Actions */
 
+        Hook& Call(std::function<void()> callable) {
+            _hookActions.push_back(HookAction{callable});
+            return *this;
+        }
+
         Hook& CallFunction(FunctionTypes::Void functionPtr) {
             _hookActions.push_back(HookAction{HookActionType::CALL, functionPtr});
             return *this;
         }
 
+        Hook& JmpToFunction(FunctionTypes::Void functionPtr) {
+            _hookActions.push_back(HookAction{HookActionType::JMP, functionPtr});
+            return *this;
+        }
+
         Hook& CallOriginalBytes() {
-            _hookActions.push_back(HookAction{HookActionType::BYTES, GetDetourBytes()});
+            _hookActions.push_back(HookAction{GetDetourBytes()});
+            return *this;
+        }
+
+        Hook& SaveRegisters(bool storeRegistersAtStart) {
+            _hookActions.push_back(HookAction{HookActionType::SAVE_REGISTERS});
+            return *this;
+        }
+
+        Hook& RestoreRegisters() {
+            _hookActions.push_back(HookAction{HookActionType::RESTORE_REGISTERS});
             return *this;
         }
 
