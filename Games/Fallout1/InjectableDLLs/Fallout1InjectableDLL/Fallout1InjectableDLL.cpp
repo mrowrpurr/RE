@@ -6,14 +6,19 @@
 
 #define Output(...) UserInterface::App().AppendOutput(string_format(__VA_ARGS__))
 
-void SetupHooks() {
-    RegisterHook("Something")
-        .SetInstallFunction([]() { Output("Installing Something"); })
-        .SetUninstallFunction([]() { Output("Uninstalling Something"); });
+uint32_t _dropItem_jumpBackAddress;
+void __declspec(naked) DropItem_Detour() {
+    __asm {
+        jmp[_dropItem_jumpBackAddress]
+    }
+}
 
-    RegisterHook("Something Else")
-        .SetInstallFunction([]() { Output("Installing Something ELSE"); })
-        .SetUninstallFunction([]() { Output("Uninstalling Something ELSE"); });
+void SetupHooks() {
+    auto& hook = RegisterHook("Drop Item")
+                     .SetAddress(0x46a41c)
+                     .SetJumpOffset(0x5)
+                     .WriteOriginalBytesAtStart();
+    _dropItem_jumpBackAddress = hook.GetJumpBackAddress();
 }
 
 void RunUI() {
