@@ -6,8 +6,8 @@
 #include "Hooks/Registry.h"
 
 // Register a hook with the given name
-std::shared_ptr<Hooks::Hook> RegisterHook(const std::string& name) {
-    return Hooks::HookRegistry::GetSingleton().RegisterHook(name);
+Hooks::Hook& RegisterHook(const std::string& name) {
+    return *Hooks::HookRegistry::GetSingleton().RegisterHook(name);
 }
 
 // Get all registered hooks

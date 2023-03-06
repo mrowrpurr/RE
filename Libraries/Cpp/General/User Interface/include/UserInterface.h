@@ -4,6 +4,7 @@
 #include "UserInterface/Macros/UI_Main.h"
 
 namespace UserInterface {
-    void Run(std::function<void(Application& app)> callback = [](auto&) {}) { Application::Run(callback); }
-    void Close() { Application::Current().Close(); }
+    Application& App() { return Application::Current(); }
+    void         Run(std::function<void(Application& app)> callback = [](auto&) {}) { Application::Run(callback); }
+    void         Close() { Application::Current().Close(); }
 }
