@@ -6,12 +6,37 @@
 
 #define Output(...) UserInterface::App().AppendOutput(string_format(__VA_ARGS__))
 
+void OrPutTheHookIntoAFunction_OptionallyNaked() {
+    // ...
+}
+
+struct FalloutItem {
+    uint32_t instanceId;
+    uint32_t tileNumber;
+};
+
 void SetupHooks() {
     RegisterHook("Drop Item", 0x46a41c, [](Registers& regs) {
-        auto tile = regs.eax<int>(0x4);
-        auto pid  = regs.edx<int>(0x64);
+        auto tile = regs.eax(0x4);
+        auto pid  = regs.edx(0x64);
         Output("Dropped item: {} on tile: {}", pid, tile);
     });
+
+    RegisterHook<7>("Pickup Item (Existing)", 0x46a2ba, [](Registers& regs) {
+        auto prototypeId = regs.eax();
+        auto itemTile    = regs.edi(0x4);
+        Output("Picked up item: {} from tile: {}", prototypeId, itemTile);
+
+        // Get registers from the stack AS A STRUCT*
+        auto* item = regs.edi<FalloutItem*>();
+        Output("Picked up item {} from tile: {}", item->instanceId, item->tileNumber);
+
+        // Multiple offsets
+        auto firstItemPID = regs.ebp({0x34, 0x0, 0x64});
+        Output("[MULTIPLE OFFSETS] First Item PID: {}", firstItemPID);
+    });
+
+    RegisterHook(0x1234, OrPutTheHookIntoAFunction_OptionallyNaked);
 }
 
 void RunUI() {

@@ -24,11 +24,11 @@ namespace Hooks {
     // Represents an action which can be taken when a hook is run.
     // So that common actions are easier to setup (although *all* could be done with BYTES)
     class HookAction {
-        uint32_t                                                        _address;
+        uint32_t                                                        _address = 0;
         HookActionType                                                  _type;
         Bytes                                                           _bytes;
-        uint32_t                                                        _functionAddress;
-        uint32_t                                                        _callableId;
+        uint32_t                                                        _functionAddress = 0;
+        uint32_t                                                        _callableId      = 0;
         std::optional<std::function<void(Registers::RegistersReader&)>> _callable;
 
     public:

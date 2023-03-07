@@ -96,6 +96,15 @@ namespace Hooks::Registers {
         }
 
         uint32_t eax() { return Current::EAX; }
+        uint32_t eax(uint32_t offset) {
+            return *reinterpret_cast<uint32_t*>(Current::EAX + offset);
+        }
+        uint32_t eax(std::vector<uint32_t> offsets) {
+            uint32_t address = Current::EAX;
+            for (size_t i = 0; i < offsets.size() - 1; i++)
+                address = *reinterpret_cast<uint32_t*>(address + offsets[i]);
+            return *reinterpret_cast<uint32_t*>(address + offsets.back());
+        }
 
         template <typename T>
         T eax() {
@@ -116,6 +125,15 @@ namespace Hooks::Registers {
         }
 
         uint32_t ebx() { return Current::EBX; }
+        uint32_t ebx(uint32_t offset) {
+            return *reinterpret_cast<uint32_t*>(Current::EBX + offset);
+        }
+        uint32_t ebx(std::vector<uint32_t> offsets) {
+            uint32_t address = Current::EBX;
+            for (size_t i = 0; i < offsets.size() - 1; i++)
+                address = *reinterpret_cast<uint32_t*>(address + offsets[i]);
+            return *reinterpret_cast<uint32_t*>(address + offsets.back());
+        }
 
         template <typename T>
         T ebx() {
@@ -136,6 +154,15 @@ namespace Hooks::Registers {
         }
 
         uint32_t ecx() { return Current::ECX; }
+        uint32_t ecx(uint32_t offset) {
+            return *reinterpret_cast<uint32_t*>(Current::ECX + offset);
+        }
+        uint32_t ecx(std::vector<uint32_t> offsets) {
+            uint32_t address = Current::ECX;
+            for (size_t i = 0; i < offsets.size() - 1; i++)
+                address = *reinterpret_cast<uint32_t*>(address + offsets[i]);
+            return *reinterpret_cast<uint32_t*>(address + offsets.back());
+        }
 
         template <typename T>
         T ecx() {
@@ -156,6 +183,15 @@ namespace Hooks::Registers {
         }
 
         uint32_t edx() { return Current::EDX; }
+        uint32_t edx(uint32_t offset) {
+            return *reinterpret_cast<uint32_t*>(Current::EDX + offset);
+        }
+        uint32_t edx(std::vector<uint32_t> offsets) {
+            uint32_t address = Current::EDX;
+            for (size_t i = 0; i < offsets.size() - 1; i++)
+                address = *reinterpret_cast<uint32_t*>(address + offsets[i]);
+            return *reinterpret_cast<uint32_t*>(address + offsets.back());
+        }
 
         template <typename T>
         T edx() {
@@ -176,6 +212,15 @@ namespace Hooks::Registers {
         }
 
         uint32_t esi() { return Current::ESI; }
+        uint32_t esi(uint32_t offset) {
+            return *reinterpret_cast<uint32_t*>(Current::ESI + offset);
+        }
+        uint32_t esi(std::vector<uint32_t> offsets) {
+            uint32_t address = Current::ESI;
+            for (size_t i = 0; i < offsets.size() - 1; i++)
+                address = *reinterpret_cast<uint32_t*>(address + offsets[i]);
+            return *reinterpret_cast<uint32_t*>(address + offsets.back());
+        }
 
         template <typename T>
         T esi() {
@@ -196,6 +241,15 @@ namespace Hooks::Registers {
         }
 
         uint32_t edi() { return Current::EDI; }
+        uint32_t edi(uint32_t offset) {
+            return *reinterpret_cast<uint32_t*>(Current::EDI + offset);
+        }
+        uint32_t edi(std::vector<uint32_t> offsets) {
+            uint32_t address = Current::EDI;
+            for (size_t i = 0; i < offsets.size() - 1; i++)
+                address = *reinterpret_cast<uint32_t*>(address + offsets[i]);
+            return *reinterpret_cast<uint32_t*>(address + offsets.back());
+        }
 
         template <typename T>
         T edi() {
@@ -216,6 +270,15 @@ namespace Hooks::Registers {
         }
 
         uint32_t ebp() { return Current::EBP; }
+        uint32_t ebp(uint32_t offset) {
+            return *reinterpret_cast<uint32_t*>(Current::EBP + offset);
+        }
+        uint32_t ebp(std::vector<uint32_t> offsets) {
+            uint32_t address = Current::EBP;
+            for (size_t i = 0; i < offsets.size() - 1; i++)
+                address = *reinterpret_cast<uint32_t*>(address + offsets[i]);
+            return *reinterpret_cast<uint32_t*>(address + offsets.back());
+        }
 
         template <typename T>
         T ebp() {
@@ -236,6 +299,15 @@ namespace Hooks::Registers {
         }
 
         uint32_t esp() { return Current::ESP; }
+        uint32_t esp(uint32_t offset) {
+            return *reinterpret_cast<uint32_t*>(Current::ESP + offset);
+        }
+        uint32_t esp(std::vector<uint32_t> offsets) {
+            uint32_t address = Current::ESP;
+            for (size_t i = 0; i < offsets.size() - 1; i++)
+                address = *reinterpret_cast<uint32_t*>(address + offsets[i]);
+            return *reinterpret_cast<uint32_t*>(address + offsets.back());
+        }
 
         template <typename T>
         T esp() {

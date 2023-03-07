@@ -24,8 +24,8 @@ namespace Hooks {
         Bytes _replacedBytes;
 
         MemoryBytes _detour;
-        uint32_t    _detourByteCount = 5;  // JMP is 5 bytes
-        uint32_t    _detourJumpBackOffset;
+        uint32_t    _detourByteCount      = 5;  // JMP is 5 bytes
+        uint32_t    _detourJumpBackOffset = 0;
         Bytes       _originalDetourBytes;
 
         MemoryBytes _trampoline;
