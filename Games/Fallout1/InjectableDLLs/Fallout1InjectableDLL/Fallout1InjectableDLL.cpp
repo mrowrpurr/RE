@@ -6,20 +6,23 @@
 
 #define Output(...) UserInterface::App().AppendOutput(string_format(__VA_ARGS__))
 
-void DropItem_Detour() {
-    auto& reg = Registers::Current();
-    Output(
-        "[FUNCTION] Drop Item: eax: {}, ebx: {}, ecx: {}, edx: {}, esi: {}, edi: {}, "
-        "ebp: {}, esp: {}",
-        reg.eax(), reg.ebx(), reg.ecx(), reg.edx(), reg.esi(), reg.edi(), reg.ebp(), reg.esp()
-    );
-}
+// TODO: Uninstall!
+
+void MyDetour() { Output("MyDetour() called!"); }
 
 void SetupHooks() {
-    // Make a nice alias!
-    // Add AOB (with option mask support)
+    SetModuleName("falloutwHR.exe");
+    SetSearchOffset(0x10000);
 
-    RegisterHook(0x46a41c, DropItem_Detour);
+    RegisterAoB("Drop Item (AoB)", MyDetour, "\x83\xEC\x14\x89\xC1\x89\xD5\x89\x5C\x24\x10");
+
+    RegisterHook(0x46a41c, MyDetour);
+
+    RegisterHook(0x46a41c, [](Registers& regs) {
+        auto tile = regs.eax<int>(0x4);
+        auto pid  = regs.edx<int>(0x64);
+        Output("Dropped item: {} on tile: {}", pid, tile);
+    });
 }
 
 void RunUI() {

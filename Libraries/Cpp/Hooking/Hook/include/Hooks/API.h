@@ -4,10 +4,13 @@
 
 #include <string>
 
+#include "Hooks/ArrayOfBytes.h"
 #include "Hooks/FunctionTypes.h"
 #include "Hooks/Hook.h"
 #include "Hooks/Registers.h"
 #include "Hooks/Registry.h"
+
+/** Basics */
 
 Hooks::Hook& RegisterHook(uint32_t address = 0) {
     auto name = string_format("0x{:x}", address);
@@ -29,6 +32,8 @@ Hooks::Hook& RegisterHook(const std::string& name, uint32_t address = 0) {
     hook->SetByteCount(detourSize);
     return *hook;
 }
+
+/** Call() */
 
 Hooks::Hook& RegisterHook(
     const std::string& name, uint32_t address,
@@ -70,6 +75,19 @@ Hooks::Hook& RegisterHook(
 }
 
 Hooks::Hook& RegisterHook(
+    uint32_t address, std::function<void(Hooks::Registers::RegistersReader&)> callable
+) {
+    return RegisterHook(address)
+        .CallOriginalBytes()
+        .SaveRegisters()
+        .Call(callable)
+        .RestoreRegisters()
+        .JumpBack();
+}
+
+/** CallFunction() */
+
+Hooks::Hook& RegisterHook(
     const std::string& name, uint32_t address, Hooks::FunctionTypes::Void functionPtr
 ) {
     return RegisterHook(name, address)
@@ -112,6 +130,45 @@ Hooks::Hook& RegisterHook(uint32_t address, Hooks::FunctionTypes::Void functionP
         .RestoreRegisters()
         .JumpBack();
 }
+
+/** Array of Bytes */
+
+void SetModuleName(const std::string& moduleName) {
+    Hooks::ArrayOfBytes::DEFAULT_MODULE_NAME = moduleName;
+}
+
+void SetSearchOffset(uint32_t moduleOffset) {
+    Hooks::ArrayOfBytes::DEFAULT_START_OFFSET = moduleOffset;
+}
+
+Hooks::Hook& RegisterAoB(
+    const std::string& name, std::function<void(Hooks::Registers::RegistersReader&)> callable,
+    const std::string& pattern, const std::string& mask = "", const std::string& moduleName = "",
+    uint32_t startOffset = 0
+) {
+    return RegisterHook(name)
+        .SetArrayOfBytes(pattern, mask, moduleName, startOffset)
+        .CallOriginalBytes()
+        .SaveRegisters()
+        .Call(callable)
+        .RestoreRegisters()
+        .JumpBack();
+}
+
+Hooks::Hook& RegisterAoB(
+    const std::string& name, Hooks::FunctionTypes::Void functionPtr, const std::string& pattern,
+    const std::string& mask = "", const std::string& moduleName = "", uint32_t startOffset = 0
+) {
+    return RegisterHook(name)
+        .SetArrayOfBytes(pattern, mask, moduleName, startOffset)
+        .CallOriginalBytes()
+        .SaveRegisters()
+        .CallFunction(functionPtr)
+        .RestoreRegisters()
+        .JumpBack();
+}
+
+/** ... */
 
 // Get all registered hooks
 std::unordered_map<std::string, std::shared_ptr<Hooks::Hook>>& GetRegisteredHooks() {

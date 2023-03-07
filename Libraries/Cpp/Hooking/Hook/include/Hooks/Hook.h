@@ -5,6 +5,7 @@
 #include <stdexcept>
 #include <string>
 
+#include "Hooks/ArrayOfBytes.h"
 #include "Hooks/Bytes.h"
 #include "Hooks/FunctionTypes.h"
 #include "Hooks/HookAction.h"
@@ -54,7 +55,7 @@ namespace Hooks {
         void WriteDetour() {
             _detour.WriteProtectedJmp(_trampoline.GetAddress());
             if (_detourByteCount > 5)
-                for (auto i = 5; i < _detourByteCount; i++) _detour.WriteProtectedByte(0x90);
+                for (uint32_t i = 5; i < _detourByteCount; i++) _detour.WriteProtectedByte(0x90);
         }
 
     public:
@@ -126,6 +127,16 @@ namespace Hooks {
         uint32_t GetJumpBackOffset() const { return _detourJumpBackOffset; }
         Hook&    SetJumpBackOffset(uint32_t detourJumpBackOffset) {
             _detourJumpBackOffset = detourJumpBackOffset;
+            return *this;
+        }
+
+        Hook& SetArrayOfBytes(
+            const std::string& encodedBytes, const std::string& mask = "",
+            const std::string& moduleName = "", uint32_t offset = 0
+        ) {
+            auto address = ArrayOfBytes::Find(encodedBytes, mask, offset, moduleName);
+            if (address == 0) throw std::runtime_error("Could not find bytes");
+            SetAddress(address);
             return *this;
         }
 

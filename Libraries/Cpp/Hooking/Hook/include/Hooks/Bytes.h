@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <string>
 #include <vector>
 
 namespace Hooks {
@@ -20,6 +21,15 @@ namespace Hooks {
     public:
         Bytes() = default;
         Bytes(const std::vector<uint8_t>& bytes) : _bytes(bytes) {}
+
+        static std::string Encode(const std::vector<uint8_t>& bytes) {
+            std::string encoded{};
+            for (auto byte : bytes) {
+                encoded += "\\x";
+                encoded += std::to_string(byte);
+            }
+            return encoded;
+        }
 
         std::vector<uint8_t>& GetBytes() { return _bytes; }
         void                  WriteByte(uint8_t byte) { _bytes.push_back(byte); }
