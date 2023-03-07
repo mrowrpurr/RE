@@ -27,7 +27,7 @@ namespace Hooks {
 
         std::shared_ptr<Hook> RegisterHook(const std::string& name) {
             if (RegisteredHooks.find(name) != RegisteredHooks.end()) return RegisteredHooks[name];
-            auto hook             = std::make_shared<Hook>();
+            auto hook             = std::make_shared<Hook>(name);
             RegisteredHooks[name] = hook;
             return hook;
         }
@@ -37,6 +37,10 @@ namespace Hooks {
             return nullptr;
         }
 
-        std::unordered_map<std::string, std::shared_ptr<Hook>>& GetHooks() { return RegisteredHooks; }
+        std::vector<std::shared_ptr<Hook>> GetHooks() {
+            std::vector<std::shared_ptr<Hook>> hooks;
+            for (auto& [name, hook] : RegisteredHooks) hooks.push_back(hook);
+            return hooks;
+        }
     };
 }

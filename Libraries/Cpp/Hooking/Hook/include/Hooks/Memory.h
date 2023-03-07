@@ -16,14 +16,15 @@ namespace Hooks::Memory {
         return bytes;
     }
 
-    void FreeBytes(uint32_t address, uint32_t length) {
-        if (!VirtualFree(reinterpret_cast<BYTE*>(address), length, MEM_RELEASE))
+    void FreeBytes(uint32_t address) {
+        if (!VirtualFree(reinterpret_cast<BYTE*>(address), 0, MEM_RELEASE))
             throw std::runtime_error("Failed to free memory");
+        Log("Freed bytes at {:x}", address);
     }
 
     void WriteByte(uint32_t address, uint8_t byte) {
         *reinterpret_cast<uint8_t*>(address) = byte;
-        Log("0x{:x}: {:x}", address, byte);
+        Log("Write 0x{:x}: {:x}", address, byte);
     }
     void WriteBytes(uint32_t address, const std::vector<uint8_t>& bytes) {
         for (uint32_t i = 0; i < bytes.size(); i++) WriteByte(address + i, bytes[i]);
@@ -40,9 +41,6 @@ namespace Hooks::Memory {
         code();
         VirtualProtect(reinterpret_cast<BYTE*>(address), byteCount, oldProtect, &oldProtect);
     }
-    void FreeProtectedBytes(uint32_t address, uint32_t length) {
-        Protected(address, length, [&]() { FreeBytes(address, length); });
-    }
     void WriteProtectedBytes(uint32_t address, const std::vector<uint8_t>& bytes) {
         Protected(address, bytes.size(), [&]() { WriteBytes(address, bytes); });
     }
@@ -57,10 +55,12 @@ namespace Hooks::Memory {
         // HACK TODO FIXME BLAH I HATE THIS...
         length = 255;
         // if (length == 0) throw std::runtime_error("Length cannot be 0");
-        auto address =
+        auto addressPtr =
             VirtualAlloc(nullptr, length, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
-        if (address == nullptr) throw std::runtime_error("Failed to allocate memory");
-        return reinterpret_cast<uint32_t>(address);
+        if (addressPtr == nullptr) throw std::runtime_error("Failed to allocate memory");
+        auto address = reinterpret_cast<uint32_t>(addressPtr);
+        Log("Allocated {} bytes at {:x}", length, address);
+        return address;
     }
     uint32_t AllocateBytes(const std::vector<uint8_t>& bytes) {
         auto address = AllocateBytes(bytes.size());

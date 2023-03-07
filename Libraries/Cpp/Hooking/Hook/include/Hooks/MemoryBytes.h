@@ -1,13 +1,17 @@
 #pragma once
 
+#include <cstdint>
+#include <vector>
+
 #include "Hooks/Bytes.h"
 #include "Hooks/Memory.h"
 
 namespace Hooks {
 
     class MemoryBytes {
-        uint32_t _address;
-        Bytes    _bytes;
+        uint32_t              _address;
+        Bytes                 _bytes;
+        std::vector<uint32_t> _allocatedAddresses;
 
     public:
         MemoryBytes() = default;
@@ -16,12 +20,19 @@ namespace Hooks {
         uint32_t GetAddress() const { return _address; }
         Bytes&   GetBytes() { return _bytes; }
         void     SetBytes(const Bytes& bytes) { _bytes = bytes; }
-        void     SetAddress(uint32_t address) { _address = address; }
-        void     AddBytes(std::vector<uint8_t>& bytes) { _bytes.WriteBytes(bytes); }
-        void     AddByte(uint8_t byte) { _bytes.WriteByte(byte); }
-        size_t   GetSize() const { return _bytes.size(); }
-        uint32_t CurrentAddress() const { return _address + _bytes.size(); }
-        Bytes    GetBytes(size_t count) {
+        void     ClearBytes() { _bytes.clear(); }
+        void     SetAddress(uint32_t address) {
+            _address = address;
+            ClearBytes();
+            _allocatedAddresses.clear();
+        }
+        void                  Clear() { SetAddress(0); }
+        void                  AddBytes(std::vector<uint8_t>& bytes) { _bytes.WriteBytes(bytes); }
+        void                  AddByte(uint8_t byte) { _bytes.WriteByte(byte); }
+        size_t                GetSize() const { return _bytes.size(); }
+        uint32_t              CurrentAddress() const { return _address + _bytes.size(); }
+        std::vector<uint32_t> GetAllocatedAddresses() const { return _allocatedAddresses; }
+        Bytes                 GetBytes(size_t count) {
             if (_address == 0) throw std::runtime_error("Cannot read from address 0");
             return Memory::ReadBytes(_address, count);
         }
@@ -30,10 +41,10 @@ namespace Hooks {
             _bytes = Memory::ReadBytes(_address, count);
             return _bytes;
         }
-        void ClearBytes() { _bytes.clear(); }
         void Allocate(uint32_t size = 0) {
             if (size == 0) size = GetSize();
             _address = Memory::AllocateBytes(size);
+            _allocatedAddresses.push_back(_address);
         }
         void EnsureAllocatedMemoryAddress() {
             if (_address == 0) throw std::runtime_error("Memory address not allocated");
@@ -146,7 +157,8 @@ namespace Hooks {
             WriteProtectedBytes(bytes);
         }
 
-        void Free() { Memory::FreeBytes(_address, GetSize()); }
-        void FreeProtected() { Memory::FreeProtectedBytes(_address, GetSize()); }
+        void Free() {
+            for (auto address : _allocatedAddresses) Memory::FreeBytes(address);
+        }
     };
 }

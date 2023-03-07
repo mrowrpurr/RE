@@ -171,6 +171,6 @@ Hooks::Hook& RegisterAoB(
 /** ... */
 
 // Get all registered hooks
-std::unordered_map<std::string, std::shared_ptr<Hooks::Hook>>& GetRegisteredHooks() {
+std::vector<std::shared_ptr<Hooks::Hook>> GetRegisteredHooks() {
     return Hooks::HookRegistry::GetSingleton().GetHooks();
 }

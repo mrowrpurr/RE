@@ -79,8 +79,9 @@ namespace Hooks {
                 case HookActionType::BYTES:
                     return _bytes.size();
                 case HookActionType::SAVE_REGISTERS:
+                    return (7 * 6) + 5;  // saving EAX only requires 5
                 case HookActionType::RESTORE_REGISTERS:
-                    return 8 * 5;  // 8 registers, 5 bytes each
+                    return 8 * 6;  // 8 registers, 6 bytes each
                 case HookActionType::CALL_CALLABLE:
                     return 10;  // PUSH and then CALL
                 default:
