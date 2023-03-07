@@ -170,7 +170,10 @@ Hooks::Hook& RegisterAoB(
 
 /** ... */
 
-// Get all registered hooks
 std::vector<std::shared_ptr<Hooks::Hook>> GetRegisteredHooks() {
     return Hooks::HookRegistry::GetSingleton().GetHooks();
+}
+
+void UninstallAllHooks() {
+    for (auto& hook : GetRegisteredHooks()) hook->Uninstall();
 }

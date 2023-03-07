@@ -37,5 +37,6 @@ void RunUI() {
 DLL_Main {
     SetupHooks();
     RunUI();
+    UninstallAllHooks();
     Injected_DLL::EjectDLL();
 }
