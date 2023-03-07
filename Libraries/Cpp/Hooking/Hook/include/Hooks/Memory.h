@@ -52,9 +52,7 @@ namespace Hooks::Memory {
     }
 
     uint32_t AllocateBytes(uint32_t length) {
-        // HACK TODO FIXME BLAH I HATE THIS...
-        length = 255;
-        // if (length == 0) throw std::runtime_error("Length cannot be 0");
+        if (length == 0) throw std::runtime_error("Length cannot be 0");
         auto addressPtr =
             VirtualAlloc(nullptr, length, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
         if (addressPtr == nullptr) throw std::runtime_error("Failed to allocate memory");
