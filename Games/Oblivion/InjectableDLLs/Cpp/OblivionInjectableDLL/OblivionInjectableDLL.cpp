@@ -74,9 +74,10 @@ void SetupHooks() {
             auto formID             = object(0xc).As<int>();
             auto baseObject         = object(0x1c);
             auto baseFormID         = baseObject(0xc).As<int>();
-            auto baseName           = baseObject.GetArray<char>({0xa4, 0x0}).data();
+            auto baseName           = baseObject.GetArray<char>({0xa4, 0x0});
             Output(
-                "FormID: 0x{:x}, BaseFormID: 0x{:x}, BaseName: {}", formID, baseFormID, baseName
+                "FormID: 0x{:x}, BaseFormID: 0x{:x}, BaseName: {}", formID, baseFormID,
+                baseName.data()
             );
 
             auto inventory = objectAndInventory(0x0).As<InventoryItemAndNext*>();
