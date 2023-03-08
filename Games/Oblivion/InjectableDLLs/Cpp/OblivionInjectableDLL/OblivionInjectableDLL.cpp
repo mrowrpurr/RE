@@ -11,22 +11,44 @@
 std::unordered_set<uint32_t> discoveredEntities;
 std::unordered_set<uint32_t> discoveredEntityInventoryAddresses;
 
-// TODO - cute little helper for following offsets (from uint32_t)
 // TODO - ability to write custom detour
-// TODO - have the offset helpers return 0 if any of the pointers are nullptr
 // TODO - pushad, push, call, pop, popad
+// TODO - try T with inline structs
 
-int mrowr;
+struct ItemName {
+    char name[255];
+};
 
-struct NameStruct {
-    char name[16];
+struct TESForm {
+    uint32_t  vtable;
+    uint32_t  unk04;
+    uint32_t  unk08;
+    uint32_t  formId;
+    uint32_t  unk10;
+    uint32_t  unk14;
+    uint32_t  unk18;
+    uint32_t  unk1C;
+    uint32_t  unk20;
+    uint32_t  unk24;
+    ItemName* itemName;
+};
+
+struct ItemInventoryInfo {
+    uint32_t unkItemPtr;
+    uint32_t quantity;
+    TESForm* itemForm;
+};
+
+struct InventoryItemAndNext {
+    ItemInventoryInfo*    itemInventoryInfo;
+    InventoryItemAndNext* next;
 };
 
 void SetupHooks() {
     RegisterHook<7>("Set X,Y,Z on Entity", 0x4D8A38, [](Registers& regs) {
         if (!discoveredEntities.contains(regs.ecx())) {
             discoveredEntities.insert(regs.ecx());
-            Output("Entity: 0x{:x}", regs.ecx());
+            Output("Entity: 0x{:x}", regs.ecx<int>());
         }
     });
 
@@ -40,52 +62,31 @@ void SetupHooks() {
         })
         .SaveRegisters()
         .Call([](Registers& regs) {
-            try {
-                if (!regs.eax()) return;
+            auto entityInventoryAddress = regs.eax();
+            if (!discoveredEntityInventoryAddresses.contains(entityInventoryAddress)) {
+                discoveredEntityInventoryAddresses.insert(entityInventoryAddress);
+                Log("EntityInventoryStruct: 0x{:x}", entityInventoryAddress.Get<int>());
+            } else
+                return;
 
-                auto entityInventoryAddress = regs.eax();
-                if (!discoveredEntityInventoryAddresses.contains(entityInventoryAddress)) {
-                    discoveredEntityInventoryAddresses.insert(entityInventoryAddress);
-                    Log("EntityInventoryStruct: 0x{:x}", entityInventoryAddress);
-                } else
-                    return;
+            auto objectAndInventory = regs.eax(0x0c);
+            auto object             = objectAndInventory(0x4);
+            auto formID             = object(0xc).As<int>();
+            auto baseObject         = object(0x1c);
+            auto baseFormID         = baseObject(0xc).As<int>();
+            auto baseName           = baseObject.GetArray<char>({0xa4, 0x0}).data();
+            Output(
+                "FormID: 0x{:x}, BaseFormID: 0x{:x}, BaseName: {}", formID, baseFormID, baseName
+            );
 
-                Log("Trying to read offset 0x0c");
-                if (!regs.eax(0x0c)) return;
-
-                Log("Trying to read offsets 0x0c, 0x4");
-                if (!regs.eax({0x0c, 0x4})) return;
-                Log("Entity address: 0x{:x}", regs.eax({0x0c, 0x4}));
-
-                Log("Trying to read offsets 0x0c, 0x4, 0x1c");
-                if (!regs.eax({0x0c, 0x4, 0x1c})) return;
-
-                Log("Trying to read offsets 0x0c, 0x4, 0x1c, 0xa4");
-                if (!regs.eax({0x0c, 0x4, 0x1c, 0xa4})) return;
-
-                // Log("Trying to read offsets 0x0c, 0x4, 0x1c, 0xa4, 0x0");
-                // if (!regs.eax({0x0c, 0x4, 0x1c, 0xa4, 0x0})) return;
-
-                Log("Ok, we would love to read it now... but how?");
-                auto nameStructAddress = regs.eax({0x0c, 0x4, 0x1c, 0xa4});
-                Log("NameStruct address: 0x{:x}", nameStructAddress);
-
-                auto* nameStruct = regs.eax<NameStruct*>({0x0c, 0x4, 0x1c, 0xa4});
-                Log("NameStruct->name: {}", nameStruct->name);
-
-                Log(".END.");
-
-                // Log("Entity name: {}", regs.eax<const char*>({0x0c, 0x4, 0x1c, 0xa4, 0x0}));
-                // auto creatureOrCharacter = regs.eax({0x0c, 0x4});
-                // auto inventoryList       = regs.eax({0x0c, 0x0});
-                // if (creatureOrCharacter) {
-                //     auto name = regs.eax<char*>({0x0c, 0x4, 0x1c, 0xa4, 0x0});
-                //     Log("Entity name: {}", name);
-                // }
-            } catch (std::exception& e) {
-                Log("Exception: {}", e.what());
-            } catch (...) {
-                Log("Unknown exception");
+            auto inventory = objectAndInventory(0x0).As<InventoryItemAndNext*>();
+            while (inventory->next) {
+                auto itemInventoryInfo = inventory->itemInventoryInfo;
+                auto itemForm          = itemInventoryInfo->itemForm;
+                auto itemName          = itemForm->itemName->name;
+                auto itemQuantity      = itemInventoryInfo->quantity;
+                Output("Item: {} ({}), Quantity: {}", itemName, itemForm->formId, itemQuantity);
+                inventory = inventory->next;
             }
         })
         .RestoreRegisters()

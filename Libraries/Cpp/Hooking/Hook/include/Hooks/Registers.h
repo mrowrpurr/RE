@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <vector>
 
+#include "Hooks/Address.h"
 #include "Hooks/MemoryBytes.h"
 
 namespace Hooks::Registers {
@@ -95,236 +96,132 @@ namespace Hooks::Registers {
             return singleton;
         }
 
-        uint32_t eax() { return Current::EAX; }
-        uint32_t eax(uint32_t offset) {
-            return *reinterpret_cast<uint32_t*>(Current::EAX + offset);
-        }
-        uint32_t eax(std::vector<uint32_t> offsets) {
-            uint32_t address = Current::EAX;
-            for (size_t i = 0; i < offsets.size() - 1; i++)
-                address = *reinterpret_cast<uint32_t*>(address + offsets[i]);
-            return *reinterpret_cast<uint32_t*>(address + offsets.back());
-        }
-
+        Address eax() { return Address{Current::EAX}; }
+        Address eax(uint32_t offset) { return Address{Current::EAX, offset}; }
+        Address eax(std::vector<uint32_t> offsets) { return Address{Current::EAX, offsets}; }
         template <typename T>
         T eax() {
-            return (T)Current::EAX;
+            return Address{Current::EAX}.Get<T>();
         }
-
         template <typename T>
         T eax(uint32_t offset) {
-            return *reinterpret_cast<T*>(Current::EAX + offset);
+            return Address{Current::EAX, offset}.Get<T>();
         }
-
         template <typename T>
         T eax(std::vector<uint32_t> offsets) {
-            uint32_t address = Current::EAX;
-            for (size_t i = 0; i < offsets.size() - 1; i++)
-                address = *reinterpret_cast<uint32_t*>(address + offsets[i]);
-            return *reinterpret_cast<T*>(address + offsets.back());
+            return Address{Current::EAX, offsets}.Get<T>();
         }
 
-        uint32_t ebx() { return Current::EBX; }
-        uint32_t ebx(uint32_t offset) {
-            return *reinterpret_cast<uint32_t*>(Current::EBX + offset);
-        }
-        uint32_t ebx(std::vector<uint32_t> offsets) {
-            uint32_t address = Current::EBX;
-            for (size_t i = 0; i < offsets.size() - 1; i++)
-                address = *reinterpret_cast<uint32_t*>(address + offsets[i]);
-            return *reinterpret_cast<uint32_t*>(address + offsets.back());
-        }
-
+        Address ebx() { return Address{Current::EBX}; }
+        Address ebx(uint32_t offset) { return Address{Current::EBX, offset}; }
+        Address ebx(std::vector<uint32_t> offsets) { return Address{Current::EBX, offsets}; }
         template <typename T>
         T ebx() {
-            return (T)Current::EBX;
+            return Address{Current::EBX}.Get<T>();
         }
-
         template <typename T>
         T ebx(uint32_t offset) {
-            return *reinterpret_cast<T*>(Current::EBX + offset);
+            return Address{Current::EBX, offset}.Get<T>();
         }
-
         template <typename T>
         T ebx(std::vector<uint32_t> offsets) {
-            uint32_t address = Current::EBX;
-            for (size_t i = 0; i < offsets.size() - 1; i++)
-                address = *reinterpret_cast<uint32_t*>(address + offsets[i]);
-            return *reinterpret_cast<T*>(address + offsets.back());
+            return Address{Current::EBX, offsets}.Get<T>();
         }
 
-        uint32_t ecx() { return Current::ECX; }
-        uint32_t ecx(uint32_t offset) {
-            return *reinterpret_cast<uint32_t*>(Current::ECX + offset);
-        }
-        uint32_t ecx(std::vector<uint32_t> offsets) {
-            uint32_t address = Current::ECX;
-            for (size_t i = 0; i < offsets.size() - 1; i++)
-                address = *reinterpret_cast<uint32_t*>(address + offsets[i]);
-            return *reinterpret_cast<uint32_t*>(address + offsets.back());
-        }
-
+        Address ecx() { return Address{Current::ECX}; }
+        Address ecx(uint32_t offset) { return Address{Current::ECX, offset}; }
+        Address ecx(std::vector<uint32_t> offsets) { return Address{Current::ECX, offsets}; }
         template <typename T>
         T ecx() {
-            return (T)Current::ECX;
+            return Address{Current::ECX}.Get<T>();
         }
-
         template <typename T>
         T ecx(uint32_t offset) {
-            return *reinterpret_cast<T*>(Current::ECX + offset);
+            return Address{Current::ECX, offset}.Get<T>();
         }
-
         template <typename T>
         T ecx(std::vector<uint32_t> offsets) {
-            uint32_t address = Current::ECX;
-            for (size_t i = 0; i < offsets.size() - 1; i++)
-                address = *reinterpret_cast<uint32_t*>(address + offsets[i]);
-            return *reinterpret_cast<T*>(address + offsets.back());
+            return Address{Current::ECX, offsets}.Get<T>();
         }
 
-        uint32_t edx() { return Current::EDX; }
-        uint32_t edx(uint32_t offset) {
-            return *reinterpret_cast<uint32_t*>(Current::EDX + offset);
-        }
-        uint32_t edx(std::vector<uint32_t> offsets) {
-            uint32_t address = Current::EDX;
-            for (size_t i = 0; i < offsets.size() - 1; i++)
-                address = *reinterpret_cast<uint32_t*>(address + offsets[i]);
-            return *reinterpret_cast<uint32_t*>(address + offsets.back());
-        }
-
+        Address edx() { return Address{Current::EDX}; }
+        Address edx(uint32_t offset) { return Address{Current::EDX, offset}; }
+        Address edx(std::vector<uint32_t> offsets) { return Address{Current::EDX, offsets}; }
         template <typename T>
         T edx() {
-            return (T)Current::EDX;
+            return Address{Current::EDX}.Get<T>();
         }
-
         template <typename T>
         T edx(uint32_t offset) {
-            return *reinterpret_cast<T*>(Current::EDX + offset);
+            return Address{Current::EDX, offset}.Get<T>();
         }
-
         template <typename T>
         T edx(std::vector<uint32_t> offsets) {
-            uint32_t address = Current::EDX;
-            for (size_t i = 0; i < offsets.size() - 1; i++)
-                address = *reinterpret_cast<uint32_t*>(address + offsets[i]);
-            return *reinterpret_cast<T*>(address + offsets.back());
+            return Address{Current::EDX, offsets}.Get<T>();
         }
 
-        uint32_t esi() { return Current::ESI; }
-        uint32_t esi(uint32_t offset) {
-            return *reinterpret_cast<uint32_t*>(Current::ESI + offset);
-        }
-        uint32_t esi(std::vector<uint32_t> offsets) {
-            uint32_t address = Current::ESI;
-            for (size_t i = 0; i < offsets.size() - 1; i++)
-                address = *reinterpret_cast<uint32_t*>(address + offsets[i]);
-            return *reinterpret_cast<uint32_t*>(address + offsets.back());
-        }
-
+        Address esi() { return Address{Current::ESI}; }
+        Address esi(uint32_t offset) { return Address{Current::ESI, offset}; }
+        Address esi(std::vector<uint32_t> offsets) { return Address{Current::ESI, offsets}; }
         template <typename T>
         T esi() {
-            return (T)Current::ESI;
+            return Address{Current::ESI}.Get<T>();
         }
-
         template <typename T>
         T esi(uint32_t offset) {
-            return *reinterpret_cast<T*>(Current::ESI + offset);
+            return Address{Current::ESI, offset}.Get<T>();
         }
-
         template <typename T>
         T esi(std::vector<uint32_t> offsets) {
-            uint32_t address = Current::ESI;
-            for (size_t i = 0; i < offsets.size() - 1; i++)
-                address = *reinterpret_cast<uint32_t*>(address + offsets[i]);
-            return *reinterpret_cast<T*>(address + offsets.back());
+            return Address{Current::ESI, offsets}.Get<T>();
         }
 
-        uint32_t edi() { return Current::EDI; }
-        uint32_t edi(uint32_t offset) {
-            return *reinterpret_cast<uint32_t*>(Current::EDI + offset);
-        }
-        uint32_t edi(std::vector<uint32_t> offsets) {
-            uint32_t address = Current::EDI;
-            for (size_t i = 0; i < offsets.size() - 1; i++)
-                address = *reinterpret_cast<uint32_t*>(address + offsets[i]);
-            return *reinterpret_cast<uint32_t*>(address + offsets.back());
-        }
-
+        Address edi() { return Address{Current::EDI}; }
+        Address edi(uint32_t offset) { return Address{Current::EDI, offset}; }
+        Address edi(std::vector<uint32_t> offsets) { return Address{Current::EDI, offsets}; }
         template <typename T>
         T edi() {
-            return (T)Current::EDI;
+            return Address{Current::EDI}.Get<T>();
         }
-
         template <typename T>
         T edi(uint32_t offset) {
-            return *reinterpret_cast<T*>(Current::EDI + offset);
+            return Address{Current::EDI, offset}.Get<T>();
         }
-
         template <typename T>
         T edi(std::vector<uint32_t> offsets) {
-            uint32_t address = Current::EDI;
-            for (size_t i = 0; i < offsets.size() - 1; i++)
-                address = *reinterpret_cast<uint32_t*>(address + offsets[i]);
-            return *reinterpret_cast<T*>(address + offsets.back());
+            return Address{Current::EDI, offsets}.Get<T>();
         }
 
-        uint32_t ebp() { return Current::EBP; }
-        uint32_t ebp(uint32_t offset) {
-            return *reinterpret_cast<uint32_t*>(Current::EBP + offset);
-        }
-        uint32_t ebp(std::vector<uint32_t> offsets) {
-            uint32_t address = Current::EBP;
-            for (size_t i = 0; i < offsets.size() - 1; i++)
-                address = *reinterpret_cast<uint32_t*>(address + offsets[i]);
-            return *reinterpret_cast<uint32_t*>(address + offsets.back());
-        }
-
+        Address ebp() { return Address{Current::EBP}; }
+        Address ebp(uint32_t offset) { return Address{Current::EBP, offset}; }
+        Address ebp(std::vector<uint32_t> offsets) { return Address{Current::EBP, offsets}; }
         template <typename T>
         T ebp() {
-            return (T)Current::EBP;
+            return Address{Current::EBP}.Get<T>();
         }
-
         template <typename T>
         T ebp(uint32_t offset) {
-            return *reinterpret_cast<T*>(Current::EBP + offset);
+            return Address{Current::EBP, offset}.Get<T>();
         }
-
         template <typename T>
         T ebp(std::vector<uint32_t> offsets) {
-            uint32_t address = Current::EBP;
-            for (size_t i = 0; i < offsets.size() - 1; i++)
-                address = *reinterpret_cast<uint32_t*>(address + offsets[i]);
-            return *reinterpret_cast<T*>(address + offsets.back());
+            return Address{Current::EBP, offsets}.Get<T>();
         }
 
-        uint32_t esp() { return Current::ESP; }
-        uint32_t esp(uint32_t offset) {
-            return *reinterpret_cast<uint32_t*>(Current::ESP + offset);
-        }
-        uint32_t esp(std::vector<uint32_t> offsets) {
-            uint32_t address = Current::ESP;
-            for (size_t i = 0; i < offsets.size() - 1; i++)
-                address = *reinterpret_cast<uint32_t*>(address + offsets[i]);
-            return *reinterpret_cast<uint32_t*>(address + offsets.back());
-        }
-
+        Address esp() { return Address{Current::ESP}; }
+        Address esp(uint32_t offset) { return Address{Current::ESP, offset}; }
+        Address esp(std::vector<uint32_t> offsets) { return Address{Current::ESP, offsets}; }
         template <typename T>
         T esp() {
-            return (T)Current::ESP;
+            return Address{Current::ESP}.Get<T>();
         }
-
         template <typename T>
         T esp(uint32_t offset) {
-            return *reinterpret_cast<T*>(Current::ESP + offset);
+            return Address{Current::ESP, offset}.Get<T>();
         }
-
         template <typename T>
         T esp(std::vector<uint32_t> offsets) {
-            uint32_t address = Current::ESP;
-            for (size_t i = 0; i < offsets.size() - 1; i++)
-                address = *reinterpret_cast<uint32_t*>(address + offsets[i]);
-            return *reinterpret_cast<T*>(address + offsets.back());
+            return Address{Current::ESP, offsets}.Get<T>();
         }
     };
 }
