@@ -54,7 +54,7 @@ namespace Hooks {
             EnsureAllocatedMemoryAddress();
             Memory::WriteBytes(CurrentAddress(), _bytes.GetBytes());
         }
-        void WriteBytes(std::vector<uint8_t>& bytes) {
+        void WriteBytes(std::vector<uint8_t> bytes) {
             EnsureAllocatedMemoryAddress();
             Memory::WriteBytes(CurrentAddress(), bytes);
             AddBytes(bytes);
@@ -114,7 +114,7 @@ namespace Hooks {
             Memory::WriteProtectedByte(CurrentAddress(), byte);
             AddByte(byte);
         }
-        void WriteProtectedBytes(std::vector<uint8_t>& bytes) {
+        void WriteProtectedBytes(std::vector<uint8_t> bytes) {
             EnsureAllocatedMemoryAddress();
             Memory::WriteProtectedBytes(CurrentAddress(), bytes);
             AddBytes(bytes);

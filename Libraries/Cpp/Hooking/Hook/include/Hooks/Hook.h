@@ -16,10 +16,10 @@ namespace Hooks {
 
     // Represents a hook to a specific address implemented via a JMP
     class Hook {
-        std::string                          _name;
-        bool                                 _installed = false;
-        std::optional<std::function<void()>> _installFunction;
-        std::optional<std::function<void()>> _uninstallFunction;
+        std::string                               _name;
+        bool                                      _installed = false;
+        std::optional<std::function<void(Hook&)>> _installFunction;
+        std::optional<std::function<void(Hook&)>> _uninstallFunction;
 
         Bytes _replacedBytes;
 
@@ -32,47 +32,6 @@ namespace Hooks {
 
         std::vector<HookAction> _hookActions;
 
-        void WriteTrampoline() {
-            auto requiredSize = 0;
-            for (auto& hookAction : _hookActions) {
-                Log("[{}] Trampoline Action {} requires {} bytes", _name, hookAction.GetTypeName(),
-                    hookAction.CalculateByteCount());
-                requiredSize += hookAction.CalculateByteCount();
-            }
-            Log("[{}] Trampoline Total required size: {}", _name, requiredSize);
-
-            _trampoline.Allocate(requiredSize);
-            Log("[{}] Trampoline Allocate {} --> {:x}", _name, requiredSize,
-                _trampoline.GetAddress());
-
-            for (auto& hookAction : _hookActions) {
-                Log("[{}] Trampoline Writing action: {}", _name, hookAction.GetTypeName());
-                hookAction.Write(_trampoline);
-                Log("[{}] Trampoline Wrote action: {}", _name, hookAction.GetTypeName());
-            }
-        }
-
-        Bytes GetDetourBytes() { return _detour.GetBytes(_detourByteCount); }
-
-        void BackupOriginalDetourBytes() { _originalDetourBytes = GetDetourBytes(); }
-
-        void WriteDetour() {
-            Log("[{}] Writing detour to {:x}", _name, _detour.GetAddress());
-            _detour.WriteProtectedJmp(_trampoline.GetAddress());
-            if (_detourByteCount > 5)
-                for (uint32_t i = 5; i < _detourByteCount; i++) _detour.WriteProtectedByte(0x90);
-            Log("[{}] Wrote detour to {:x}", _name, _detour.GetAddress());
-        }
-
-        void RestoreDetourToOriginalBytes() {
-            Log("[{}] Restoring detour at {:x} to original bytes", _name, _detour.GetAddress());
-            _detour.ClearBytes();
-            _detour.WriteProtectedBytes(_originalDetourBytes);
-            Log("[{}] Restored detour at {:x} to original bytes", _name, _detour.GetAddress());
-        }
-
-        void FreeTrampolineBytes() { _trampoline.Free(); }
-
     public:
         explicit Hook(const std::string& name) : _name(name) {}
 
@@ -82,58 +41,29 @@ namespace Hooks {
             return *this;
         }
 
-        /** Installation / Uninstallation */
-
-        bool IsInstalled() const { return _installed; }
-
-        // Set the function to be called when the hook is installed
-        Hook& OnInstall(const std::function<void()>& installFunction) {
-            _installFunction = installFunction;
-            return *this;
-        }
-
-        // Set the function to be called when the hook is uninstalled
-        Hook& OnUninstall(const std::function<void()>& uninstallFunction) {
-            _uninstallFunction = uninstallFunction;
-            return *this;
-        }
-
-        void Install() {
-            if (_installed) return;
-            if (_installFunction.has_value()) {
-                _installFunction.value()();
-                return;
-            }
-            if (_detour.GetAddress() == 0) throw std::runtime_error("Hook address not set");
-            BackupOriginalDetourBytes();
-            WriteTrampoline();
-            WriteDetour();
-        }
-
-        void Uninstall() {
-            if (!_installed) return;
-            if (_uninstallFunction.has_value()) {
-                _uninstallFunction.value()();
-                return;
-            }
-            if (_detour.GetAddress() == 0)
-                throw std::runtime_error("Uninstall called but detour not set");
-            RestoreDetourToOriginalBytes();
-            FreeTrampolineBytes();
-            _detour.ClearBytes();
-            _trampoline.Clear();
-        }
-
-        bool Toggle() {
-            if (_installed)
-                Uninstall();
-            else
-                Install();
-            _installed = !_installed;
-            return _installed;
-        }
-
         /** Detour Configuration */
+
+        MemoryBytes& GetDetour() { return _detour; }
+        Bytes        GetDetourBytes() { return _detour.GetBytes(_detourByteCount); }
+
+        void   BackupOriginalDetourBytes() { _originalDetourBytes = GetDetourBytes(); }
+        Bytes& GetOriginalDetourBytes() { return _originalDetourBytes; }
+
+        void RestoreDetourToOriginalBytes() {
+            Log("[{}] Restoring detour at {:x} to original bytes", _name, _detour.GetAddress());
+            _detour.ClearBytes();
+            _detour.WriteProtectedBytes(_originalDetourBytes);
+            Log("[{}] Restored detour at {:x} to original bytes", _name, _detour.GetAddress());
+        }
+
+        // TODO: use "Hook Actions" to DEFINE the actions taken to write a Detour
+        void WriteDetour() {
+            Log("[{}] Writing detour to {:x}", _name, _detour.GetAddress());
+            _detour.WriteProtectedJmp(_trampoline.GetAddress());
+            if (_detourByteCount > 5)
+                for (uint32_t i = 5; i < _detourByteCount; i++) _detour.WriteProtectedByte(0x90);
+            Log("[{}] Wrote detour to {:x}", _name, _detour.GetAddress());
+        }
 
         uint32_t GetAddress() const { return _detour.GetAddress(); }
         Hook&    SetAddress(uint32_t address) {
@@ -161,6 +91,31 @@ namespace Hooks {
             if (address == 0) throw std::runtime_error("Could not find bytes");
             SetAddress(address);
             return *this;
+        }
+
+        /** Trampoline */
+
+        MemoryBytes& GetTrampoline() { return _trampoline; }
+        void         FreeTrampolineBytes() { _trampoline.Free(); }
+
+        void WriteTrampoline() {
+            auto requiredSize = 0;
+            for (auto& hookAction : _hookActions) {
+                Log("[{}] Trampoline Action {} requires {} bytes", _name, hookAction.GetTypeName(),
+                    hookAction.CalculateByteCount());
+                requiredSize += hookAction.CalculateByteCount();
+            }
+            Log("[{}] Trampoline Total required size: {}", _name, requiredSize);
+
+            _trampoline.Allocate(requiredSize);
+            Log("[{}] Trampoline Allocate {} --> {:x}", _name, requiredSize,
+                _trampoline.GetAddress());
+
+            for (auto& hookAction : _hookActions) {
+                Log("[{}] Trampoline Writing action: {}", _name, hookAction.GetTypeName());
+                hookAction.Write(_trampoline);
+                Log("[{}] Trampoline Wrote action: {}", _name, hookAction.GetTypeName());
+            }
         }
 
         /** Hook Actions */
@@ -230,5 +185,56 @@ namespace Hooks {
         Hook& Popad() { return WriteBytes({0x61}); }
         Hook& Pushfd() { return WriteBytes({0x9C}); }
         Hook& Popfd() { return WriteBytes({0x9D}); }
+
+        /** Installation / Uninstallation */
+
+        bool IsInstalled() const { return _installed; }
+
+        // Set the function to be called when the hook is installed
+        Hook& OnInstall(const std::function<void(Hook&)>& installFunction) {
+            _installFunction = installFunction;
+            return *this;
+        }
+
+        // Set the function to be called when the hook is uninstalled
+        Hook& OnUninstall(const std::function<void(Hook&)>& uninstallFunction) {
+            _uninstallFunction = uninstallFunction;
+            return *this;
+        }
+
+        void Install() {
+            if (_installed) return;
+            if (_installFunction.has_value()) {
+                _installFunction.value()(*this);
+                return;
+            }
+            if (_detour.GetAddress() == 0) throw std::runtime_error("Hook address not set");
+            BackupOriginalDetourBytes();
+            WriteTrampoline();
+            WriteDetour();
+        }
+
+        void Uninstall() {
+            if (!_installed) return;
+            if (_uninstallFunction.has_value()) {
+                _uninstallFunction.value()(*this);
+                return;
+            }
+            if (_detour.GetAddress() == 0)
+                throw std::runtime_error("Uninstall called but detour not set");
+            RestoreDetourToOriginalBytes();
+            FreeTrampolineBytes();
+            _detour.ClearBytes();
+            _trampoline.Clear();
+        }
+
+        bool Toggle() {
+            if (_installed)
+                Uninstall();
+            else
+                Install();
+            _installed = !_installed;
+            return _installed;
+        }
     };
 }

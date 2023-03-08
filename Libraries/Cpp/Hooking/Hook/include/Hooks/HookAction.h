@@ -83,7 +83,7 @@ namespace Hooks {
                 case HookActionType::RESTORE_REGISTERS:
                     return 8 * 6;  // 8 registers, 6 bytes each
                 case HookActionType::CALL_CALLABLE:
-                    return 10;  // PUSH and then CALL
+                    return 13;  // PUSH and then CALL and then POP
                 default:
                     return 0;
             }
@@ -118,6 +118,7 @@ namespace Hooks {
                     trampoline.WriteProtectedCall(
                         reinterpret_cast<uint32_t>(&CallableFunctions::CallHookFunction)
                     );
+                    trampoline.WriteProtectedBytes({0x83, 0xC4, 0x04});  // ADD ESP, 4
                     break;
                 default:
                     Log("Unsupported HookActionType: {}", GetTypeName());

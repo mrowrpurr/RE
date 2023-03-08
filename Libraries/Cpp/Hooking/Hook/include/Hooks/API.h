@@ -10,6 +10,9 @@
 #include "Hooks/Registers.h"
 #include "Hooks/Registry.h"
 
+typedef Hooks::Registers::RegistersReader Registers;
+typedef Hooks::Hook                       Hook;
+
 /** Basics */
 
 Hooks::Hook& RegisterHook(uint32_t address = 0) {
