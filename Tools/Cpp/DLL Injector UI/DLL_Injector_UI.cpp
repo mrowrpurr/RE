@@ -3,11 +3,17 @@
 
 constexpr auto Fallout1_EXE = L"falloutwHR.exe";
 constexpr auto Fallout1_DLL =
-    "C:/Code/mrowrpurr/Retro-RE-Playground/build/debug/Games/Fallout1/InjectableDLLs/Fallout1InjectableDLL/"
+    "C:/Code/mrowrpurr/Retro-RE-Playground/build/debug/Games/Fallout1/InjectableDLLs/"
+    "Fallout1InjectableDLL/"
     "Fallout1InjectableDLL.dll";
 
 constexpr auto Vampire_EXE = L"Vampire.exe";
 constexpr auto Vampire_DLL = "REBUILD ME!";
+
+constexpr auto Oblivion_EXE = L"Oblivion.exe";
+constexpr auto Oblivion_DLL =
+    "C:/Code/mrowrpurr/Retro-RE-Playground/build/debug/Games/Oblivion/InjectableDLLs/Cpp/"
+    "OblivionInjectableDLL/OblivionInjectableDLL.dll";
 
 UI_Main {
     UserInterface::Run([](auto& app) {
@@ -18,5 +24,6 @@ UI_Main {
         app.AddButton("Vampire the Masquerade: Bloodlines", []() {
             DLL_Injector::InjectDLL(Vampire_EXE, Vampire_DLL);
         });
+        app.AddButton("Oblivion", []() { DLL_Injector::InjectDLL(Oblivion_EXE, Oblivion_DLL); });
     });
 }
