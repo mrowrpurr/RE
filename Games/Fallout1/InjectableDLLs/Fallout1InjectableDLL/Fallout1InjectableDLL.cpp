@@ -6,8 +6,10 @@
 
 #define Output(...) UserInterface::App().AppendOutput(string_format(__VA_ARGS__))
 
-void OrPutTheHookIntoAFunction_OptionallyNaked() {
-    // ...
+// TODO!
+bool SomeSignatureThatIFiguredOut(uint8_t, int, const char*) {
+    // ....
+    // INVOKE_THE_ORIGINAL(0x46a41c, uint8_t, int, const char*)
 }
 
 struct FalloutItem {
@@ -35,8 +37,6 @@ void SetupHooks() {
         auto firstItemPID = regs.ebp({0x34, 0x0, 0x64});
         Output("[MULTIPLE OFFSETS] First Item PID: {}", firstItemPID);
     });
-
-    RegisterHook(0x1234, OrPutTheHookIntoAFunction_OptionallyNaked);
 }
 
 void RunUI() {
