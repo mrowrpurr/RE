@@ -157,6 +157,8 @@ THIS SOFTWARE.
 Other (Misc)
   - [Stephen Champan Hacking Videos - Playlist](https://www.youtube.com/playlist?list=PLNffuWEygffbJGq_cffRgEzFk6N1wrKtx)
   - [Hex Murder: How to find an Entity List / Object List | Cheat Engine](https://youtu.be/0Hr-8rH3nWs)
+  - [Cheat Engine Lua Tutorials playlist](https://www.youtube.com/playlist?list=PLMomQxQh6AdXya6zbMkL4Lj_klpmKNq4d)
+  - [Cheat Engine Lua Series playlist](https://www.youtube.com/playlist?list=PLMomQxQh6AdVHlZGrDCwttcm5mzX63dHu)
 
 Articles:
   - https://www.thehackerwithin.com/blog/11-08-07/Steam_s_anti-debugging_code.aspx
