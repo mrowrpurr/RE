@@ -1,11 +1,27 @@
 #pragma once
 
+#include <Windows.h>
+
+#include <cstdint>
+#include <vector>
+
 #include "Memory/Bytes.h"
 
 namespace Memory {
 
     class MemoryWriter {
         uintptr_t _address;
+        bool      _isProtected = false;
+
+        template <typename T>
+        void WriteProtected(T value, uintptr_t offset) const {
+            DWORD oldProtect;
+            VirtualProtect(
+                (LPVOID)(GetAddress() + offset), sizeof(T), PAGE_EXECUTE_READWRITE, &oldProtect
+            );
+            *(T*)(GetAddress() + offset) = value;
+            VirtualProtect((LPVOID)(GetAddress() + offset), sizeof(T), oldProtect, &oldProtect);
+        }
 
     public:
         MemoryWriter(uintptr_t address) : _address(address) {}
@@ -14,9 +30,16 @@ namespace Memory {
         void      SetAddress(uintptr_t address) { _address = address; }
         uintptr_t GetAddress() const { return _address; }
 
+        void SetProtected(bool isProtected = true) { _isProtected = isProtected; }
+        void Protect() { SetProtected(true); }
+        void Unprotect() { SetProtected(false); }
+
         template <typename T>
         void Write(T value, uintptr_t offset) const {
-            *(T*)(_address + offset) = value;
+            if (_isProtected)
+                WriteProtected<T>(value, offset);
+            else
+                *(T*)(_address + offset) = value;
         }
 
         template <typename T>

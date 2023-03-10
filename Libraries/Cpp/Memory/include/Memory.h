@@ -4,4 +4,3 @@
 #include "Memory/MemoryAddress.h"
 #include "Memory/MemoryReader.h"
 #include "Memory/MemoryWriter.h"
-#include "Memory/ProtectedMemoryWriter.h"
