@@ -1,23 +1,28 @@
+#include <CodeInjection.h>
 #include <Injected_DLL.h>
-#include <Logging.h>
-#include <Memory.h>
 #include <UserInterface.h>
 #include <string_format.h>
 
-using namespace Memory;
-
 #define Output(...) UserInterface::App().AppendOutput(string_format(__VA_ARGS__))
 
-uintptr_t address = 0x434b01;
-uint32_t  size    = 6;
-Bytes     bytes;
+// uintptr_t address = 0x434b01;
 
-void WriteBytes() {
-    bytes = MemoryReader{address}.Read(size);
-    ProtectedMemoryWriter(address).WriteBytes({0x90, 0x90, 0x90, 0x90, 0x90, 0x90});
+void Setup() {
+    CreateCodeInjection("Diablo Something")
+        .On("Load")
+        .Do(AllocateMemory(1024))
+        .Do(WriteBytes({0x90, 0x90, 0x90, 0x90, 0x90, 0x90}))
+        .Do(WriteAsm([](Code& code) { code.move(ptr[esp + 14], eax) }))
+        .Call([]() { auto x = EAX(0x4); });
 }
 
-void ResetBytes() { ProtectedMemoryWriter(address).WriteBytes(bytes); }
+void WriteBytes() {
+    //
+}
+
+void ResetBytes() {
+    //
+}
 
 void RunUI() {
     UserInterface::Run([&](auto& app) {
@@ -47,3 +52,7 @@ DLL_Main {
     // UninstallAllHooks();
     Injected_DLL::EjectDLL();
 }
+
+// bytes = MemoryReader{address}.Read(size);
+// ProtectedMemoryWriter(address).WriteBytes({0x90, 0x90, 0x90, 0x90, 0x90, 0x90});
+// ProtectedMemoryWriter(address).WriteBytes(bytes);
