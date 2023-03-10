@@ -15,6 +15,11 @@ constexpr auto Oblivion_DLL =
     "C:/Code/mrowrpurr/Retro-RE-Playground/build/debug/Games/Oblivion/InjectableDLLs/Cpp/"
     "OblivionInjectableDLL/OblivionInjectableDLL.dll";
 
+constexpr auto Diablo_EXE = L"Diablo.exe";
+constexpr auto Diablo_DLL =
+    "C:/Code/mrowrpurr/Retro-RE-Playground/build/debug/Games/Diablo/InjectableDLLs/Cpp/"
+    "DiabloInjectableDLL/DiabloInjectableDLL.dll";
+
 UI_Main {
     UserInterface::Run([](auto& app) {
         app.SetTitle("Choose DLL to Inject");
@@ -25,5 +30,6 @@ UI_Main {
             DLL_Injector::InjectDLL(Vampire_EXE, Vampire_DLL);
         });
         app.AddButton("Oblivion", []() { DLL_Injector::InjectDLL(Oblivion_EXE, Oblivion_DLL); });
+        app.AddButton("Diablo", []() { DLL_Injector::InjectDLL(Diablo_EXE, Diablo_DLL); });
     });
 }

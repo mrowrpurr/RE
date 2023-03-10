@@ -14,6 +14,7 @@ std::unordered_set<uint32_t> discoveredEntityInventoryAddresses;
 // TODO - ability to write custom detour
 // TODO - pushad, push, call, pop, popad
 // TODO - try T with inline structs
+// TODO - ASM::JZ and stuff like that - constants for the most common instructions
 
 struct ItemName {
     char name[255];
@@ -51,6 +52,9 @@ void SetupHooks() {
             Output("Entity: 0x{:x}", regs.ecx<int>());
         }
     });
+
+    // ADD sections for TRAMPOLINE and DETOUR setup (can still default to TRAMPOLINE) - if we could
+    // ALLOC multiple spaces, that might be neat.
 
     RegisterHook<10>("Entity + Inventory", 0x41e6f9)
         .OnInstall([](Hook& hook) {
