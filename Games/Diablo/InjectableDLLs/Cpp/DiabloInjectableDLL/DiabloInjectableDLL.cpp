@@ -13,7 +13,14 @@ void Setup() {
         .Do(AllocateMemory(1024))
         .Do(WriteBytes({0x90, 0x90, 0x90, 0x90, 0x90, 0x90}))
         .Do(WriteAsm([](Code& code) { code.move(ptr[esp + 14], eax) }))
-        .Call([]() { auto x = EAX(0x4); });
+        .Do(Call([]() { auto x = EAX(0x4); }));
+
+    CreateCodeInjection("Diablo Something")
+        .OnInstall()
+        .AllocateMemory(1024)
+        .WriteBytes({0x90, 0x90, 0x90, 0x90, 0x90, 0x90})
+        .WriteAsm([](Asm& asm) { asm.move(ptr[esp + 14], eax) })
+        .Run([]() { auto x = EAX(0x4); });
 }
 
 void WriteBytes() {
