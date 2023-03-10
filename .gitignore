@@ -5,7 +5,6 @@ cmake-build*
 *.pdb
 .vscode/settings.json
 docs
-doxygen-awesome-css
 Debug
 x86
 x64
