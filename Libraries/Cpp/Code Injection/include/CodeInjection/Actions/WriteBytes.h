@@ -8,13 +8,17 @@
 #include <string>
 #include <vector>
 
+#include "CodeInjection/Actions/ByteWriterActionBase.h"
+
 namespace CodeInjection {
-    class WriteBytesAction : public StatefulApp::Action {
+    class WriteBytesAction : public ByteWriterActionBase {
         std::vector<uint8_t> _bytes;
         std::string          _bytesVariableName = "";
 
     public:
         WriteBytesAction(std::vector<uint8_t> bytes) : _bytes(bytes) {}
+
+        size_t GetByteCount() override { return _bytes.size(); }
 
         void Perform(std::shared_ptr<StatefulApp::Variables> variables) override {
             auto address = variables->Get<uintptr_t>("address");

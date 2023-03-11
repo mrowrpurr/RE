@@ -8,10 +8,21 @@
 
 class MemoryArea {};
 
+using namespace CodeInjection;
+
 void SetupHooks() {
-    auto byteActions = CodeInjection::ByteWriterActionGroup{};
-    byteActions.AddAction(CodeInjection::WriteBytes{0x69, 0x69, 0x69, 0x69});
-    byteActions.AddAction(CodeInjection::WriteBytes{0x42, 0x42, 0x42});
+    // Get our stoopid group of bytes which calculates the total!
+    auto byteActions = ByteWriterActionGroup{};
+
+    // Add some stoopid bytes!
+    byteActions.AddAction<WriteBytesAction>(WriteBytesAction{
+        {0x69, 0x69, 0x69, 0x69}
+    });
+
+    // Add some which require a relative address to be calculated at write time
+
+    // Get the total!
+    Output("Total required bytes: {}", byteActions.GetByteCount());
 
     // Write some bytes (deferred)
 

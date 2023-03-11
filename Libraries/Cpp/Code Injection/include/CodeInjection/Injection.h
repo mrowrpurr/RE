@@ -78,22 +78,22 @@ namespace CodeInjection {
         std::vector<uint8_t> GetSavedBytes(const std::string& name) const {
             return _app.Get<std::vector<uint8_t>>(name);
         }
-        Injection& WriteBytes(const std::vector<uint8_t>& bytes) {
-            _app.AddAction(WriteBytesAction{bytes});
-            return *this;
-        }
-        Injection& WriteBytesByVar(const std::string& variableName) {
-            _app.AddAction(WriteBytesByVarAction{variableName});
-            return *this;
-        }
-        Injection& WriteProtectedBytes(const std::vector<uint8_t>& bytes) {
-            _app.AddAction(WriteProtectedBytesAction{bytes});
-            return *this;
-        }
-        Injection& WriteProtectedBytesByVar(const std::string& variableName) {
-            _app.AddAction(WriteProtectedBytesByVarAction{variableName});
-            return *this;
-        }
+        // Injection& WriteBytes(const std::vector<uint8_t>& bytes) {
+        //     _app.AddAction(WriteBytesAction{bytes});
+        //     return *this;
+        // }
+        // Injection& WriteBytesByVar(const std::string& variableName) {
+        //     _app.AddAction(WriteBytesByVarAction{variableName});
+        //     return *this;
+        // }
+        // Injection& WriteProtectedBytes(const std::vector<uint8_t>& bytes) {
+        //     _app.AddAction(WriteProtectedBytesAction{bytes});
+        //     return *this;
+        // }
+        // Injection& WriteProtectedBytesByVar(const std::string& variableName) {
+        //     _app.AddAction(WriteProtectedBytesByVarAction{variableName});
+        //     return *this;
+        // }
 
 #ifdef CODE_INJECTION_XBYAK
 
