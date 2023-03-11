@@ -11,6 +11,11 @@
 #include "CodeInjection/Actions/WriteProtectedBytes.h"
 #include "CodeInjection/Actions/WriteProtectedBytesByVar.h"
 
+#ifdef CODE_INJECTION_XBYAK
+    #include "CodeInjection/Actions/WriteAssembly.h"
+    #include "CodeInjection/Actions/WriteProtectedAssembly.h"
+#endif
+
 namespace CodeInjection {
 
     class Injection {
@@ -22,11 +27,19 @@ namespace CodeInjection {
     public:
         explicit Injection(const std::string& name) : _name(name) {}
 
+        /**
+         * Address
+         */
+
         Injection& SetAddress(uintptr_t address) {
             _app.Set<uintptr_t>(VARNAME_ADDRESS, address);
             return *this;
         }
         uintptr_t GetAddress() const { return _app.Get<uintptr_t>(VARNAME_ADDRESS); }
+
+        /**
+         * States
+         */
 
         Injection& Begin(const std::string& name) {
             _app.ConfigureState(name);
@@ -52,6 +65,10 @@ namespace CodeInjection {
             return *this;
         }
 
+        /**
+         * Byte Actions
+         */
+
         template <size_t N>
         Injection& SaveBytes(const std::string& name) {
             _app.AddAction(ReadBytesAction{name, 0, N});
@@ -76,5 +93,18 @@ namespace CodeInjection {
             _app.AddAction(WriteProtectedBytesByVarAction{variableName});
             return *this;
         }
+
+#ifdef CODE_INJECTION_XBYAK
+
+        /**
+         * Xbyak Actions
+         */
+
+        Injection& WriteAssembly(const std::function<void(Xbyak::CodeGenerator&)>& assemblyGenerator
+        ) {
+            _app.AddAction(WriteProtectedAssemblyAction{assemblyGenerator});
+            return *this;
+        }
+#endif
     };
 }

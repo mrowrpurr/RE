@@ -32,6 +32,7 @@ namespace CodeInjection {
                     string_format("Injection with name '{}' already exists", name)
                 );
             _injections[name] = std::make_shared<Injection>(name);
+            return _injections[name];
         }
 
         std::shared_ptr<Injection> Get(const std::string& name) { return _injections[name]; }

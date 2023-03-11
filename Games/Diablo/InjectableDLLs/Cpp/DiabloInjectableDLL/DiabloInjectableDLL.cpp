@@ -1,4 +1,4 @@
-#include <CodeInjection.h>
+#include <CodeInjection/WithXbyak.h>
 #include <Injected_DLL.h>
 #include <Memory.h>
 #include <UserInterface.h>
@@ -17,8 +17,7 @@ void Setup() {
     // INSTALL
     injection.BeginInstall();
     injection.SaveBytes<6>("originalBytes");
-    injection.WriteProtectedBytes({0x69, 0x42, 0x69, 0x42, 0x69, 0x42});
-    // ^--- change to use xbyak
+    injection.WriteAssembly([](Assembly code) { code.mov(eax, 0x696969); });
     injection.EndInstall();
 
     // UNINSTALL
@@ -27,10 +26,7 @@ void Setup() {
     injection.EndUninstall();
 }
 
-void WriteBytes() {
-    //
-    injection.Install();
-}
+void WriteBytes() { injection.Install(); }
 void ResetBytes() { injection.Uninstall(); }
 
 void RunUI() {
