@@ -22,7 +22,8 @@ namespace StatefulApp {
          * Variables
          */
 
-        App& Variable(const std::string& name, std::any value) {
+        std::shared_ptr<Variables> GetVariables() const { return _variables; }
+        App&                       Variable(const std::string& name, std::any value) {
             _variables->Variable(name, std::move(value));
             return *this;
         }
@@ -39,6 +40,10 @@ namespace StatefulApp {
         App& Set(const std::string& name, T value) {
             _variables->Set(name, value);
             return *this;
+        }
+        template <typename T>
+        T Get(const std::string& name) const {
+            return _variables->Get<T>(name);
         }
 
         /**
@@ -57,11 +62,13 @@ namespace StatefulApp {
             _currentlyConfiguringState = name;
             return *this;
         }
-        App& On(const std::string& name) {
-            if (!GetState(name)) return AddState(name);
+        App& ConfigureState(const std::string& name) {
+            if (!name.empty() && !GetState(name)) return AddState(name);
             _currentlyConfiguringState = name;
             return *this;
         }
+        App& EndConfigure() { return ConfigureState(""); }
+        App& On(const std::string& name) { return ConfigureState(name); }
         App& GotoState(const std::string& name) {
             _stateMachine->GotoState(name);
             return *this;
@@ -77,11 +84,5 @@ namespace StatefulApp {
             GetState(name)->AddAction(std::move(action));
             return *this;
         }
-
-        // template <typename T>
-        // App& AddAction(T action) {
-        //     GetState(_currentlyConfiguringState)->AddAction(std::move(action));
-        //     return *this;
-        // }
     };
 }

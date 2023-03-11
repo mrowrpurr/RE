@@ -25,7 +25,10 @@ namespace StatefulApp {
                 throw std::runtime_error("State with name '" + name + "' already exists");
             _states[name] = std::make_shared<State>(name);
         }
-        std::shared_ptr<State> GetState(const std::string& name) const { return _states.at(name); }
+        std::shared_ptr<State> GetState(const std::string& name) const {
+            if (_states.contains(name)) return _states.at(name);
+            return nullptr;
+        }
 
         void        SetCurrentState(const std::string& stateName) { _currentState = stateName; }
         std::string GetCurrentState() const { return _currentState; }

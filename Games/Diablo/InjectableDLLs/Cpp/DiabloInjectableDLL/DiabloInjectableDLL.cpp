@@ -6,31 +6,27 @@
 
 #define Output(...) UserInterface::App().AppendOutput(string_format(__VA_ARGS__))
 
+CodeInjection::Injection injection{"Gain Health on Hit"};
+
 void Setup() {
-    CodeInjection::Inject("Gain Health on Hit");
+    // VARIABLES
+    injection.SetAddress(0x434b01);
 
-    //.SetAddress(0x434b01);
+    // INSTALL
+    injection.BeginInstall();
+    injection.SaveBytes<6>("originalBytes");
+    injection.WriteProtectedBytes({0x69, 0x42, 0x69, 0x42, 0x69, 0x42});
+    // ^--- change to use xbyak
+    injection.EndInstall();
 
-    // uintptr_t address       = ;
-    // auto      originalBytes = Memory::MemoryReader{address}.Read(6).GetBytes();
-
-    // app.Set<uintptr_t>("address", address);
-
-    // app.AddState("Install");
-    // app.AddAction<WriteBytesAction>(
-    //     "Install", WriteBytesAction({0x90, 0x90, 0x90, 0x90, 0x90, 0x90})
-    // );
-
-    // app.AddState("Uninstall");
-    // app.AddAction<WriteBytesAction>("Uninstall", WriteBytesAction(originalBytes));
+    // UNINSTALL
+    injection.BeginUninstall();
+    injection.WriteProtectedBytes(injection.GetSavedBytes("originalBytes"));
+    injection.EndUninstall();
 }
 
-void WriteBytes() {
-    // app.Goto("Install");
-}
-void ResetBytes() {
-    // app.Goto("Uninstall");
-}
+void WriteBytes() { injection.Install(); }
+void ResetBytes() { injection.Uninstall(); }
 
 void RunUI() {
     UserInterface::Run([&](auto& app) {
