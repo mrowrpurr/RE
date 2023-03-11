@@ -46,6 +46,13 @@ struct InventoryItemAndNext {
 };
 
 void SetupHooks() {
+    // Detour
+    // ALLOC
+
+    // RegisterHook(0x123).
+    //     OnInstall([](){}).
+    //     OnUninstall([](){});
+
     RegisterHook<7>("Set X,Y,Z on Entity", 0x4D8A38, [](Registers& regs) {
         if (!discoveredEntities.contains(regs.ecx())) {
             discoveredEntities.insert(regs.ecx());

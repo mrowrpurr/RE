@@ -21,10 +21,10 @@ namespace Hooks {
         CALL_CALLABLE
     };
 
-    // Represents an action which can be taken when a hook is run.
-    // So that common actions are easier to setup (although *all* could be done with BYTES)
+    // RENAME - it's more like a writer.
     class HookAction {
-        uint32_t                                                        _address = 0;
+        bool                                                            _protected = false;
+        uint32_t                                                        _address   = 0;
         HookActionType                                                  _type;
         Bytes                                                           _bytes;
         uint32_t                                                        _functionAddress = 0;

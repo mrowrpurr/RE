@@ -7,11 +7,13 @@
 #include "Hooks/ArrayOfBytes.h"
 #include "Hooks/FunctionTypes.h"
 #include "Hooks/Hook.h"
+#include "Hooks/HookActions.h"
 #include "Hooks/Registers.h"
 #include "Hooks/Registry.h"
 
 typedef Hooks::Registers::RegistersReader Registers;
 typedef Hooks::Hook                       Hook;
+typedef Hooks::HookActions                HookActions;
 
 /** Basics */
 

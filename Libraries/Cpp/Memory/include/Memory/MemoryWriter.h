@@ -30,9 +30,18 @@ namespace Memory {
         void      SetAddress(uintptr_t address) { _address = address; }
         uintptr_t GetAddress() const { return _address; }
 
-        void SetProtected(bool isProtected = true) { _isProtected = isProtected; }
-        void Protect() { SetProtected(true); }
-        void Unprotect() { SetProtected(false); }
+        MemoryWriter& SetProtected(bool isProtected = true) {
+            _isProtected = isProtected;
+            return *this;
+        }
+        MemoryWriter& Protect() {
+            SetProtected(true);
+            return *this;
+        }
+        MemoryWriter& Unprotect() {
+            SetProtected(false);
+            return *this;
+        }
 
         template <typename T>
         void Write(T value, uintptr_t offset) const {

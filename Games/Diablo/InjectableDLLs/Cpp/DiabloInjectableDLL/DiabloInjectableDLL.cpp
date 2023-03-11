@@ -1,35 +1,44 @@
-#include <CodeInjection.h>
 #include <Injected_DLL.h>
+#include <Memory.h>
+#include <StatefulApp.h>
 #include <UserInterface.h>
 #include <string_format.h>
 
 #define Output(...) UserInterface::App().AppendOutput(string_format(__VA_ARGS__))
 
-// uintptr_t address = 0x434b01;
+// CodeInjection injection;
+
+StatefulApp::App app;
+
+class WriteBytesAction : public StatefulApp::Action {
+    std::vector<uint8_t> _bytes;
+
+public:
+    WriteBytesAction(std::vector<uint8_t> bytes) : _bytes(bytes) {}
+
+    void Perform(std::shared_ptr<StatefulApp::Variables> variables) override {
+        auto address = variables->Get<uintptr_t>("address");
+        Memory::MemoryWriter{address}.Protect().WriteBytes(_bytes);
+    }
+};
 
 void Setup() {
-    CreateCodeInjection("Diablo Something")
-        .On("Load")
-        .Do(AllocateMemory(1024))
-        .Do(WriteBytes({0x90, 0x90, 0x90, 0x90, 0x90, 0x90}))
-        .Do(WriteAsm([](Code& code) { code.move(ptr[esp + 14], eax) }))
-        .Do(Call([]() { auto x = EAX(0x4); }));
+    uintptr_t address       = 0x434b01;
+    auto      originalBytes = Memory::MemoryReader{address}.Read(6).GetBytes();
 
-    CreateCodeInjection("Diablo Something")
-        .OnInstall()
-        .AllocateMemory(1024)
-        .WriteBytes({0x90, 0x90, 0x90, 0x90, 0x90, 0x90})
-        .WriteAsm([](Asm& asm) { asm.move(ptr[esp + 14], eax) })
-        .Run([]() { auto x = EAX(0x4); });
+    app.Set<uintptr_t>("address", address);
+
+    app.AddState("Install");
+    app.AddAction<WriteBytesAction>(
+        "Install", WriteBytesAction({0x90, 0x90, 0x90, 0x90, 0x90, 0x90})
+    );
+
+    app.AddState("Uninstall");
+    app.AddAction<WriteBytesAction>("Uninstall", WriteBytesAction(originalBytes));
 }
 
-void WriteBytes() {
-    //
-}
-
-void ResetBytes() {
-    //
-}
+void WriteBytes() { app.Goto("Install"); }
+void ResetBytes() { app.Goto("Uninstall"); }
 
 void RunUI() {
     UserInterface::Run([&](auto& app) {
@@ -40,20 +49,13 @@ void RunUI() {
             .ShowOutputTextBox();
         app.AddButton("Write Bytes", [&]() { WriteBytes(); });
         app.AddButton("Reset Bytes", [&]() { ResetBytes(); });
-        // for (auto hook : GetRegisteredHooks()) {
-        //     app.AddButton(string_format("Enable: {}", hook->GetName()), [&, hook]() {
-        //         if (hook->Toggle())
-        //             app.ChangeButtonText(string_format("Disable: {}", hook->GetName()));
-        //         else
-        //             app.ChangeButtonText(string_format("Enable: {}", hook->GetName()));
-        //     });
-        // }
         app.AddButton("Clear", [&]() { app.ClearOutput(); });
         app.AddButton("Eject DLL", [&]() { app.Close(); });
     });
 }
 
 DLL_Main {
+    Setup();
     // SetupHooks();
     RunUI();
     // UninstallAllHooks();
