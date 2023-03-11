@@ -9,19 +9,18 @@
 #include <vector>
 
 namespace CodeInjection {
-    class WriteBytesAction : public StatefulApp::Action {
-        std::vector<uint8_t> _bytes;
-        std::string          _bytesVariableName = "";
+    class WriteBytesByVarAction : public StatefulApp::Action {
+        std::string _bytesVariableName = "";
 
     public:
-        WriteBytesAction(std::vector<uint8_t> bytes) : _bytes(bytes) {}
+        WriteBytesByVarAction(const std::string& bytesVariableName)
+            : _bytesVariableName(bytesVariableName) {}
 
         void Perform(std::shared_ptr<StatefulApp::Variables> variables) override {
             auto address = variables->Get<uintptr_t>("address");
             if (address == 0) throw std::runtime_error("WriteBytesAction: Address is 0");
-            if (_bytesVariableName != "")
-                _bytes = variables->Get<std::vector<uint8_t>>(_bytesVariableName);
-            Memory::MemoryWriter{address}.WriteBytes(_bytes);
+            auto bytes = variables->Get<std::vector<uint8_t>>(_bytesVariableName);
+            Memory::MemoryWriter{address}.WriteBytes(bytes);
         }
     };
 }

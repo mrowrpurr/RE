@@ -5,6 +5,12 @@
 
 #include <string>
 
+#include "CodeInjection/Actions/ReadBytes.h"
+#include "CodeInjection/Actions/WriteBytes.h"
+#include "CodeInjection/Actions/WriteBytesByVar.h"
+#include "CodeInjection/Actions/WriteProtectedBytes.h"
+#include "CodeInjection/Actions/WriteProtectedBytesByVar.h"
+
 namespace CodeInjection {
 
     class Injection {
@@ -48,20 +54,26 @@ namespace CodeInjection {
 
         template <size_t N>
         Injection& SaveBytes(const std::string& name) {
-            _app.Set<std::vector<uint8_t>>(
-                name, Memory::MemoryReader{GetAddress()}.Read(N).GetBytes()
-            );
+            _app.AddAction(ReadBytesAction{name, 0, N});
             return *this;
         }
         std::vector<uint8_t> GetSavedBytes(const std::string& name) const {
             return _app.Get<std::vector<uint8_t>>(name);
         }
         Injection& WriteBytes(const std::vector<uint8_t>& bytes) {
-            Memory::MemoryWriter{GetAddress()}.WriteBytes(bytes);
+            _app.AddAction(WriteBytesAction{bytes});
+            return *this;
+        }
+        Injection& WriteBytesByVar(const std::string& variableName) {
+            _app.AddAction(WriteBytesByVarAction{variableName});
             return *this;
         }
         Injection& WriteProtectedBytes(const std::vector<uint8_t>& bytes) {
-            Memory::MemoryWriter{GetAddress()}.Protect().WriteBytes(bytes);
+            _app.AddAction(WriteProtectedBytesAction{bytes});
+            return *this;
+        }
+        Injection& WriteProtectedBytesByVar(const std::string& variableName) {
+            _app.AddAction(WriteProtectedBytesByVarAction{variableName});
             return *this;
         }
     };

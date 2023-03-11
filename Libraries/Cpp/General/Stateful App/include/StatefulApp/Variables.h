@@ -30,6 +30,8 @@ namespace StatefulApp {
             SetVariable(name, value);
         }
 
+        bool HasVariable(const std::string& name) const { return _variables.contains(name); }
+
         std::any GetVariable(const std::string& name) const { return _variables.at(name); }
         std::any Variable(const std::string& name) const { return GetVariable(name); }
         std::any Var(const std::string& name) const { return GetVariable(name); }

@@ -8,6 +8,8 @@
 
 CodeInjection::Injection injection{"Gain Health on Hit"};
 
+// ADD LOGGING
+
 void Setup() {
     // VARIABLES
     injection.SetAddress(0x434b01);
@@ -21,11 +23,14 @@ void Setup() {
 
     // UNINSTALL
     injection.BeginUninstall();
-    injection.WriteProtectedBytes(injection.GetSavedBytes("originalBytes"));
+    injection.WriteProtectedBytesByVar("originalBytes");
     injection.EndUninstall();
 }
 
-void WriteBytes() { injection.Install(); }
+void WriteBytes() {
+    //
+    injection.Install();
+}
 void ResetBytes() { injection.Uninstall(); }
 
 void RunUI() {

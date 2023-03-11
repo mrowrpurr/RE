@@ -84,5 +84,10 @@ namespace StatefulApp {
             GetState(name)->AddAction(std::move(action));
             return *this;
         }
+
+        template <typename T>
+        App& AddAction(T action) {
+            return AddAction(_currentlyConfiguringState, std::move(action));
+        }
     };
 }

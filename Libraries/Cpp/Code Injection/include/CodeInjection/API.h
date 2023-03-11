@@ -2,7 +2,6 @@
 
 #include "CodeInjection/Injection.h"
 #include "CodeInjection/Registry.h"
-// Actions
 
 namespace CodeInjection {
 
