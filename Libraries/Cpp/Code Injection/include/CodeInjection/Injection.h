@@ -5,6 +5,7 @@
 
 #include <string>
 
+#include "CodeInjection/Actions/ByteWriterActionGroup.h"
 #include "CodeInjection/Actions/ReadBytes.h"
 #include "CodeInjection/Actions/WriteBytes.h"
 #include "CodeInjection/Actions/WriteBytesByVar.h"
