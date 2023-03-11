@@ -3,13 +3,13 @@
   <CheatEntries>
     <CheatEntry>
       <ID>0</ID>
-      <Description>"Gold 1"</Description>
+      <Description>"Gold 1 - Maybe UI"</Description>
       <VariableType>4 Bytes</VariableType>
       <Address>Diablo.exe+286614</Address>
     </CheatEntry>
     <CheatEntry>
       <ID>1</ID>
-      <Description>"Gold 2"</Description>
+      <Description>"Gold 2 - THE REAL GOLD"</Description>
       <VariableType>4 Bytes</VariableType>
       <Address>Diablo.exe+287298</Address>
     </CheatEntry>
