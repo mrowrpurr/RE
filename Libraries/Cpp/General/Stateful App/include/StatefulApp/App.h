@@ -42,6 +42,11 @@ namespace StatefulApp {
             return *this;
         }
         template <typename T>
+        App& Set(const std::string& name) {
+            _variables->Set<T>(name);
+            return *this;
+        }
+        template <typename T>
         T Get(const std::string& name) const {
             return _variables->Get<T>(name);
         }

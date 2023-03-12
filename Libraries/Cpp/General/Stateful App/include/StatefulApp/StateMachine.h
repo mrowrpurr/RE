@@ -1,5 +1,7 @@
 #pragma once
 
+#include <Logging.h>
+
 #include <memory>
 #include <stdexcept>
 #include <string>
@@ -38,6 +40,7 @@ namespace StatefulApp {
         }
 
         void GotoState(const std::string& stateName) {
+            Log("GotoState {}", stateName);
             SetCurrentState(stateName);
             PerformStateActions(stateName);
         }

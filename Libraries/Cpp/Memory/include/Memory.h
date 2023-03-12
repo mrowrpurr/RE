@@ -4,3 +4,7 @@
 #include "Memory/MemoryAddress.h"
 #include "Memory/MemoryReader.h"
 #include "Memory/MemoryWriter.h"
+
+namespace Memory {
+    typedef MemoryAddress Address;
+}

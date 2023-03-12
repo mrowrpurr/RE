@@ -8,43 +8,34 @@
 
 class MemoryArea {};
 
+using namespace Memory;
 using namespace CodeInjection;
 
-void SetupHooks() {
-    // Get our stoopid group of bytes which calculates the total!
-    auto byteActions = ByteWriterActionGroup{};
+// TODO - Logger only log IF A LOG NAME IS SET!
 
-    // Add some stoopid bytes!
-    byteActions.AddAction<WriteBytesAction>(WriteBytesAction{
-        {0x69, 0x69, 0x69, 0x69}
+// NEXT: LOGS
+// Next Next ALLOC!
+
+Injection injection{"Pickup double items"};
+
+void SetupHooks() {
+    injection.Configure([](Injection& x) {
+        // Rename to make more clear that it's a VARIABLE?
+        x.Set<Address>("address", 0x46a41c);
+        x.Set<Bytes>("originalBytes");
+        x.SetBytes("newBytes", {0x69, 0x69, 0x69, 0x69});
     });
 
-    // Add some which require a relative address to be calculated at write time
+    injection.OnInstall([](Injection& x) {
+        x.ReadBytes("address", "originalBytes", 4);
+        x.WriteProtectedBytes("address", "newBytes");
+    });
 
-    // Get the total!
-    Output("Total required bytes: {}", byteActions.GetByteCount());
-
-    // Write some bytes (deferred)
-
-    // Write more bytes (deferred)
-
-    // Get the total count
-
-    // TRAMPOLINE
-    // auto trampoline = MemoryArea{};
-
-    // CALL ORIGINAL BYTES
-
-    // STORE THE REGISTERS in GLOBAL VARS
-
-    // PUSH
-    // CALL
-    // POP
-
-    // RESET REGISTERS
-
-    // JMP to DETOUR+OFFSET (JumpBackAddress)
+    injection.OnUninstall([](Injection& x) { x.WriteProtectedBytes("address", "originalBytes"); });
 }
+
+void Install() { injection.Install(); }
+void Uninstall() { injection.Uninstall(); }
 
 /*
     RegisterHook("Drop Item", 0x46a41c, [](Registers& regs) {
@@ -61,6 +52,8 @@ void RunUI() {
             .SetHeight(500)
             .SetWidth(500)
             .ShowOutputTextBox();
+        app.AddButton("Install", [&]() { Install(); });
+        app.AddButton("Uninstall", [&]() { Uninstall(); });
         app.AddButton("Clear", [&]() { app.ClearOutput(); });
         app.AddButton("Eject DLL", [&]() { app.Close(); });
     });

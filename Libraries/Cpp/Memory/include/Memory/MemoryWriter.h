@@ -25,6 +25,7 @@ namespace Memory {
 
     public:
         MemoryWriter(uintptr_t address) : _address(address) {}
+        MemoryWriter(const MemoryAddress& address) : _address(address.GetAddress()) {}
         MemoryWriter() : _address(0) {}
 
         void      SetAddress(uintptr_t address) { _address = address; }

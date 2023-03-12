@@ -9,6 +9,7 @@ namespace Memory {
 
     public:
         MemoryReader(uintptr_t address) : _address(address) {}
+        MemoryReader(const MemoryAddress& address) : _address(address.GetAddress()) {}
         MemoryReader() : _address(0) {}
 
         Bytes Read(size_t size) const {

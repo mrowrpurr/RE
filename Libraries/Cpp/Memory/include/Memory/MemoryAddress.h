@@ -14,6 +14,7 @@ namespace Memory {
 
         uintptr_t GetAddress() const { return _address; }
         void      SetAddress(uintptr_t address) { _address = address; }
+        bool      IsNull() const { return _address == 0; }
 
         MemoryAddress Offset(uintptr_t offset) const { return MemoryAddress(_address + offset); }
         MemoryAddress Offset(std::vector<uintptr_t> offsets) const {
