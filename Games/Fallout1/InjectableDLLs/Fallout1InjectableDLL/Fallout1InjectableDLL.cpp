@@ -27,7 +27,7 @@ void SetupHooks() {
         x.ReadBytes("address", "originalBytes", 7);
         x.AllocateMemory("trampoline", [](AllocatedMemory& memory) {
             memory.WriteAssembly([](Assembly code) {
-                code.add(ptr[esi + eax + 0x04], edx);  // add [esi+eax+04],edx
+                code.add(dword[esi + eax + 0x04], 68);
                 code.mov(eax, ptr[ecx + 0x08]);
             });
             memory.WriteJmp("jumpBackAddress");
@@ -77,3 +77,5 @@ DLL_Main {
 // add [esi+eax+04],edx - 01 54 06 04
 // mov eax,[ecx+08] - 8B 41 08
 // xor edx,edx - 31 D2
+
+// 09BF0000 - 83 44 30 04 05        - add dword ptr [eax+esi+04],05
