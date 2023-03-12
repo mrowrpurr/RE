@@ -29,7 +29,7 @@ namespace CodeInjection {
 
         void Perform(std::shared_ptr<StatefulApp::Variables> variables) override {
             auto address = Memory::Allocate(GetByteCount());
-            variables->Set<uintptr_t>(_addressVariableName, address);
+            variables->Set<Memory::MemoryAddress>(_addressVariableName, address);
             for (auto& byteWriterAction : this->GetByteWriterActions()) {
                 variables->Set<uintptr_t>("__CURRENT_ADDRESS__", address);  // Lame sauce....
                 byteWriterAction->Perform(variables);

@@ -28,4 +28,5 @@ namespace Memory {
             throw std::runtime_error("Failed to free memory");
         Log("Freed bytes at {:x}", address);
     }
+    void Free(const Address& address) { Free(address.GetAddress()); }
 }

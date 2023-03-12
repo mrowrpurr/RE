@@ -29,6 +29,7 @@ namespace Memory {
         MemoryWriter() : _address(0) {}
 
         void      SetAddress(uintptr_t address) { _address = address; }
+        void      SetAddress(const MemoryAddress& address) { _address = address.GetAddress(); }
         uintptr_t GetAddress() const { return _address; }
 
         MemoryWriter& SetProtected(bool isProtected = true) {

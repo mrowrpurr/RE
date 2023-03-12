@@ -16,7 +16,7 @@
 #include "CodeInjection/Actions/ReadBytesAction.h"
 #include "CodeInjection/Actions/RunFunctionAction.h"
 #include "CodeInjection/Actions/WriteBytesAction.h"
-
+#include "CodeInjection/Actions/WriteJmpAction.h"
 
 #ifdef CODE_INJECTION_XBYAK
 // #include "CodeInjection/Actions/WriteAssembly.h"
@@ -146,6 +146,12 @@ namespace CodeInjection {
             const std::string& addressVariable, const std::string& bytesVariable
         ) {
             _app.AddAction(WriteBytesAction{addressVariable, bytesVariable}.Protected());
+            return *this;
+        }
+        Injection& WriteJmp(
+            const std::string& addressVariable, const std::string& targetAddressVariable
+        ) {
+            _app.AddAction(WriteJmpAction{addressVariable, targetAddressVariable});
             return *this;
         }
 

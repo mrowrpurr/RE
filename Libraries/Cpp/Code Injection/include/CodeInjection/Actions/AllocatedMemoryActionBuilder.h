@@ -5,6 +5,7 @@
 #include "CodeInjection/Actions/ByteWriterActionGroup.h"
 #include "CodeInjection/Actions/WriteRawAssemblyAction.h"
 #include "CodeInjection/Actions/WriteRawBytesAction.h"
+#include "CodeInjection/Actions/WriteRawJmpAction.h"
 
 namespace CodeInjection {
 
@@ -24,6 +25,11 @@ namespace CodeInjection {
             const std::function<void(Xbyak::CodeGenerator&)>& assembly
         ) {
             _byteWriterActionGroup.AddAction(WriteRawAssemblyAction{assembly});
+            return *this;
+        }
+
+        AllocatedMemoryActionBuilder& WriteJmp(const std::string& jumpToAddressVariableName) {
+            _byteWriterActionGroup.AddAction(WriteRawJmpAction{jumpToAddressVariableName});
             return *this;
         }
     };

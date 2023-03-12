@@ -31,11 +31,8 @@ namespace CodeInjection {
             auto address = variables->Get<Memory::MemoryAddress>(_addressVariableName);
             if (address.IsNull()) throw std::runtime_error("WriteBytesAction: Address is 0");
             auto bytes = variables->Get<Memory::Bytes>(_bytesVariableName);
-            if (_protectedBytes) {
-                Memory::MemoryWriter{address}.Protect().WriteBytes(bytes);
-            } else {
-                Memory::MemoryWriter{address}.WriteBytes(bytes);
-            }
+            // if (_protectedBytes) {
+            Memory::MemoryWriter{address}.Protect().WriteBytes(bytes);
         }
     };
 }

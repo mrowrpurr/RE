@@ -18,7 +18,7 @@ namespace CodeInjection {
             : _addressVariableName(addressVariableName) {}
 
         void Perform(std::shared_ptr<StatefulApp::Variables> variables) override {
-            auto address = variables->Get<uintptr_t>(_addressVariableName);
+            auto address = variables->Get<Memory::MemoryAddress>(_addressVariableName);
             if (address == 0) throw std::runtime_error("FreeMemoryAction: Address is 0");
             Memory::Free(address);
         }

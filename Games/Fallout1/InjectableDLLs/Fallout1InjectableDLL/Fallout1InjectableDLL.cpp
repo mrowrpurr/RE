@@ -17,20 +17,29 @@ Injection injection{"Pickup double items"};
 void SetupHooks() {
     injection.Configure([](Injection& x) {
         x.Set<Address>("address", 0x46A363);
+        x.Set<Address>("jumpBackAddress", 0x46A363 + 7);
         x.Set<Bytes>("originalBytes");
+        x.SetBytes("nopBytes", {0x90, 0x90});
+        x.Set<Address>("nopAddress", 0x46A363 + 5);
     });
 
     injection.OnInstall([](Injection& x) {
         x.ReadBytes("address", "originalBytes", 7);
         x.AllocateMemory("trampoline", [](AllocatedMemory& memory) {
             memory.WriteAssembly([](Assembly code) {
-                code.add(ptr[esi + eax + 0x04], edx);
+                code.add(ptr[esi + eax + 0x04], edx);  // add [esi+eax+04],edx
                 code.mov(eax, ptr[ecx + 0x08]);
             });
+            memory.WriteJmp("jumpBackAddress");
         });
+        x.WriteJmp("address", "trampoline");
+        x.WriteBytes("nopAddress", "nopBytes");
     });
 
-    injection.OnUninstall([](Injection& x) { x.FreeMemory("trampoline"); });
+    injection.OnUninstall([](Injection& x) {
+        x.WriteBytes("address", "originalBytes");
+        x.FreeMemory("trampoline");
+    });
 }
 
 void Install() { injection.Install(); }
