@@ -21,11 +21,9 @@ namespace CodeInjection {
         }
 
         size_t GetByteCount() override {
-            size_t byteCount        = 0;
-            auto   theStoopidSizeIs = GetByteWriterActions().size();
-            for (auto& byteWriterAction : GetByteWriterActions()) {
+            size_t byteCount = 0;
+            for (auto& byteWriterAction : GetByteWriterActions())
                 byteCount += byteWriterAction->GetByteCount();
-            }
             return byteCount;
         }
 

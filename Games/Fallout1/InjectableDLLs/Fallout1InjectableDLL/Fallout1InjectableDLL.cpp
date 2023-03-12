@@ -1,10 +1,11 @@
-#include <CodeInjection.h>
+#include <CodeInjection/WithXbyak.h>
 #include <Injected_DLL.h>
 #include <Logging.h>
 #include <UserInterface.h>
 #include <string_format.h>
 
 // TODO - Logger only log IF A LOG NAME IS SET!
+// TODO - Set<ProtectedAddress>
 
 #define Output(...) UserInterface::App().AppendOutput(string_format(__VA_ARGS__))
 
@@ -15,20 +16,21 @@ Injection injection{"Pickup double items"};
 
 void SetupHooks() {
     injection.Configure([](Injection& x) {
-        // x.Set<ProtectedAddress>
-        x.Set<Address>("address", 0x46a41c);
+        x.Set<Address>("address", 0x46A363);
         x.Set<Bytes>("originalBytes");
     });
 
     injection.OnInstall([](Injection& x) {
-        x.ReadBytes("address", "originalBytes", 4);
+        x.ReadBytes("address", "originalBytes", 7);
         x.AllocateMemory("trampoline", [](AllocatedMemory& memory) {
-            memory.WriteBytes({0x69, 0x69, 0x69, 0x69});
-            memory.WriteBytes({0x42, 0x42});
+            memory.WriteAssembly([](Assembly code) {
+                code.add(ptr[esi + eax + 0x04], edx);
+                code.mov(eax, ptr[ecx + 0x08]);
+            });
         });
     });
 
-    injection.OnUninstall([](Injection& x) { x.WriteProtectedBytes("address", "originalBytes"); });
+    injection.OnUninstall([](Injection& x) { x.FreeMemory("trampoline"); });
 }
 
 void Install() { injection.Install(); }
@@ -62,3 +64,7 @@ DLL_Main {
     // UninstallAllHooks();
     Injected_DLL::EjectDLL();
 }
+
+// add [esi+eax+04],edx - 01 54 06 04
+// mov eax,[ecx+08] - 8B 41 08
+// xor edx,edx - 31 D2

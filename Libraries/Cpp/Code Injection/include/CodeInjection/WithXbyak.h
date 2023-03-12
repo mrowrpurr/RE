@@ -5,3 +5,5 @@
 #include "CodeInjection/API.h"
 
 typedef Xbyak::CodeGenerator& Assembly;
+
+using namespace Xbyak::util;

@@ -12,9 +12,11 @@
 
 #include "CodeInjection/Actions/AllocateMemoryAction.h"
 #include "CodeInjection/Actions/ByteWriterActionGroup.h"
+#include "CodeInjection/Actions/FreeMemoryAction.h"
 #include "CodeInjection/Actions/ReadBytesAction.h"
 #include "CodeInjection/Actions/RunFunctionAction.h"
 #include "CodeInjection/Actions/WriteBytesAction.h"
+
 
 #ifdef CODE_INJECTION_XBYAK
 // #include "CodeInjection/Actions/WriteAssembly.h"
@@ -107,13 +109,19 @@ namespace CodeInjection {
         }
 
         /**
-         * Allocated Memory Action
+         * Memory Actions
          */
+
         Injection& AllocateMemory(
             const std::string&                                 addressVariableName,
             std::function<void(AllocatedMemoryActionBuilder&)> builderFunction
         ) {
             _app.AddAction(AllocateMemoryAction{addressVariableName, builderFunction});
+            return *this;
+        }
+
+        Injection& FreeMemory(const std::string& addressVariableName) {
+            _app.AddAction(FreeMemoryAction{addressVariableName});
             return *this;
         }
 
