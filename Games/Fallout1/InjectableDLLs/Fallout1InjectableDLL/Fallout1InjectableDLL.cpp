@@ -4,31 +4,28 @@
 #include <UserInterface.h>
 #include <string_format.h>
 
-#define Output(...) UserInterface::App().AppendOutput(string_format(__VA_ARGS__))
+// TODO - Logger only log IF A LOG NAME IS SET!
 
-class MemoryArea {};
+#define Output(...) UserInterface::App().AppendOutput(string_format(__VA_ARGS__))
 
 using namespace Memory;
 using namespace CodeInjection;
-
-// TODO - Logger only log IF A LOG NAME IS SET!
-
-// NEXT: LOGS
-// Next Next ALLOC!
 
 Injection injection{"Pickup double items"};
 
 void SetupHooks() {
     injection.Configure([](Injection& x) {
-        // Rename to make more clear that it's a VARIABLE?
+        // x.Set<ProtectedAddress>
         x.Set<Address>("address", 0x46a41c);
         x.Set<Bytes>("originalBytes");
-        x.SetBytes("newBytes", {0x69, 0x69, 0x69, 0x69});
     });
 
     injection.OnInstall([](Injection& x) {
         x.ReadBytes("address", "originalBytes", 4);
-        x.WriteProtectedBytes("address", "newBytes");
+        x.AllocateMemory("trampoline", [](AllocatedMemory& memory) {
+            memory.WriteBytes({0x69, 0x69, 0x69, 0x69});
+            memory.WriteBytes({0x42, 0x42});
+        });
     });
 
     injection.OnUninstall([](Injection& x) { x.WriteProtectedBytes("address", "originalBytes"); });

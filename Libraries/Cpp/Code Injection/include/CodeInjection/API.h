@@ -9,5 +9,6 @@ namespace CodeInjection {
 
     Injection& Inject(const std::string& name) { return *Registry::GetSingleton().Register(name); }
 
-    typedef StatefulApp::Variables& Variables;
+    typedef StatefulApp::Variables&                     Variables;
+    typedef CodeInjection::AllocatedMemoryActionBuilder AllocatedMemory;
 }

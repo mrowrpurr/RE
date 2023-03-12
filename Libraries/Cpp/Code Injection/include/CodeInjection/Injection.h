@@ -10,6 +10,7 @@
 #include <string>
 #include <vector>
 
+#include "CodeInjection/Actions/AllocateMemoryAction.h"
 #include "CodeInjection/Actions/ByteWriterActionGroup.h"
 #include "CodeInjection/Actions/ReadBytesAction.h"
 #include "CodeInjection/Actions/RunFunctionAction.h"
@@ -30,16 +31,6 @@ namespace CodeInjection {
 
     public:
         explicit Injection(const std::string& name) : _name(name) {}
-
-        /**
-         * Address
-         */
-
-        // Injection& SetAddress(uintptr_t address) {
-        //     _app.Set<uintptr_t>(VARNAME_ADDRESS, address);
-        //     return *this;
-        // }
-        // uintptr_t GetAddress() const { return _app.Get<uintptr_t>(VARNAME_ADDRESS); }
 
         /**
          * "Configure" block (just for semantics)
@@ -103,7 +94,7 @@ namespace CodeInjection {
         }
 
         /**
-         * Generic Actions
+         * Run Actions
          */
 
         Injection& Run(const std::function<void()>& function) {
@@ -112,6 +103,17 @@ namespace CodeInjection {
         }
         Injection& Run(const std::function<void(StatefulApp::Variables&)>& function) {
             _app.AddAction(RunFunctionAction{function});
+            return *this;
+        }
+
+        /**
+         * Allocated Memory Action
+         */
+        Injection& AllocateMemory(
+            const std::string&                                 addressVariableName,
+            std::function<void(AllocatedMemoryActionBuilder&)> builderFunction
+        ) {
+            _app.AddAction(AllocateMemoryAction{addressVariableName, builderFunction});
             return *this;
         }
 

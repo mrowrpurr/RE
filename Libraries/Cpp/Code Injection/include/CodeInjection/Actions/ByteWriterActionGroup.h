@@ -24,6 +24,10 @@ namespace CodeInjection {
             for (auto& byteWriterAction : _byteWriterActions) byteWriterAction->Perform(variables);
         }
 
+        std::vector<std::shared_ptr<ByteWriterActionBase>>& GetByteWriterActions() {
+            return _byteWriterActions;
+        }
+
         template <typename T>
         void AddAction(T action) {
             _byteWriterActions.push_back(std::make_shared<T>(action));
