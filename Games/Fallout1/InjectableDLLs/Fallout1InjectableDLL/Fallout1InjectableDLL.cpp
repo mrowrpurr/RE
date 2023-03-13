@@ -1,38 +1,47 @@
 #include <Assembly.h>
+#include <CodeInjection.h>
 #include <Injected_DLL.h>
 #include <Logging.h>
 #include <Memory.h>
+#include <StringFormatting.h>
 #include <UserInterface.h>
-#include <string_format.h>
 
 #define Output(...) UserInterface::App().AppendOutput(string_format(__VA_ARGS__))
 
-uintptr_t            address = 0x4ceed9;
-size_t               size    = 3;
-std::vector<uint8_t> originalBytes;
-
-void ReadMemory() {
-    originalBytes = Memory::ReadBytes(address, size);
-
-    std::string bytesString;
-    for (auto b : originalBytes) bytesString += string_format("{:02X} ", b);
-    Output("Original Bytes: {}", bytesString);
-
-    auto disassembled = Assembly::Disassemble86(originalBytes, address);
-    Output("Disassembled: {}", disassembled[0]);
+void SetupHooks() {
+    CodeInjection::New("Drop Item")
+        .Configure([](Injection& _) {
+            _.AddressVariable("Detour", 0x46a41c);
+            _.SizeVariable("DetourSize", 7);
+            _.AddressVariable("JumpBack", _.AddressVariable("Detour") +
+            _.SizeVariable("DetourSize");
+            _.AddressVariable("Trampoline", 0);
+            _.BytesVariable("OriginalBytes", {});
+            _.ReadBytes(
+                {.outVariable = "Detour", .addressVariable = "OriginalBytes", .byteCount = 5}
+            );
+        })
+        .OnEnable([](Injection& _) {
+            _.AllocateMemory({
+                .addressVariable = "Trampoline",
+                .code =
+                    [](Injection& trampoline) {
+                        trampoline.WriteBytes({0x69});
+                        trampoline.Jmp("JumpBack");
+                    },
+            });
+            _.WriteJmp({.addressVariable = "Detour"});
+            _.WriteNops({.count = 2});
+            _.WriteAssembly(AssemblyCode {
+                _.nop();
+                _.nop();
+            })
+        })
+        .OnDisable([](Injection& _) {
+            _.WriteBytes({.addressVariable = "Detour", .bytesVariable = "OriginalBytes"});
+            _.DeallocateMemory({.addressVariable = "Trampoline"});
+        });
 }
-
-void WriteMemory() {
-    auto bytes = Assembly::GetBytes([](Assembly::Code code) { code.mov(ptr[ebp - 0x14], ecx); });
-
-    std::string bytesString;
-    for (auto b : bytes) bytesString += string_format("{:02X} ", b);
-    Output("Bytes from Assembly: {}", bytesString);
-
-    Memory::WriteProtectedBytes(address, bytes);
-}
-
-void RestoreMemory() { Memory::WriteProtectedBytes(address, originalBytes); }
 
 void RunUI() {
     UserInterface::Run([&](auto& app) {
@@ -41,15 +50,13 @@ void RunUI() {
             .SetHeight(500)
             .SetWidth(500)
             .ShowOutputTextBox();
-        app.AddButton("Read", [&]() { ReadMemory(); });
-        app.AddButton("Write", [&]() { WriteMemory(); });
-        app.AddButton("Restore", [&]() { RestoreMemory(); });
         app.AddButton("Clear", [&]() { app.ClearOutput(); });
         app.AddButton("Eject DLL", [&]() { app.Close(); });
     });
 }
 
 DLL_Main {
+    SetupHooks();
     RunUI();
     Injected_DLL::EjectDLL();
 }
