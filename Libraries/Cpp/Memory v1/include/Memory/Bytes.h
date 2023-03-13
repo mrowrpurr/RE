@@ -32,6 +32,7 @@ namespace Memory {
             _bytes.push_back((dword >> 16) & 0xFF);
             _bytes.push_back((dword >> 24) & 0xFF);
         }
+        // Foo bar
         void WriteDword(uint32_t dword) { Write32(dword); }
 
         void Write64(uint64_t qword) {
