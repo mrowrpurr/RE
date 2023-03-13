@@ -1,38 +1,20 @@
 #pragma once
 
-#include <Memory.h>
-#include <StatefulApp.h>
-#include <stdint.h>
+#include <CodeInjection\IAction.h>
 
-#include <memory>
-#include <stdexcept>
-#include <string>
-#include <vector>
+namespace CodeInjection::Actions {
 
-namespace CodeInjection {
-    class WriteBytesAction : public StatefulApp::Action {
-        bool        _protectedBytes      = false;
-        std::string _addressVariableName = "";
-        std::string _bytesVariableName   = "";
+    // class WriteBytesAction : public IAction {
+    //     std::string _name;
+    //     DWORD       _address;
+    //     std::string _bytes;
 
-    public:
-        WriteBytesAction(
-            const std::string& addressVariableName, const std::string& bytesVariableName
-        )
-            : _addressVariableName(addressVariableName), _bytesVariableName(bytesVariableName) {}
+    // public:
+    //     WriteBytesAction(std::string name, DWORD address, std::string bytes)
+    //         : _name(name), _address(address), _bytes(bytes) {}
 
-        WriteBytesAction Protected() {
-            WriteBytesAction action{_addressVariableName, _bytesVariableName};
-            action._protectedBytes = true;
-            return action;
-        }
-
-        void Perform(std::shared_ptr<StatefulApp::Variables> variables) override {
-            auto address = variables->Get<Memory::MemoryAddress>(_addressVariableName);
-            if (address.IsNull()) throw std::runtime_error("WriteBytesAction: Address is 0");
-            auto bytes = variables->Get<Memory::Bytes>(_bytesVariableName);
-            // if (_protectedBytes) {
-            Memory::MemoryWriter{address}.Protect().WriteBytes(bytes);
-        }
-    };
+    //     void Perform() override {
+    //         Memory::WriteBytes(_address, _bytes);
+    //     }
+    // };
 }

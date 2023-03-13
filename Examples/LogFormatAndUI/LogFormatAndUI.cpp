@@ -1,6 +1,6 @@
 #include <Logging.h>
 #include <UserInterface.h>
-#include <string_format.h>
+#include <StringFormatting.h>
 
 UI_Main {
     UserInterface::Run([](auto& app) {

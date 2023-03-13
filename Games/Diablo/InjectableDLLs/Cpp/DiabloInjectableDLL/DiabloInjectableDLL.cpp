@@ -2,7 +2,7 @@
 #include <Injected_DLL.h>
 #include <Memory.h>
 #include <UserInterface.h>
-#include <string_format.h>
+#include <StringFormatting.h>
 
 #define Output(...) UserInterface::App().AppendOutput(string_format(__VA_ARGS__))
 

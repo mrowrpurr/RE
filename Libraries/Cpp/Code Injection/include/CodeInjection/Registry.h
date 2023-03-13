@@ -1,40 +1,33 @@
 #pragma once
 
-#include <CodeInjection/Injection.h>
-#include <string_format.h>
+#include <CodeInjection\Injection.h>
 
 #include <memory>
-#include <stdexcept>
 #include <string>
 #include <unordered_map>
 
 namespace CodeInjection {
+    std::unordered_map<std::string, std::shared_ptr<Injection>> RegisteredInjections;
 
-    class Registry {
-        std::unordered_map<std::string, std::shared_ptr<Injection>> _injections;
+    void New(std::string name) { RegisteredInjections[name] = std::make_shared<Injection>(name); }
 
-        Registry()                           = default;
-        ~Registry()                          = default;
-        Registry(const Registry&)            = delete;
-        Registry(Registry&&)                 = delete;
-        Registry& operator=(const Registry&) = delete;
-        Registry& operator=(Registry&&)      = delete;
+    Injection& Get(std::string name) { return *RegisteredInjections[name]; }
 
-    public:
-        static Registry& GetSingleton() {
-            static Registry singleton;
-            return singleton;
-        }
+    std::vector<std::shared_ptr<Injection>> GetAll() {
+        std::vector<std::shared_ptr<Injection>> injections;
+        for (auto& injection : RegisteredInjections) injections.push_back(injection.second);
+        return injections;
+    }
 
-        std::shared_ptr<Injection> Register(const std::string& name) {
-            if (_injections.contains(name))
-                throw std::runtime_error(
-                    string_format("Injection with name '{}' already exists", name)
-                );
-            _injections[name] = std::make_shared<Injection>(name);
-            return _injections[name];
-        }
+    void Install(std::string name) { RegisteredInjections[name]->Install(); }
 
-        std::shared_ptr<Injection> Get(const std::string& name) { return _injections[name]; }
-    };
+    void Uninstall(std::string name) { RegisteredInjections[name]->Uninstall(); }
+
+    void InstallAll() {
+        for (auto& injection : RegisteredInjections) injection.second->Install();
+    }
+
+    void UninstallAll() {
+        for (auto& injection : RegisteredInjections) injection.second->Uninstall();
+    }
 }

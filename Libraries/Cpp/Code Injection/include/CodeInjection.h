@@ -1,3 +1,4 @@
 #pragma once
 
-#include "CodeInjection/API.h"
+#include <CodeInjection\Injection.h>
+#include <CodeInjection\Registry.h>

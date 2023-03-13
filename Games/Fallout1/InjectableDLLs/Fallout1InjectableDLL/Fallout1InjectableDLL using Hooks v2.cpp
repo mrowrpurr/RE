@@ -2,7 +2,7 @@
 #include <Injected_DLL.h>
 #include <Logging.h>
 #include <UserInterface.h>
-#include <string_format.h>
+#include <StringFormatting.h>
 
 // TODO - Logger only log IF A LOG NAME IS SET!
 // TODO - Set<ProtectedAddress>
