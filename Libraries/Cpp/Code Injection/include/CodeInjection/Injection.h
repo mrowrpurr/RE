@@ -1,41 +1,69 @@
 #pragma once
 
-#include <CodeInjection\Actions.h>
-#include <CodeInjection\IAction.h>
-
+#include <any>
 #include <functional>
 #include <memory>
 #include <string>
+#include <string_view>
+#include <unordered_map>
 #include <vector>
+
+#include "InjectionState.h"
 
 namespace CodeInjection {
 
     class Injection {
-        std::string                           _name;
-        std::vector<std::shared_ptr<IAction>> _installActions;
-        std::vector<std::shared_ptr<IAction>> _uninstallActions;
+        std::string                                                      _name;
+        std::unordered_map<std::string, std::any>                        _variables;
+        std::unordered_map<std::string, std::shared_ptr<InjectionState>> _states;
+        std::shared_ptr<InjectionState>                                  _currentState;
+        std::shared_ptr<InjectionState>                                  _currentlyConfiguringState;
+
+        std::shared_ptr<InjectionState> GetStateIfExists(std::string name) {
+            if (_states.contains(name)) return _states[name];
+            return nullptr;
+        }
+        std::shared_ptr<InjectionState> FindOrCreateState(const std::string& name) {
+            if (_states.contains(name)) return _states[name];
+            auto state    = std::make_shared<InjectionState>(name, *this);
+            _states[name] = state;
+            return state;
+        }
 
     public:
-        Injection(std::string name) : _name(name) {}
+        Injection(const std::string& name) : _name(name) {}
 
-        Injection& OnInstall(std::function<void(Actions&)> installActions) {
-            auto actions = Actions(_installActions);
-            installActions(actions);
+        std::string_view GetName() const { return _name; }
+
+        /**
+         * States
+         */
+
+        Injection& On(const std::string& stateName) {
+            _currentlyConfiguringState = FindOrCreateState(stateName);
             return *this;
         }
+        Injection& OnInstall() { return On("Install"); }
+        Injection& OnUninstall() { return On("Uninstall"); }
+        void       Goto(const std::string& stateName) {
+            auto state = GetStateIfExists(stateName);
+            if (state) state->PerformActions();
+        }
+        void Install() { Goto("Install"); }
+        void Uninstall() { Goto("Uninstall"); }
 
-        Injection& OnUninstall(std::function<void(Actions&)> uninstallActions) {
-            auto actions = Actions(_uninstallActions);
-            uninstallActions(actions);
+        /**
+         * Variables
+         */
+
+        template <typename T>
+        Injection& Var(const std::string& name, T value) {
+            _variables[name] = value;
             return *this;
         }
-
-        void Install() {
-            for (auto& action : _installActions) action->Perform();
-        }
-
-        void Uninstall() {
-            for (auto& action : _uninstallActions) action->Perform();
+        template <typename T>
+        T& Var(const std::string& name) {
+            return std::any_cast<T&>(_variables[name]);
         }
     };
 }

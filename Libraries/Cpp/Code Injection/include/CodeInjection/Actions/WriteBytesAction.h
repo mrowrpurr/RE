@@ -1,6 +1,6 @@
 #pragma once
 
-#include <CodeInjection\IAction.h>
+#include "../InjectionAction.h"
 
 namespace CodeInjection::Actions {
 
