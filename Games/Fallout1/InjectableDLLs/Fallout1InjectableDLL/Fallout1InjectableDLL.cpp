@@ -5,11 +5,6 @@
 #include <UserInterface.h>
 #include <string_format.h>
 
-// [x] 1. Read Bytes
-// [x] 2. Disassemble Bytes
-// [x] 3. Write Bytes
-// [x] 4. Write Bytes from Assembly
-
 #define Output(...) UserInterface::App().AppendOutput(string_format(__VA_ARGS__))
 
 uintptr_t            address = 0x4ceed9;
