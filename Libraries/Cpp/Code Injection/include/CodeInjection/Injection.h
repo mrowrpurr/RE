@@ -36,6 +36,15 @@ namespace CodeInjection {
         std::string_view GetName() const { return _name; }
 
         /**
+         * Configure block (just for semantics)
+         */
+
+        Injection& Configure(std::function<void(Injection&)> block) {
+            block(*this);
+            return *this;
+        }
+
+        /**
          * States
          */
 

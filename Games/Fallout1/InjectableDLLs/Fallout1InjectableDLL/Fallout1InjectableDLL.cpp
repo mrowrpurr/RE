@@ -1,6 +1,5 @@
 #include <Assembly.h>
 #include <CodeInjection.h>
-#include <CodeInjection/Injection.h>
 #include <Injected_DLL.h>
 #include <Logging.h>
 #include <Memory.h>
@@ -9,19 +8,22 @@
 
 #define Output(...) UserInterface::App().AppendOutput(string_format(__VA_ARGS__))
 
+typedef std::vector<uint8_t> Bytes;
+
 void SetupHooks() {
-    // CodeInjection::New("Drop Item")
-    //     .Configure([](Injection& _) {
-    //         _.Var("Detour", 0x46a41c);
-    //         _.Var("DetourSize", 7);
-    //         _.Var("JumpBack", _.AddressVariable("Detour") +
-    //         _.SizeVariable("DetourSize");
-    //         _.AddressVariable("Trampoline", 0);
-    //         _.BytesVariable("OriginalBytes", {});
-    //         _.ReadBytes(
-    //             {.outVariable = "Detour", .addressVariable = "OriginalBytes", .byteCount = 5}
-    //         );
-    //     })
+    CodeInjection::New("Drop Item").Configure([](Injection& _) {
+        _.Var("Detour", 0x46a41c);
+        _.Var("DetourSize", 5);
+        _.Var("JumpBack", _.Var<int>("Detour") + _.Var<int>("DetourSize"));
+        _.Var("Trampoline", 0);
+
+        // remove
+        _.Var<Bytes>("OriginalBytes", {});
+
+        // replace with
+        // _.ReadBytes({.outVariable = "OriginalBytes", .byteCount = _.Var<int>("DetourSize")});
+    });
+
     //     .OnEnable([](Injection& _) {
     //         _.AllocateMemory({
     //             .addressVariable = "Trampoline",
