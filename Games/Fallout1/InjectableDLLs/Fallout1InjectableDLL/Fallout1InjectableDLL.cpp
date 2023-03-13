@@ -8,7 +8,7 @@
 // [x] 1. Read Bytes
 // [x] 2. Disassemble Bytes
 // [x] 3. Write Bytes
-// [ ] 4. Write Bytes from Assembly
+// [x] 4. Write Bytes from Assembly
 
 #define Output(...) UserInterface::App().AppendOutput(string_format(__VA_ARGS__))
 
