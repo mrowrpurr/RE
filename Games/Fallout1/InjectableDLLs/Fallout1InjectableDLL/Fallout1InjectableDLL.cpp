@@ -18,8 +18,9 @@ std::vector<uint8_t> originalBytes;
 
 void ReadMemory() {
     originalBytes = Memory::ReadBytes(address, size);
+
     std::string bytesString;
-    for (auto byte : originalBytes) bytesString += string_format("{:02X} ", byte);
+    for (auto b : originalBytes) bytesString += string_format("{:02X} ", b);
     Output("Original Bytes: {}", bytesString);
 
     auto disassembled = Assembly::Disassemble86(originalBytes, address);
@@ -27,12 +28,13 @@ void ReadMemory() {
 }
 
 void WriteMemory() {
-    std::vector<uint8_t> bytes = {0x90, 0x90, 0x90};
-    Memory::WriteProtectedBytes(address, bytes);
-}
+    auto bytes = Assembly::GetBytes([](Assembly::Code code) { code.mov(ptr[ebp - 0x14], ecx); });
 
-void WriteAssembly() {
-    // TODO - Write assembly
+    std::string bytesString;
+    for (auto b : bytes) bytesString += string_format("{:02X} ", b);
+    Output("Bytes from Assembly: {}", bytesString);
+
+    Memory::WriteProtectedBytes(address, bytes);
 }
 
 void RestoreMemory() { Memory::WriteProtectedBytes(address, originalBytes); }
