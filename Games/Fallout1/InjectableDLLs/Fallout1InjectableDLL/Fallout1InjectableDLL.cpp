@@ -1,20 +1,19 @@
 #include <Assembly.h>
 #include <Injected_DLL.h>
 #include <Logging.h>
-#include <Mem.h>
+#include <Memory.h>
 #include <UserInterface.h>
 #include <string_format.h>
 
 // [x] 1. Read Bytes
-// [ ] 2. Disassemble Bytes
+// [x] 2. Disassemble Bytes
 // [ ] 3. Write Bytes
 // [ ] 4. Write Bytes from Assembly
 
 #define Output(...) UserInterface::App().AppendOutput(string_format(__VA_ARGS__))
 
 void ReadMemory() {
-    auto reader = Mem::MemoryReader(0x4ceed9);
-    auto bytes  = reader.Read(3);
+    auto bytes = Memory::ReadBytes(0x4ceed9, 3);
     Output("Bytes: {:x} {:X} {:X}", bytes[0], bytes[1], bytes[2]);
 
     auto disassembled = Assembly::Disassemble86(bytes, 0x4ceed9);
