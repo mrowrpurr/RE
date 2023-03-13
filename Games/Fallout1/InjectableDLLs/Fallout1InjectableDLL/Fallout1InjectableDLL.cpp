@@ -1,10 +1,14 @@
+#include <Assembly.h>
 #include <Injected_DLL.h>
 #include <Logging.h>
 #include <Mem.h>
 #include <UserInterface.h>
 #include <string_format.h>
 
-// TODO - Logger only log IF A LOG NAME IS SET!
+// [x] 1. Read Bytes
+// [ ] 2. Disassemble Bytes
+// [ ] 3. Write Bytes
+// [ ] 4. Write Bytes from Assembly
 
 #define Output(...) UserInterface::App().AppendOutput(string_format(__VA_ARGS__))
 
@@ -12,12 +16,17 @@ void ReadMemory() {
     auto reader = Mem::MemoryReader(0x4ceed9);
     auto bytes  = reader.Read(3);
     Output("Bytes: {:x} {:X} {:X}", bytes[0], bytes[1], bytes[2]);
-}
 
-void DisassembleMemory() {}
+    auto disassembled = Assembly::Disassemble86(bytes, 0x4ceed9);
+    Output("Disassembled: {}", disassembled[0]);
+}
 
 void WriteMemory() {
     // TODO - Write memory
+}
+
+void WriteAssembly() {
+    // TODO - Write assembly
 }
 
 void RunUI() {
