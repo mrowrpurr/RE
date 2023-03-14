@@ -9,7 +9,6 @@
 
 #include "../InjectionAction.h"
 
-
 namespace CodeInjection::Actions {
 
     struct ReadBytesActionParams {
@@ -31,7 +30,7 @@ namespace CodeInjection::Actions {
             auto address = _params.address;
             if (!_params.addressVariable.empty())
                 address = vars->Var<uintptr_t>(_params.addressVariable);
-            auto bytes = Memory::ReadBytes(address, _params.byteCount);
+            auto bytes = Memory::Read(address, _params.byteCount);
             vars->Var<std::vector<uint8_t>>(_params.outVariable, bytes);
         }
     };

@@ -4,29 +4,32 @@
 #include <string>
 #include <unordered_map>
 
-#include "Injection.h"
+#include "InjectionApp.h"
 
 namespace CodeInjection {
-    std::unordered_map<std::string, std::shared_ptr<Injection>> RegisteredInjections;
+    std::unordered_map<std::string, std::shared_ptr<InjectionApp>> RegisteredInjections;
 
-    Injection& New(const std::string& name) {
-        auto injection             = std::make_shared<Injection>(name);
-        RegisteredInjections[name] = injection;
-        return *injection;
+    InjectionBuilder x;
+
+    InjectionBuilder& New(const std::string& name) {
+        auto injectionApp          = std::make_shared<InjectionApp>(name);
+        RegisteredInjections[name] = injectionApp;
+        // ...
+        return x;
     }
 
-    Injection& GetInjection(const std::string& name) { return *RegisteredInjections[name]; }
+    // Injection& GetInjection(const std::string& name) { return *RegisteredInjections[name]; }
 
-    std::vector<std::shared_ptr<Injection>> GetAllInjections() {
-        std::vector<std::shared_ptr<Injection>> injections;
-        for (auto injection : RegisteredInjections) injections.push_back(injection.second);
-        return injections;
-    }
+    // std::vector<std::shared_ptr<Injection>> GetAllInjections() {
+    //     std::vector<std::shared_ptr<Injection>> injections;
+    //     for (auto injection : RegisteredInjections) injections.push_back(injection.second);
+    //     return injections;
+    // }
 
-    void InstallAll() {
-        for (auto injection : RegisteredInjections) injection.second->Install();
-    }
-    void UninstallAll() {
-        for (auto injection : RegisteredInjections) injection.second->Uninstall();
-    }
+    // void InstallAll() {
+    //     for (auto injection : RegisteredInjections) injection.second->Install();
+    // }
+    // void UninstallAll() {
+    //     for (auto injection : RegisteredInjections) injection.second->Uninstall();
+    // }
 }

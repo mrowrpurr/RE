@@ -10,30 +10,10 @@
 #include <vector>
 
 #include "Actions.h"
-#include "InjectionState.h"
-#include "InjectionVariables.h"
 
 namespace CodeInjection {
 
     class Injection {
-        std::string                                                      _name;
-        bool                                                             _isInstalled = false;
-        std::shared_ptr<InjectionVariables>                              _variables;
-        std::unordered_map<std::string, std::shared_ptr<InjectionState>> _states;
-        std::shared_ptr<InjectionState>                                  _currentState;
-        std::shared_ptr<InjectionState>                                  _currentlyConfiguringState;
-
-        std::shared_ptr<InjectionState> GetStateIfExists(std::string name) {
-            if (_states.contains(name)) return _states[name];
-            return nullptr;
-        }
-        std::shared_ptr<InjectionState> FindOrCreateState(const std::string& name) {
-            if (_states.contains(name)) return _states[name];
-            auto state    = std::make_shared<InjectionState>(name, _variables);
-            _states[name] = state;
-            return state;
-        }
-
     public:
         Injection(const std::string& name)
             : _name(name), _variables(std::make_shared<InjectionVariables>()) {}
