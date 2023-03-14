@@ -8,35 +8,41 @@
 
 #define Output(...) UserInterface::App().AppendOutput(string_format(__VA_ARGS__))
 
-typedef std::vector<uint8_t> Bytes;
-
-std::string PrintBytes(Bytes bytes) {
+std::string PrintBytes(std::vector<uint8_t> bytes) {
     std::string result;
     for (auto b : bytes) result += string_format("{:02x} ", b);
     return result;
 }
 
 void SetupHooks() {
-    CodeInjection::New("Drop Item").Configure([](Injection& _) {
-        _.Var("Detour", 0x46a41c);
-        _.Var("DetourSize", 5);
-        _.Var("JumpBack", _.Var<int>("Detour") + _.Var<int>("DetourSize"));
-        _.Var("Trampoline", 0);
+    auto dropItemHook =
+        CodeInjection::New("Drop Item")
+            .Configure([](Injection& _) {
+                _.Var<uintptr_t>("Detour", 0x46a41c);
+                _.Var<size_t>("DetourSize", 5);
+                _.Var<uintptr_t>(
+                    "JumpBack", _.Var<uintptr_t>("Detour") + _.Var<size_t>("DetourSize")
+                );
+                _.Var<uintptr_t>("Trampoline", 0);
+                _.ReadBytes(
+                    {.addressVariable = "Detour",
+                     .outVariable     = "OriginalBytes",
+                     .byteCount       = _.Var<size_t>("DetourSize")}
+                );
+            })
+            .OnInstall([](Injection& _) {
+                _.AllocateMemory({.addressVariable = "Trampoline", .block = [](Injection&) {}});
+            })
+            .OnUninstall([](Injection&) {
+                //
+            });
 
-        Output("Detour: {:x}", _.Var<int>("Detour"));
-        Output("DetourSize: {:x}", _.Var<int>("DetourSize"));
-        Output("JumpBack: {:x}", _.Var<int>("JumpBack"));
+    Output("Detour: {:x}", dropItemHook.Var<uintptr_t>("Detour"));
+    Output("DetourSize: {:x}", dropItemHook.Var<size_t>("DetourSize"));
+    Output("JumpBack: {:x}", dropItemHook.Var<uintptr_t>("JumpBack"));
 
-        _.Var<Bytes>("OriginalBytes", {});
-        _.ReadBytes(
-            {.addressVariable = "Detour",
-             .outVariable     = "OriginalBytes",
-             .byteCount       = _.Var<size_t>("DetourSize")}
-        );
-
-        auto bytes = _.Var<Bytes>("OriginalBytes");
-        Output("OriginalBytes: {}", PrintBytes(bytes));
-    });
+    auto bytes = dropItemHook.Var<std::vector<uint8_t>>("OriginalBytes");
+    Output("OriginalBytes: {}", PrintBytes(bytes));
 
     // .OnEnable([](Injection& _) {
     //     _.AllocateMemory({

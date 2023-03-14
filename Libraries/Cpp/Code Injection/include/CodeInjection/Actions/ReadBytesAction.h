@@ -1,9 +1,12 @@
 #pragma once
 
 #include <cstdint>
+#include <memory>
 #include <string>
+#include <vector>
 
 #include "../InjectionAction.h"
+
 
 namespace CodeInjection::Actions {
 
@@ -21,6 +24,9 @@ namespace CodeInjection::Actions {
         ReadBytesAction(ReadBytesActionParams params) : _params(params) {}
 
         size_t GetByteCount() const override { return 0; }
-        void   Perform(Injection&) override {}
+
+        void Perform(std::shared_ptr<InjectionVariables> vars) override {
+            vars->Var<std::vector<uint8_t>>(_params.outVariable, {0x69, 0x42, 0x69, 0x42});
+        }
     };
 }

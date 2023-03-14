@@ -1,7 +1,5 @@
 #pragma once
 
-#include <StringFormatting.h>
-
 #include <any>
 #include <functional>
 #include <memory>
@@ -13,12 +11,13 @@
 
 #include "Actions.h"
 #include "InjectionState.h"
+#include "InjectionVariables.h"
 
 namespace CodeInjection {
 
     class Injection {
         std::string                                                      _name;
-        std::unordered_map<std::string, std::any>                        _variables;
+        std::shared_ptr<InjectionVariables>                              _variables;
         std::unordered_map<std::string, std::shared_ptr<InjectionState>> _states;
         std::shared_ptr<InjectionState>                                  _currentState;
         std::shared_ptr<InjectionState>                                  _currentlyConfiguringState;
@@ -29,13 +28,14 @@ namespace CodeInjection {
         }
         std::shared_ptr<InjectionState> FindOrCreateState(const std::string& name) {
             if (_states.contains(name)) return _states[name];
-            auto state    = std::make_shared<InjectionState>(name, *this);
+            auto state    = std::make_shared<InjectionState>(name, _variables);
             _states[name] = state;
             return state;
         }
 
     public:
-        Injection(const std::string& name) : _name(name) {}
+        Injection(const std::string& name)
+            : _name(name), _variables(std::make_shared<InjectionVariables>()) {}
 
         std::string_view GetName() const { return _name; }
 
@@ -49,17 +49,18 @@ namespace CodeInjection {
             _currentlyConfiguringState = nullptr;
             return *this;
         }
-        Injection& Install(std::function<void(Injection&)> block) { return On("Install", block); }
-        Injection& Uninstall(std::function<void(Injection&)> block) {
+        Injection& OnInstall(std::function<void(Injection&)> block) { return On("Install", block); }
+        Injection& OnUninstall(std::function<void(Injection&)> block) {
             return On("Uninstall", block);
-        }
-        Injection& Configure(std::function<void(Injection&)> block) {
-            return On("Configure", block);
-            Goto("Configure");  // <--- Configure() actions are run immediately
         }
         void Goto(const std::string& stateName) {
             auto state = GetStateIfExists(stateName);
             if (state) state->PerformActions();
+        }
+        Injection& Configure(std::function<void(Injection&)> block) {
+            On("Configure", block);
+            Goto("Configure");  // <--- Configure() actions are run immediately
+            return *this;
         }
         void Install() { Goto("Install"); }
         void Uninstall() { Goto("Uninstall"); }
@@ -70,15 +71,12 @@ namespace CodeInjection {
 
         template <typename T>
         Injection& Var(const std::string& name, T value) {
-            _variables[name] = value;
+            _variables->Var(name, value);
             return *this;
         }
         template <typename T>
         T& Var(const std::string& name) {
-            auto found = _variables.find(name);
-            if (found == _variables.end())
-                throw std::runtime_error(string_format("Variable {} not found", name));
-            return std::any_cast<T&>(found->second);
+            return _variables->Var<T>(name);
         }
 
         /**
@@ -94,6 +92,11 @@ namespace CodeInjection {
 
         Injection& ReadBytes(Actions::ReadBytesActionParams params) {
             return AddAction(Actions::ReadBytesAction(params));
+        }
+
+        Injection& AllocateMemory(Actions::AllocateMemoryActionParams params) {
+            return AddAction(Actions::AllocateMemoryAction(params));
+            return *this;
         }
     };
 }

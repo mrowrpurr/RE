@@ -1,15 +1,16 @@
 #pragma once
 
 #include <cstdint>
+#include <memory>
+
+#include "InjectionVariables.h"
 
 namespace CodeInjection {
 
-    class Injection;
-
     class InjectionAction {
     public:
-        uintptr_t      ActionAddress;
-        virtual size_t GetByteCount() const = 0;
-        virtual void   Perform(Injection&)  = 0;
+        uintptr_t      ActionCurrentAddress;
+        virtual size_t GetByteCount() const                         = 0;
+        virtual void   Perform(std::shared_ptr<InjectionVariables>) = 0;
     };
 }
