@@ -12,7 +12,7 @@ typedef std::vector<uint8_t> Bytes;
 
 std::string PrintBytes(Bytes bytes) {
     std::string result;
-    for (auto byte : bytes) result += string_format("{:02x} ", byte);
+    for (auto b : bytes) result += string_format("{:02x} ", b);
     return result;
 }
 
