@@ -25,14 +25,15 @@ namespace CodeInjection::Actions {
 
         size_t GetByteCount() const override { return 0; }
 
-        void Perform(std::shared_ptr<InjectionVariables> vars) override {
-            std::vector<uint8_t> bytes;
-            if (!_params.bytesVariable.empty())
-                bytes = vars->Var<std::vector<uint8_t>>(_params.bytesVariable);
-            else
-                bytes = _params.bytes;
-            auto address = vars->Var<uintptr_t>(_params.addressVariable);
-            Memory::WriteProtectedBytes(address, bytes);
-        }
+        void Perform(std::shared_ptr<InjectionBuilder> builder) override {}
+        // void Perform(std::shared_ptr<InjectionVariables> vars) override {
+        //     std::vector<uint8_t> bytes;
+        //     if (!_params.bytesVariable.empty())
+        //         bytes = vars->Var<std::vector<uint8_t>>(_params.bytesVariable);
+        //     else
+        //         bytes = _params.bytes;
+        //     auto address = vars->Var<uintptr_t>(_params.addressVariable);
+        //     Memory::WriteProtectedBytes(address, bytes);
+        // }
     };
 }

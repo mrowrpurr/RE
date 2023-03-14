@@ -18,48 +18,43 @@ std::string PrintBytes(std::vector<uint8_t> bytes) {
 }
 
 void SetupHooks() {
-    auto dropItemHook = CodeInjection::New("Drop Item").Configure([](Injection& _) {
-        _.AllocateMemory({.addressVariable = "Detour", .code = [](Injection&) {}});
-    });
-
-    // .Configure([](Injection& _) {
-    //     _.Var<uintptr_t>("Detour", 0x46a41c);
-    //     _.Var<size_t>("DetourSize", 5);
-    //     _.Var<uintptr_t>(
-    //         "JumpBack", _.Var<uintptr_t>("Detour") + _.Var<size_t>("DetourSize")
-    //     );
-    //     _.Var<uintptr_t>("Trampoline", 0);
-    //     _.ReadBytes(
-    //         {.addressVariable = "Detour",
-    //          .outVariable     = "OriginalBytes",
-    //          .byteCount       = _.Var<size_t>("DetourSize")}
-    //     );
-    // })
-    // .OnInstall([](Injection& _) {
-    //     _.WriteBytes({
-    //         .addressVariable = "Detour",
-    //         .bytes           = {0x69, 0x42, 0x69, 0x42, 0x69},
-    //     });
-    //     _.AllocateMemory({
-    //         .addressVariable = "Trampoline",
-    //         .block =
-    //             [](Injection& trampoline) {
-    //                 trampoline.WriteBytes({
-    //                     .bytes = {0x01, 0x02, 0x03, 0x04, 0x05},
-    //                 });
-    //                 trampoline.WriteBytes({
-    //                     .bytes = {0x99, 0x98, 0x97, 0x96, 0x95},
-    //                 });
-    //             },
-    //     });
-    // })
-    // .OnUninstall([](Injection& _) {
-    //     _.WriteBytes({
-    //         .addressVariable = "Detour",
-    //         .bytesVariable   = "OriginalBytes",
-    //     });
-    //     // _.DeallocateMemory({.addressVariable = "Trampoline"});
-    // });
+    CodeInjection::New("Drop Item")
+        .Configure([](Injection& _) {
+            _.Var<uintptr_t>("Detour", 0x46a41c);
+            _.Var<size_t>("DetourSize", 5);
+            _.Var<uintptr_t>("JumpBack", _.Var<uintptr_t>("Detour") + _.Var<size_t>("DetourSize"));
+            _.Var<uintptr_t>("Trampoline", 0);
+            _.ReadBytes(
+                {.addressVariable = "Detour",
+                 .outVariable     = "OriginalBytes",
+                 .byteCount       = _.Var<size_t>("DetourSize")}
+            );
+        })
+        .OnInstall([](Injection& _) {
+            _.WriteBytes({
+                .addressVariable = "Detour",
+                .bytes           = {0x69, 0x42, 0x69, 0x42, 0x69},
+            });
+            _.AllocateMemory({
+                .addressVariable = "Trampoline",
+                .code =
+                    [](Injection& trampoline) {
+                        trampoline.WriteBytes({
+                            .bytes = {0x01, 0x02, 0x03, 0x04, 0x05},
+                        });
+                        trampoline.WriteBytes({
+                            .bytes = {0x99, 0x98, 0x97, 0x96, 0x95},
+                        });
+                    },
+            });
+        })
+        .OnUninstall([](Injection& _) {
+            _.WriteBytes({
+                .addressVariable = "Detour",
+                .bytesVariable   = "OriginalBytes",
+            });
+            _.DeallocateMemory({.addressVariable = "Trampoline"});
+        });
 }
 
 void RunUI() {
