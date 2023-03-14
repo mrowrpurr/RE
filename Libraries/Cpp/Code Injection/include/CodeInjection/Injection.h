@@ -17,6 +17,7 @@ namespace CodeInjection {
 
     class Injection {
         std::string                                                      _name;
+        bool                                                             _isInstalled = false;
         std::shared_ptr<InjectionVariables>                              _variables;
         std::unordered_map<std::string, std::shared_ptr<InjectionState>> _states;
         std::shared_ptr<InjectionState>                                  _currentState;
@@ -37,7 +38,7 @@ namespace CodeInjection {
         Injection(const std::string& name)
             : _name(name), _variables(std::make_shared<InjectionVariables>()) {}
 
-        std::string_view GetName() const { return _name; }
+        const std::string& GetName() const { return _name; }
 
         /**
          * States
@@ -62,8 +63,21 @@ namespace CodeInjection {
             Goto("Configure");  // <--- Configure() actions are run immediately
             return *this;
         }
-        void Install() { Goto("Install"); }
-        void Uninstall() { Goto("Uninstall"); }
+        void Install() {
+            _isInstalled = true;
+            Goto("Install");
+        }
+        void Uninstall() {
+            _isInstalled = false;
+            Goto("Uninstall");
+        }
+        void Toggle() {
+            if (_isInstalled)
+                Uninstall();
+            else
+                Install();
+        }
+        bool IsInstalled() const { return _isInstalled; }
 
         /**
          * Variables
@@ -92,6 +106,10 @@ namespace CodeInjection {
 
         Injection& ReadBytes(Actions::ReadBytesActionParams params) {
             return AddAction(Actions::ReadBytesAction(params));
+        }
+
+        Injection& WriteBytes(Actions::WriteBytesActionParams params) {
+            return AddAction(Actions::WriteBytesAction(params));
         }
 
         Injection& AllocateMemory(Actions::AllocateMemoryActionParams params) {

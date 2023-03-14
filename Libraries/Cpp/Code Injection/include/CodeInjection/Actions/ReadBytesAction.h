@@ -1,5 +1,7 @@
 #pragma once
 
+#include <Memory.h>
+
 #include <cstdint>
 #include <memory>
 #include <string>
@@ -26,7 +28,11 @@ namespace CodeInjection::Actions {
         size_t GetByteCount() const override { return 0; }
 
         void Perform(std::shared_ptr<InjectionVariables> vars) override {
-            vars->Var<std::vector<uint8_t>>(_params.outVariable, {0x69, 0x42, 0x69, 0x42});
+            auto address = _params.address;
+            if (!_params.addressVariable.empty())
+                address = vars->Var<uintptr_t>(_params.addressVariable);
+            auto bytes = Memory::ReadBytes(address, _params.byteCount);
+            vars->Var<std::vector<uint8_t>>(_params.outVariable, bytes);
         }
     };
 }

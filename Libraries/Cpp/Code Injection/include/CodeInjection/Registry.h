@@ -19,14 +19,14 @@ namespace CodeInjection {
 
     std::vector<std::shared_ptr<Injection>> GetAllInjections() {
         std::vector<std::shared_ptr<Injection>> injections;
-        for (auto& injection : RegisteredInjections) injections.push_back(injection.second);
+        for (auto injection : RegisteredInjections) injections.push_back(injection.second);
         return injections;
     }
 
     void InstallAll() {
-        for (auto& injection : RegisteredInjections) injection.second->Install();
+        for (auto injection : RegisteredInjections) injection.second->Install();
     }
     void UninstallAll() {
-        for (auto& injection : RegisteredInjections) injection.second->Uninstall();
+        for (auto injection : RegisteredInjections) injection.second->Uninstall();
     }
 }

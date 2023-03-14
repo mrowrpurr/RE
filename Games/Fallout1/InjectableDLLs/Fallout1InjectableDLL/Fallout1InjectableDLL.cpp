@@ -31,49 +31,38 @@ void SetupHooks() {
                 );
             })
             .OnInstall([](Injection& _) {
-                _.AllocateMemory({.addressVariable = "Trampoline", .block = [](Injection&) {}});
+                // _.AllocateMemory({.addressVariable = "Trampoline", .block = [](Injection&) {}});
+                _.WriteBytes({
+                    .addressVariable = "Detour",
+                    .bytes           = {0x69, 0x42, 0x69, 0x42, 0x69},
+                });
             })
-            .OnUninstall([](Injection&) {
-                //
+            .OnUninstall([](Injection& _) {
+                _.WriteBytes({
+                    .addressVariable = "Detour",
+                    .bytesVariable   = "OriginalBytes",
+                });
             });
-
-    Output("Detour: {:x}", dropItemHook.Var<uintptr_t>("Detour"));
-    Output("DetourSize: {:x}", dropItemHook.Var<size_t>("DetourSize"));
-    Output("JumpBack: {:x}", dropItemHook.Var<uintptr_t>("JumpBack"));
-
-    auto bytes = dropItemHook.Var<std::vector<uint8_t>>("OriginalBytes");
-    Output("OriginalBytes: {}", PrintBytes(bytes));
-
-    // .OnEnable([](Injection& _) {
-    //     _.AllocateMemory({
-    //         .addressVariable = "Trampoline",
-    //         .code =
-    //             [](Injection& trampoline) {
-    //                 trampoline.WriteBytes({0x69});
-    //                 trampoline.Jmp("JumpBack");
-    //             },
-    //     });
-    //     _.WriteJmp({.addressVariable = "Detour"});
-    //     _.WriteNops({.count = 2});
-    //     _.WriteAssembly(AssemblyCode {
-    //         code.mov(eax, ptr[esp + 0x4]);
-    //         code.nop();
-    //         code.nop();
-    //     })
-    // })
-    // .OnDisable([](Injection& _) {
-    //     _.WriteBytes({.addressVariable = "Detour", .bytesVariable = "OriginalBytes"});
-    //     _.DeallocateMemory({.addressVariable = "Trampoline"});
-    // });
 }
 
 void RunUI() {
+    auto injections = CodeInjection::RegisteredInjections;
+
     UserInterface::Run([&](auto& app) {
         app.SetTitle("Fallout 1")
             .SetButtonHeight(50)
             .SetHeight(500)
             .SetWidth(500)
             .ShowOutputTextBox();
+        for (auto [name, injection] : injections) {
+            app.AddButton(string_format("Enable {}", injection->GetName()), [&, injection]() {
+                injection->Toggle();
+                if (injection->IsInstalled())
+                    app.ChangeButtonText(string_format("Disable {}", injection->GetName()));
+                else
+                    app.ChangeButtonText(string_format("Enable {}", injection->GetName()));
+            });
+        }
         app.AddButton("Clear", [&]() { app.ClearOutput(); });
         app.AddButton("Eject DLL", [&]() { app.Close(); });
     });
@@ -84,3 +73,9 @@ DLL_Main {
     RunUI();
     Injected_DLL::EjectDLL();
 }
+
+//     _.WriteAssembly(AssemblyCode {
+//         code.mov(eax, ptr[esp + 0x4]);
+//         code.nop();
+//         code.nop();
+//     })
