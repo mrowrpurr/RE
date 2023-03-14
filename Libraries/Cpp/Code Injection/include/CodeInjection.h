@@ -1,5 +1,5 @@
 #pragma once
 
-#include "CodeInjection/Registry.h"
+#include "CodeInjection/CodeInjection.h"
 
-typedef CodeInjection::InjectionBuilder Injection;
+typedef CodeInjection::Injection Injection;

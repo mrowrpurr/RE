@@ -9,20 +9,18 @@
 
 namespace CodeInjection {
 
-    class Injection;
-
     namespace Actions {
 
         struct AllocateMemoryActionParams {
-            std::string                     addressVariable;
-            std::function<void(Injection&)> block;
+            // std::string                     addressVariable;
+            // std::function<void(Injection&)> block;
         };
 
         class AllocateMemoryAction : public InjectionAction {
-            AllocateMemoryActionParams _params;
+            //     AllocateMemoryActionParams _params;
 
-        public:
-            AllocateMemoryAction(AllocateMemoryActionParams params) : _params(params) {}
+            // public:
+            //     AllocateMemoryAction(AllocateMemoryActionParams params) : _params(params) {}
 
             size_t GetByteCount() const override { return 0; }
 

@@ -12,9 +12,12 @@
 namespace CodeInjection {
 
     class InjectionApp {
-        std::string _name;
-        bool        _isInstalled = false;
-        //     false; std::shared_ptr<InjectionVariables>                              _variables;
+        std::string                                                    _name;
+        bool                                                           _isInstalled = false;
+        std::shared_ptr<InjectionVariables>                            _variables;
+        std::shared_ptr<std::vector<std::shared_ptr<InjectionAction>>> _currentActionsCollection;
+        std::shared_ptr<InjectionBuilder>                              _builder;
+
         //     std::unordered_map<std::string, std::shared_ptr<InjectionState>> _states;
         //     std::shared_ptr<InjectionState>                                  _currentState;
         //     std::shared_ptr<InjectionState> _currentlyConfiguringState;
@@ -34,6 +37,8 @@ namespace CodeInjection {
         InjectionApp(const std::string& name) : _name(name) {}
 
         const std::string& GetName() const { return _name; }
+
+        std::shared_ptr<InjectionBuilder> GetBuilder() { return _builder; }
 
         bool IsInstalled() const { return _isInstalled; }
         void Install() {}

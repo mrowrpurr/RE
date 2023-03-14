@@ -5,17 +5,15 @@
 #include <unordered_map>
 
 #include "InjectionApp.h"
+#include "InjectionBuilder.h"
 
 namespace CodeInjection {
     std::unordered_map<std::string, std::shared_ptr<InjectionApp>> RegisteredInjections;
 
-    InjectionBuilder x;
-
     InjectionBuilder& New(const std::string& name) {
         auto injectionApp          = std::make_shared<InjectionApp>(name);
         RegisteredInjections[name] = injectionApp;
-        // ...
-        return x;
+        return *injectionApp->GetBuilder();
     }
 
     // Injection& GetInjection(const std::string& name) { return *RegisteredInjections[name]; }
