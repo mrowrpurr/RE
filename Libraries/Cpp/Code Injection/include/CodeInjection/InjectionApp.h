@@ -1,5 +1,7 @@
 #pragma once
 
+#include <Logging.h>
+
 #include <functional>
 #include <memory>
 #include <string>
@@ -34,7 +36,10 @@ namespace CodeInjection {
         }
 
     public:
-        InjectionApp(const std::string& name) : _name(name) {}
+        InjectionApp(const std::string& name)
+            : _name(name), _variables(std::make_shared<InjectionVariables>()) {
+            _builder = std::make_shared<InjectionBuilder>(_variables);
+        }
 
         const std::string& GetName() const { return _name; }
 
@@ -42,8 +47,10 @@ namespace CodeInjection {
             const std::string& stateName, std::function<void(InjectionBuilder&)> block
         ) {
             _currentlyConfiguringState = FindOrCreateState(stateName);
+            _builder->SetActionContainer(_currentlyConfiguringState->GetActionContainer());
             block(*_builder);
             _currentlyConfiguringState = nullptr;
+            _builder->SetActionContainer(nullptr);
             return *this;
         }
         InjectionApp& OnInstall(std::function<void(InjectionBuilder&)> block) {
@@ -53,6 +60,7 @@ namespace CodeInjection {
             return On("Uninstall", block);
         }
         void Goto(const std::string& stateName) {
+            Log("[{}] Goto: {}", _name, stateName);
             auto state = GetStateIfExists(stateName);
             if (state) state->PerformActions();
         }

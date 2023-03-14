@@ -2,6 +2,7 @@
 
 #include "Logging/Config.h"
 #include "spdlog/sinks/basic_file_sink.h"
+#include "spdlog/sinks/stdout_color_sinks.h"
 #include "spdlog/spdlog.h"
 
 namespace Logging::Adapters {
@@ -13,7 +14,9 @@ namespace Logging::Adapters {
         SpdlogAdapter& operator=(const SpdlogAdapter&) = delete;
         SpdlogAdapter& operator=(SpdlogAdapter&&)      = delete;
 
-        SpdlogAdapter() : SpdlogLogger(spdlog::basic_logger_mt("basic_logger", Config::LogFilePath, true)) {
+        SpdlogAdapter() {
+            if (Config::LogFilePath.empty()) SpdlogLogger = spdlog::stdout_color_mt("console");
+            else SpdlogLogger = spdlog::basic_logger_mt("basic_logger", Config::LogFilePath, true);
             SpdlogLogger->set_level(spdlog::level::trace);
             SpdlogLogger->flush_on(spdlog::level::trace);
             SpdlogLogger->set_pattern("%v");

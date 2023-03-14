@@ -9,6 +9,8 @@
 #include <cstdint>
 #include <string>
 
+SetLogFilePath("InjectedDLL.log");
+
 #define Output(...) UserInterface::App().AppendOutput(string_format(__VA_ARGS__))
 
 std::string PrintBytes(std::vector<uint8_t> bytes) {

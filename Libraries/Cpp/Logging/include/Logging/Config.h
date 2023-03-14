@@ -7,10 +7,10 @@
 namespace Logging::Config {
 
     // The path to the log file.
-    std::string LogFilePath = "Log.txt";
+    std::string LogFilePath = "";
 }
 
-#define LogFilePath(filePath)                                    \
-    Logging::Util::OnLoadFunctionRunner ___loggingLogFileSetup { \
-        []() { Logging::LogFilePath = filePath; }                \
+#define SetLogFilePath(filePath)                                    \
+    Logging::Private::OnLoadFunctionRunner ___loggingLogFileSetup { \
+        []() { Logging::Config::LogFilePath = filePath; }           \
     }

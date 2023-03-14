@@ -2,7 +2,7 @@
 
 #include <functional>
 
-namespace Loggung::Private {
+namespace Logging::Private {
 
     // This class is used to run a function when the library is loaded.
     // Used by macros Log and LogFilePath.

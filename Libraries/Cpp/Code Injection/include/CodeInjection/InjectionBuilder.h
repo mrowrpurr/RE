@@ -1,5 +1,7 @@
 #pragma once
 
+#include <Logging.h>
+
 #include "Actions.h"
 #include "InjectionAction.h"
 #include "InjectionVariables.h"
@@ -12,11 +14,13 @@ namespace CodeInjection {
 
     public:
         InjectionBuilder() = default;
-        InjectionBuilder(
-            std::shared_ptr<InjectionVariables>                            variables,
+        InjectionBuilder(std::shared_ptr<InjectionVariables> variables) : _variables(variables) {}
+
+        void SetActionContainer(
             std::shared_ptr<std::vector<std::shared_ptr<InjectionAction>>> actions
-        )
-            : _actions(actions), _variables(variables) {}
+        ) {
+            _actions = actions;
+        }
 
         template <typename T>
         InjectionBuilder& AddAction(T action) {
@@ -46,12 +50,14 @@ namespace CodeInjection {
 
         template <typename T>
         InjectionBuilder& Var(const std::string& name, T value) {
+            Log("Set Variable: {} ({})", name, typeid(T).name());
             _variables->Var(name, value);
             return *this;
         }
 
         template <typename T>
         T& Var(const std::string& name) {
+            Log("Get Variable: {} ({})", name, typeid(T).name());
             return _variables->Var<T>(name);
         }
     };
