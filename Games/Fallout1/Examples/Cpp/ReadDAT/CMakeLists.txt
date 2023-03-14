@@ -1,12 +1,13 @@
 project(Fallout1.ReadDAT)
 
+set(Boost_NO_WARN_NEW_VERSIONS 1)
+
 find_package(ZLIB REQUIRED)
 
-set(FALLTERGEIST_PATH "$ENV{FALLTERGEIST_PATH}")
+set(DAT_UNPACKER_LIB "$ENV{DAT_UNPACKER_LIB}")
+message(STATUS "DAT unpacker path: ${DAT_UNPACKER_LIB}")
 
-message(STATUS "Falltergeist path: ${FALLTERGEIST_PATH}")
-
-add_subdirectory("${FALLTERGEIST_PATH}" build SYSTEM)
+add_subdirectory("${DAT_UNPACKER_LIB}" build SYSTEM)
 
 add_executable(${PROJECT_NAME} Fallout1ReadDAT.cpp)
-target_link_libraries(${PROJECT_NAME} PRIVATE falltergeist)
+target_link_libraries(${PROJECT_NAME} PRIVATE dat-unpacker)

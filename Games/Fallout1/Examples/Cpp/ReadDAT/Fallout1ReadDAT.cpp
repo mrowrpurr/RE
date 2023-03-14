@@ -1,22 +1,24 @@
-#include <iostream>
-#include <Msg/File.h>
-#include <Msg/Message.h>
-#include <Dat/File.h>
+#include <DatFile.h>
+#include <DatFileItem.h>
 
-using namespace libfalltergeist;
+#include <iostream>
+
+using namespace DatUnpacker;
+
+void ToLower(std::string& str) {
+    for (auto& c : str) c = tolower(c);
+}
 
 int main() {
-    auto pathToMasterDAT = "D:/GOG/Games/Fallout/MASTER.DAT";
-    // auto pathToMasterDAT = "D:/GOG/Games/Fallout 2/MASTER.DAT";
-    
-    auto datFile = Dat::File(pathToMasterDAT);
-    auto* itemsMsgFile = static_cast<Msg::File*>(datFile.item("text/english/game/pro_item.msg"));
-
-    auto itemName = itemsMsgFile->message(4000)->text();
-    auto itemDescription = itemsMsgFile->message(4001)->text();
-
-    std::cout << "Item name: " << itemName << std::endl;
-    std::cout << "Item description: " << itemDescription << std::endl;
-
+    auto datFile = DatFile{"D:\\GOG\\Games\\Fallout\\MASTER.DAT"};
+    datFile.version();
+    for (auto* item : *datFile.items()) {
+        auto name = item->name();
+        ToLower(name);
+        if (name.ends_with("pro_item.msg") && name.contains("english")) {
+            std::cout << item->name() << std::endl;
+            std::cout << item->data() << std::endl;
+        }
+    }
     return 0;
 }
