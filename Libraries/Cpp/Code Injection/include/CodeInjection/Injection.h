@@ -1,13 +1,17 @@
 #pragma once
 
+#include <StringFormatting.h>
+
 #include <any>
 #include <functional>
 #include <memory>
+#include <stdexcept>
 #include <string>
 #include <string_view>
 #include <unordered_map>
 #include <vector>
 
+#include "Actions.h"
 #include "InjectionState.h"
 
 namespace CodeInjection {
@@ -36,25 +40,24 @@ namespace CodeInjection {
         std::string_view GetName() const { return _name; }
 
         /**
-         * Configure block (just for semantics)
-         */
-
-        Injection& Configure(std::function<void(Injection&)> block) {
-            block(*this);
-            return *this;
-        }
-
-        /**
          * States
          */
 
-        Injection& On(const std::string& stateName) {
+        Injection& On(const std::string& stateName, std::function<void(Injection&)> block) {
             _currentlyConfiguringState = FindOrCreateState(stateName);
+            block(*this);
+            _currentlyConfiguringState = nullptr;
             return *this;
         }
-        Injection& OnInstall() { return On("Install"); }
-        Injection& OnUninstall() { return On("Uninstall"); }
-        void       Goto(const std::string& stateName) {
+        Injection& Install(std::function<void(Injection&)> block) { return On("Install", block); }
+        Injection& Uninstall(std::function<void(Injection&)> block) {
+            return On("Uninstall", block);
+        }
+        Injection& Configure(std::function<void(Injection&)> block) {
+            return On("Configure", block);
+            Goto("Configure");  // <--- Configure() actions are run immediately
+        }
+        void Goto(const std::string& stateName) {
             auto state = GetStateIfExists(stateName);
             if (state) state->PerformActions();
         }
@@ -72,7 +75,25 @@ namespace CodeInjection {
         }
         template <typename T>
         T& Var(const std::string& name) {
-            return std::any_cast<T&>(_variables[name]);
+            auto found = _variables.find(name);
+            if (found == _variables.end())
+                throw std::runtime_error(string_format("Variable {} not found", name));
+            return std::any_cast<T&>(found->second);
+        }
+
+        /**
+         * Actions
+         */
+
+        template <typename T>
+        Injection& AddAction(T action) {
+            if (_currentlyConfiguringState)
+                _currentlyConfiguringState->AddAction(std::make_shared<T>(action));
+            return *this;
+        }
+
+        Injection& ReadBytes(Actions::ReadBytesActionParams params) {
+            return AddAction(Actions::ReadBytesAction(params));
         }
     };
 }
