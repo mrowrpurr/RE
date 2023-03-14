@@ -18,7 +18,10 @@ std::string PrintBytes(std::vector<uint8_t> bytes) {
 }
 
 void SetupHooks() {
-    auto dropItemHook = CodeInjection::New("Drop Item");
+    auto dropItemHook = CodeInjection::New("Drop Item").Configure([](Injection& _) {
+        _.AllocateMemory({.addressVariable = "Detour", .code = [](Injection&) {}});
+    });
+
     // .Configure([](Injection& _) {
     //     _.Var<uintptr_t>("Detour", 0x46a41c);
     //     _.Var<size_t>("DetourSize", 5);
@@ -71,8 +74,7 @@ void RunUI() {
                 injection->Toggle();
                 if (injection->IsInstalled())
                     app.ChangeButtonText(string_format("Disable {}", injection->GetName()));
-                else
-                    app.ChangeButtonText(string_format("Enable {}", injection->GetName()));
+                else app.ChangeButtonText(string_format("Enable {}", injection->GetName()));
             });
         }
         app.AddButton("Clear", [&]() { app.ClearOutput(); });

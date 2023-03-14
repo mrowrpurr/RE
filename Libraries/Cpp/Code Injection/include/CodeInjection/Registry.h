@@ -10,10 +10,10 @@
 namespace CodeInjection {
     std::unordered_map<std::string, std::shared_ptr<InjectionApp>> RegisteredInjections;
 
-    InjectionBuilder& New(const std::string& name) {
+    InjectionApp& New(const std::string& name) {
         auto injectionApp          = std::make_shared<InjectionApp>(name);
         RegisteredInjections[name] = injectionApp;
-        return *injectionApp->GetBuilder();
+        return *injectionApp;
     }
 
     // Injection& GetInjection(const std::string& name) { return *RegisteredInjections[name]; }
