@@ -19,6 +19,14 @@ std::string PrintBytes(std::vector<uint8_t> bytes) {
     return result;
 }
 
+// TODO: SaveRegisters
+// TODO: RestoreRegisters
+// TODO: Array of Bytes
+// TODO: Call Function
+// TODO: Call Lambda
+// TODO: Overloads
+// TODO: Wrappers
+
 void SetupHooks() {
     CodeInjection::New("Drop Item")
         .Configure([](Injection& _) {
@@ -27,27 +35,23 @@ void SetupHooks() {
             _.Var<uintptr_t>("JumpBack", _.Var<uintptr_t>("Detour") + _.Var<size_t>("DetourSize"));
             _.Var<uintptr_t>("Trampoline", 0);
             _.ReadBytes(
-                {.addressVariable = "Detour",
-                 .outVariable     = "OriginalBytes",
-                 .byteCount       = _.Var<size_t>("DetourSize")}
+                {.addressVariable = "Detour", .outVariable = "OriginalBytes", .byteCount = _.Var<size_t>("DetourSize")}
             );
         })
         .OnInstall([](Injection& _) {
-            _.WriteBytes({
-                .addressVariable = "Detour",
-                .bytes           = {0x69, 0x42, 0x69, 0x42, 0x69},
-            });
             _.AllocateMemory({
                 .addressVariable = "Trampoline",
                 .code =
                     [](Injection& trampoline) {
-                        trampoline.WriteBytes({
-                            .bytes = {0x01, 0x02, 0x03, 0x04, 0x05},
-                        });
-                        trampoline.WriteBytes({
-                            .bytes = {0x99, 0x98, 0x97, 0x96, 0x95},
-                        });
+                        trampoline.WriteNop({.count = 5});
+                        trampoline.WriteBytes({.bytesVariable = "OriginalBytes"});
+                        trampoline.WriteNop({.count = 5});
+                        trampoline.WriteJmp({.toAddressVariable = "JumpBack"});
                     },
+            });
+            _.WriteJmp({
+                .addressVariable   = "Detour",
+                .toAddressVariable = "Trampoline",
             });
         })
         .OnUninstall([](Injection& _) {
@@ -59,35 +63,30 @@ void SetupHooks() {
         });
 }
 
-void PrintOutCoolShit() {
-    // From ASM to BYTES
-    auto bytes = Assembly::GetBytes([](Assembly::Code code) {
-        code.mov(eax, ptr[esp + 0x4]);
-        code.nop();
-        code.nop();
-    });
-    Output("Bytes: {}", Memory::BytesToString(bytes));
+// void PrintOutCoolShit() {
+//     // From ASM to BYTES
+//     auto bytes = Assembly::GetBytes([](Assembly::Code code) {
+//         code.mov(eax, ptr[esp + 0x4]);
+//         code.nop();
+//         code.nop();
+//     });
+//     Output("Bytes: {}", Memory::BytesToString(bytes));
 
-    // From BYTES to ASM
-    auto        instructions = Assembly::Disassemble86(bytes);
-    std::string asmCode;
-    for (auto& instruction : instructions) asmCode += instruction + "\n";
-    Output("ASM: {}", asmCode);
-}
+//     // From BYTES to ASM
+//     auto        instructions = Assembly::Disassemble86(bytes);
+//     std::string asmCode;
+//     for (auto& instruction : instructions) asmCode += instruction + "\n";
+//     Output("ASM: {}", asmCode);
+// }
 
 void RunUI() {
     UserInterface::Run([&](auto& app) {
-        app.SetTitle("Fallout 1")
-            .SetButtonHeight(50)
-            .SetHeight(500)
-            .SetWidth(500)
-            .ShowOutputTextBox();
-        app.AddButton("Generate Bytes from ASM", [&]() { PrintOutCoolShit(); });
+        app.SetTitle("Fallout 1").SetButtonHeight(50).SetHeight(500).SetWidth(500).ShowOutputTextBox();
+        // app.AddButton("Generate Bytes from ASM", [&]() { PrintOutCoolShit(); });
         for (auto [name, injection] : CodeInjection::RegisteredInjections) {
             app.AddButton(string_format("Enable {}", injection->GetName()), [&, injection]() {
                 injection->Toggle();
-                if (injection->IsInstalled())
-                    app.ChangeButtonText(string_format("Disable {}", injection->GetName()));
+                if (injection->IsInstalled()) app.ChangeButtonText(string_format("Disable {}", injection->GetName()));
                 else app.ChangeButtonText(string_format("Enable {}", injection->GetName()));
             });
         }

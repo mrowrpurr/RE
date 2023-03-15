@@ -15,9 +15,7 @@ namespace CodeInjection {
     public:
         InjectionBuilder(std::shared_ptr<InjectionVariables> variables) : _variables(variables) {}
 
-        void SetActionsContainer(
-            std::shared_ptr<std::vector<std::shared_ptr<InjectionAction>>> actions
-        ) {
+        void SetActionsContainer(std::shared_ptr<std::vector<std::shared_ptr<InjectionAction>>> actions) {
             _actions = actions;
         }
 
@@ -34,6 +32,16 @@ namespace CodeInjection {
 
         InjectionBuilder& WriteBytes(Actions::WriteBytesActionParams actionParams) {
             AddAction(Actions::WriteBytesAction(actionParams));
+            return *this;
+        }
+
+        InjectionBuilder& WriteJmp(Actions::WriteJmpActionParams actionParams) {
+            AddAction(Actions::WriteJmpAction(actionParams));
+            return *this;
+        }
+
+        InjectionBuilder& WriteNop(Actions::WriteNopActionParams actionParams) {
+            AddAction(Actions::WriteNopAction(actionParams));
             return *this;
         }
 

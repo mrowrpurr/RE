@@ -12,51 +12,44 @@
 
 namespace CodeInjection::Actions {
 
-    struct WriteBytesActionParams {
-        uintptr_t            address;
-        std::string          addressVariable;
-        std::vector<uint8_t> bytes;
-        std::string          bytesVariable;
-        bool                 writeProtected = true;
+    struct WriteNopActionParams {
+        uintptr_t   address;
+        std::string addressVariable;
+        size_t      count;
+        bool        writeProtected = true;
     };
 
-    class WriteBytesAction : public InjectionAction {
-        WriteBytesActionParams _params;
+    class WriteNopAction : public InjectionAction {
+        WriteNopActionParams _params;
 
     public:
-        WriteBytesAction(WriteBytesActionParams params) : _params(params) {}
+        WriteNopAction(WriteNopActionParams params) : _params(params) {}
 
         bool IsWriteProtected(std::shared_ptr<InjectionVariables> vars) {
             return _params.writeProtected || CurrentAddressWriteProtected;
-        }
-
-        std::vector<uint8_t> GetBytes(std::shared_ptr<InjectionVariables> vars) {
-            std::vector<uint8_t> bytes;
-            if (!_params.bytesVariable.empty()) bytes = vars->Get<std::vector<uint8_t>>(_params.bytesVariable);
-            else bytes = _params.bytes;
-            return bytes;
         }
 
         uintptr_t GetAddress(std::shared_ptr<InjectionVariables> vars) {
             if (!_params.addressVariable.empty()) return vars->Get<uintptr_t>(_params.addressVariable);
             else if (_params.address != 0) return _params.address;
             else if (ActionCurrentAddress != 0) return ActionCurrentAddress;
-            else throw std::runtime_error("WriteBytesAction: No address specified");
+            else throw std::runtime_error("WriteNopAction: No address specified");
+        }
+
+        std::vector<uint8_t> GetBytes(std::shared_ptr<InjectionVariables> vars) {
+            std::vector<uint8_t> bytes;
+            for (size_t i = 0; i < _params.count; i++) bytes.push_back(0x90);  // NOP
+            return bytes;
         }
 
         size_t GetByteCount(std::shared_ptr<InjectionVariables> vars) override { return GetBytes(vars).size(); }
 
         void Perform(std::shared_ptr<InjectionVariables> vars) override {
-            auto bytes = GetBytes(vars);
-            if (bytes.empty()) {
-                Log("WriteBytesAction: No bytes to write");
-                return;
-            }
-
             auto address          = GetAddress(vars);
+            auto bytes            = GetBytes(vars);
             auto isWriteProtected = IsWriteProtected(vars);
 
-            Log("WriteBytesAction: Writing {} bytes to 0x{:X} (Protected: {})", bytes.size(), address,
+            Log("WriteNopAction: Writing {} NOP bytes to 0x{:x} (Protected: {})", bytes.size(), address,
                 isWriteProtected);
 
             if (isWriteProtected) Memory::WriteProtectedBytes(address, bytes);

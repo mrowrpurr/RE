@@ -5,7 +5,7 @@
 #include <functional>
 #include <vector>
 
-using namespace Xbyak::util;
+// using namespace Xbyak::util;
 
 namespace Assembly {
 
