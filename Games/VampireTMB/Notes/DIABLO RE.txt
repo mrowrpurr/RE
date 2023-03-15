@@ -1,0 +1,27 @@
+Scroll Healing, left 3 down, 			168 (EAX/EDX)
+Rejuvenation, top left, 					162
+Potion of Healing, left 2nd down, 	15D
+
+
+
+
+
+2e0 (pop)
+
+
+
+
+
+
+
+
+ESI
+	3d		string
+	4f		114
+	50	?? 6573
+
+Gold 0
+Rejuvenation 116
+
+
+

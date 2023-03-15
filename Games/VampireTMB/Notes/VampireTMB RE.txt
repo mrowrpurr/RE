@@ -1,0 +1,13 @@
+On Sidewalk -111.96875
+On Street -119.96875
+
+vampire.dll+C4844 
+^--- Z of X Y Z
+
+0EEA4844
+
+vampire.dll+30B2AD EDC0000+30B29E 
+
+9460301+30B29E
+
+EDC0000

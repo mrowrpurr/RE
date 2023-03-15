@@ -1,0 +1,51 @@
+Mrowr Purr's Reverse Engineering Journey
+
+TODO : Teleport
+
+19. More CodeInjection (AllocateMemory etc) and Baldur's Gate 3
+18. Recreate CodeInjection (AGAIN) and then Read item names from .DAT
+17. xbyak + zydis Memory/Assembly libraries + Fallout 1 RE
+16. Tinker with more rewrite of CodeInjection library + F1 stats RE
+15. C++ fresh hooking lib. Fresh Diablo CT
+14. C++ fresh hooking lib. and ? Diablo ?
+13. Oblivion, PlayerCharacter, Entity List, Inventory
+12. Added Array of Bytes supported (off-stream: added Uninstall)
+11. Pretty much finished up the Hooking library!
+10. Lambda hooks
+9. Custom Hook ASM, keep registers happy, JMP learning
+8. UI for Injected DLL + Hooks can uninstall themselves
+7. UI for DLL Injector
+6. (RE practice in Vampire: TMB and Fallout 1)
+   - the Fallout 1 scripting engine
+5. Detour OK and intentionally get events
+4. Hook at offset / IDA
+3. DLL Injector + Injected .dll and created a mini library
+2. External .exe memory hack for Fallout 2
+1. Cheat Engine / Ghidra
+
+
+
+TODO:
+- !midnight
+- Cheat Engine Lua Scripting!
+- let's hook an entire function call! In Fallout 1.
+- VTables. RTTI. etc etc. godbolt C++?
+
+
+Notes:
+ESP will point to the top of the stack
+EIP will point to the instruction to be executed
+
+The first four arguments:
+Integers are passed in RCX,RDX,R8,R9,
+floats are stored in xmm0,xmm1... registers.
+
+RCX will likely be the *this* pointer
+
+Other arguments(so if it has more than 4) are pushed on the stack(like in 32bit).
+
+The return value of the function call is in RAX, or xmm0(depending if its a integer or a float)
+
+https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/x64-architecture
+
+RSP is the stack pointer

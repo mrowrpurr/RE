@@ -1,0 +1,119 @@
+Brass Knuckles: 21 / 15
+Lock picks: 84
+Flare: 79 / 4F
+Knife: 4
+Stimpack: 40
+
+----------------------------------------------
+0x46a2ba - Pickup (Existing)
+
+ECX + 0x8 ---> Inventory Ptr, e.g. 08B4A754 or 08B6BE78
+
+INC is at 0046A363
+
+18000 player at 08B4A728
+----------------------------------------------
+
+Knife P->087F2728
+
+Shady Sands Gun Dude / 417 / Tile 14108
+
+===================================================
+47f6a7
+47f6ba
+
+
+Signature: 
+
+\x8B\x72\x04\xEB\x11\xBB\x01\x00\x00\x00\xBA\x00\x00\x00\x00\x89\xC8
+
+Mask:
+
+xxxxxxxxxxx????xx
+
+=====
+
+\x8B\x72\x04\xEB\x11
+
+xxxxx
+
+=====
+
+087CC824-174
+
+unnamed
+
+87E6390
+
+A map hex (at least in Shady Sands)
+falloutwHR.exe+242D60
+
+Map 176 bytes
+
+0x0 is the Hex ID
+0x4 is similar
+
+0x98 --> GOES TO THE NEXT HEX
+0x9C --> Array of ITEMS
+
+--
+
+0x0 Ptr
+0x4 Ptr
+0xc
+0x10
+0x14
+ 
+20 bytes a piece
+
+then next
+
+---
+
+
+[falloutwHR.exe+242D64]-174
+
+
+
+
+
+
+Static --> PTR ---> +018 get to the hex (weird)
+
+---------
+
+Ends at 0xAC (still 176)
+
+LOCKPICKS: 87d2308
+
+INVENTORY COUNT: 4
+ITEM QUANTITY: 3
+Item Pointer: 87db1e0
+ITEM QUANTITY: 2
+Item Pointer: 87e66b0
+
+ITEM QUANTITY: 1
+Item Pointer: 87e68a8
+
+ITEM QUANTITY: 1
+Item Pointer: 87e6538
+
+
+
+
+"Item ID" for player: 16777216
+
+
+--
+
+Trying to hook...
+
+call falloutwHR.exe+18A90
+
+----
+
+HOOK THIS!
+
+falloutwHR.exe+18AA2 - 25 FF000000           - and eax,000000FF
+
+----
