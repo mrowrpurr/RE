@@ -11,12 +11,14 @@ namespace CodeInjection {
 
     class InjectionAction {
     public:
-        uintptr_t    ActionCurrentAddress;
-        virtual bool HasChildActions() const { return false; }
-        std::shared_ptr<std::vector<std::shared_ptr<InjectionAction>>> GetChildActions() const {
+        uintptr_t                         ActionCurrentAddress;
+        std::shared_ptr<InjectionBuilder> Builder;
+
+        virtual size_t GetByteCount(std::shared_ptr<InjectionVariables> vars) = 0;
+        virtual std::shared_ptr<std::vector<std::shared_ptr<InjectionAction>>> GetActionContainer(
+        ) {
             return nullptr;
         }
-        virtual size_t GetByteCount() const                       = 0;
-        virtual void   Perform(std::shared_ptr<InjectionBuilder>) = 0;
+        virtual void Perform(std::shared_ptr<InjectionVariables>) = 0;
     };
 }

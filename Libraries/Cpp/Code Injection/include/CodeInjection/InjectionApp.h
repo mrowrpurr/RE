@@ -14,22 +14,17 @@
 namespace CodeInjection {
 
     class InjectionApp {
-        std::string                                                    _name;
-        bool                                                           _isInstalled = false;
-        std::shared_ptr<InjectionVariables>                            _variables;
-        std::shared_ptr<std::vector<std::shared_ptr<InjectionAction>>> _currentActionsCollection;
-        std::shared_ptr<InjectionBuilder>                              _builder;
-
+        std::string                                                      _name;
+        bool                                                             _isInstalled = false;
+        std::shared_ptr<InjectionVariables>                              _variables;
         std::unordered_map<std::string, std::shared_ptr<InjectionState>> _states;
-        std::shared_ptr<InjectionState>                                  _currentState;
-        std::shared_ptr<InjectionState>                                  _currentlyConfiguringState;
 
         std::shared_ptr<InjectionState> GetStateIfExists(std::string name) {
-            if (_states.contains(name)) return _states[name];
+            if (_states.contains(name)) return _states[name];  // TODO use find
             return nullptr;
         }
         std::shared_ptr<InjectionState> FindOrCreateState(const std::string& name) {
-            if (_states.contains(name)) return _states[name];
+            if (_states.contains(name)) return _states[name];  // TODO use find
             auto state    = std::make_shared<InjectionState>(name, _variables);
             _states[name] = state;
             return state;
@@ -37,20 +32,18 @@ namespace CodeInjection {
 
     public:
         InjectionApp(const std::string& name)
-            : _name(name), _variables(std::make_shared<InjectionVariables>()) {
-            _builder = std::make_shared<InjectionBuilder>(_variables);
-        }
+            : _name(name), _variables(std::make_shared<InjectionVariables>()) {}
 
         const std::string& GetName() const { return _name; }
 
         InjectionApp& On(
             const std::string& stateName, std::function<void(InjectionBuilder&)> block
         ) {
-            _currentlyConfiguringState = FindOrCreateState(stateName);
-            _builder->SetActionContainer(_currentlyConfiguringState->GetActionContainer());
-            block(*_builder);
-            _currentlyConfiguringState = nullptr;
-            _builder->SetActionContainer(nullptr);
+            Log("[{}] On: {}", _name, stateName);
+            auto state   = FindOrCreateState(stateName);
+            auto builder = std::make_shared<InjectionBuilder>(_variables);
+            builder->SetActionsContainer(state->GetActions());
+            block(*builder);
             return *this;
         }
         InjectionApp& OnInstall(std::function<void(InjectionBuilder&)> block) {
@@ -62,9 +55,19 @@ namespace CodeInjection {
         void Goto(const std::string& stateName) {
             Log("[{}] Goto: {}", _name, stateName);
             auto state = GetStateIfExists(stateName);
-            if (state) state->PerformActions();
+            if (!state) {
+                Log("[{}] Goto: {} - State not found", _name, stateName);
+                return;
+            }
+            auto actions = state->GetActions();
+            for (auto action : *actions) {
+                auto builder    = std::make_shared<InjectionBuilder>(_variables);
+                action->Builder = builder;
+                action->Perform(_variables);
+            }
         }
         InjectionApp& Configure(std::function<void(InjectionBuilder&)> block) {
+            Log("[{}] Configure", _name);
             On("Configure", block);
             Goto("Configure");  // <--- Configure() actions are run immediately
             return *this;

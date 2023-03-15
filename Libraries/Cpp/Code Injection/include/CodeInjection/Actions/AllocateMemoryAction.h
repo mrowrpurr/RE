@@ -1,5 +1,7 @@
 #pragma once
 
+#include <Logging.h>
+
 #include <functional>
 #include <memory>
 #include <string>
@@ -27,13 +29,18 @@ namespace CodeInjection {
                 _actions = std::make_shared<std::vector<std::shared_ptr<InjectionAction>>>();
             }
 
-            std::shared_ptr<std::vector<std::shared_ptr<InjectionAction>>> GetActions() const {
+            size_t GetByteCount(std::shared_ptr<InjectionVariables> vars) override { return 0; }
+
+            std::shared_ptr<std::vector<std::shared_ptr<InjectionAction>>> GetActionContainer(
+            ) override {
                 return _actions;
             }
 
-            size_t GetByteCount() const override { return 0; }
-
-            void Perform(std::shared_ptr<InjectionBuilder> builder) override {}
+            void Perform(std::shared_ptr<InjectionVariables> vars) override {
+                size_t totalRequiredBytes = 0;
+                for (auto action : *_actions) totalRequiredBytes += action->GetByteCount(vars);
+                Log("Alloc requires {} bytes", totalRequiredBytes);
+            }
         };
     }
 }

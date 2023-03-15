@@ -59,6 +59,22 @@ void SetupHooks() {
         });
 }
 
+void PrintOutCoolShit() {
+    // From ASM to BYTES
+    auto bytes = Assembly::GetBytes([](Assembly::Code code) {
+        code.mov(eax, ptr[esp + 0x4]);
+        code.nop();
+        code.nop();
+    });
+    Output("Bytes: {}", Memory::BytesToString(bytes));
+
+    // From BYTES to ASM
+    auto        instructions = Assembly::Disassemble86(bytes);
+    std::string asmCode;
+    for (auto& instruction : instructions) asmCode += instruction + "\n";
+    Output("ASM: {}", asmCode);
+}
+
 void RunUI() {
     UserInterface::Run([&](auto& app) {
         app.SetTitle("Fallout 1")
@@ -66,6 +82,7 @@ void RunUI() {
             .SetHeight(500)
             .SetWidth(500)
             .ShowOutputTextBox();
+        app.AddButton("Generate Bytes from ASM", [&]() { PrintOutCoolShit(); });
         for (auto [name, injection] : CodeInjection::RegisteredInjections) {
             app.AddButton(string_format("Enable {}", injection->GetName()), [&, injection]() {
                 injection->Toggle();

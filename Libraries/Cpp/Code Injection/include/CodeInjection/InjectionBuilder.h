@@ -16,7 +16,7 @@ namespace CodeInjection {
         InjectionBuilder() = default;
         InjectionBuilder(std::shared_ptr<InjectionVariables> variables) : _variables(variables) {}
 
-        void SetActionContainer(
+        void SetActionsContainer(
             std::shared_ptr<std::vector<std::shared_ptr<InjectionAction>>> actions
         ) {
             _actions = actions;
@@ -51,14 +51,14 @@ namespace CodeInjection {
         template <typename T>
         InjectionBuilder& Var(const std::string& name, T value) {
             Log("Set Variable: {} ({})", name, typeid(T).name());
-            _variables->Var(name, value);
+            _variables->Set(name, value);
             return *this;
         }
 
         template <typename T>
         T& Var(const std::string& name) {
             Log("Get Variable: {} ({})", name, typeid(T).name());
-            return _variables->Var<T>(name);
+            return _variables->Get<T>(name);
         }
     };
 }

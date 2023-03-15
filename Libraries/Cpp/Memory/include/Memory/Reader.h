@@ -1,6 +1,9 @@
 #pragma once
 
+#include <StringFormatting.h>
+
 #include <cstdint>
+#include <string>
 #include <vector>
 
 namespace Memory {
@@ -36,5 +39,14 @@ namespace Memory {
     template <typename T>
     T Read(uintptr_t address, uint32_t offset1, uint32_t offset2, uint32_t offset3) {
         return Read<T>(address, {offset1, offset2, offset3});
+    }
+
+    std::string BytesToString(std::vector<uint8_t> bytes) {
+        std::string result;
+        for (size_t i = 0; i < bytes.size(); i++) {
+            result += string_format("{:02x}", bytes[i]);
+            if (i < bytes.size() - 1) result += " ";
+        }
+        return result;
     }
 }

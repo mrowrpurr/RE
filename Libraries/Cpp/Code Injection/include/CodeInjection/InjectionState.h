@@ -22,14 +22,10 @@ namespace CodeInjection {
 
         std::string GetName() const { return _name; }
 
-        std::shared_ptr<std::vector<std::shared_ptr<InjectionAction>>> GetActionContainer() {
+        std::shared_ptr<std::vector<std::shared_ptr<InjectionAction>>> GetActions() {
             return _actions;
         }
 
         void AddAction(std::shared_ptr<InjectionAction> action) { _actions->push_back(action); }
-
-        void PerformActions() {
-            // for (auto action : _actions) action->Perform(_variables);
-        }
     };
 }

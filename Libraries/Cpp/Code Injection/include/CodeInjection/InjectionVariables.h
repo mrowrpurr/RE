@@ -14,7 +14,7 @@ namespace CodeInjection {
 
     public:
         template <typename T>
-        T& Var(const std::string& name, T defaultValue) {
+        T& Set(const std::string& name, T defaultValue) {
             if (!_variables.contains(name)) {
                 _variables[name] = defaultValue;
             }
@@ -22,7 +22,7 @@ namespace CodeInjection {
         }
 
         template <typename T>
-        T& Var(const std::string& name) {
+        T& Get(const std::string& name) {
             return std::any_cast<T&>(_variables[name]);
         }
     };

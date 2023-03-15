@@ -9,8 +9,6 @@
 
 namespace CodeInjection {
 
-    class InjectionBuilder;
-
     namespace Actions {
 
         struct DeallocateMemoryActionParams {
@@ -23,9 +21,9 @@ namespace CodeInjection {
         public:
             DeallocateMemoryAction(DeallocateMemoryActionParams params) : _params(params) {}
 
-            size_t GetByteCount() const override { return 0; }
+            size_t GetByteCount(std::shared_ptr<InjectionVariables> vars) override { return 0; }
 
-            void Perform(std::shared_ptr<InjectionBuilder> builder) override {}
+            void Perform(std::shared_ptr<InjectionVariables> vars) override {}
         };
     }
 }
