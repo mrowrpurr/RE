@@ -4,6 +4,7 @@
 
 #include <cstdint>
 #include <memory>
+#include <stdexcept>
 #include <string>
 #include <vector>
 
@@ -12,6 +13,7 @@
 namespace CodeInjection::Actions {
 
     struct WriteBytesActionParams {
+        uintptr_t            address;
         std::string          addressVariable;
         std::vector<uint8_t> bytes;
         std::string          bytesVariable;
@@ -24,6 +26,10 @@ namespace CodeInjection::Actions {
     public:
         WriteBytesAction(WriteBytesActionParams params) : _params(params) {}
 
+        bool IsWriteProtected(std::shared_ptr<InjectionVariables> vars) {
+            return _params.writeProtected || CurrentAddressWriteProtected;
+        }
+
         std::vector<uint8_t> GetBytes(std::shared_ptr<InjectionVariables> vars) {
             std::vector<uint8_t> bytes;
             if (!_params.bytesVariable.empty())
@@ -32,19 +38,32 @@ namespace CodeInjection::Actions {
             return bytes;
         }
 
+        uintptr_t GetAddress(std::shared_ptr<InjectionVariables> vars) {
+            if (!_params.addressVariable.empty())
+                return vars->Get<uintptr_t>(_params.addressVariable);
+            else if (_params.address != 0) return _params.address;
+            else if (ActionCurrentAddress != 0) return ActionCurrentAddress;
+            else throw std::runtime_error("WriteBytesAction: No address specified");
+        }
+
         size_t GetByteCount(std::shared_ptr<InjectionVariables> vars) override {
-            // return GetBytes(nullptr).size();
-            return 0;
+            return GetBytes(vars).size();
         }
 
         void Perform(std::shared_ptr<InjectionVariables> vars) override {
-            auto bytes   = GetBytes(vars);
-            auto address = vars->Get<uintptr_t>(_params.addressVariable);
+            auto bytes = GetBytes(vars);
+            if (bytes.empty()) {
+                Log("WriteBytesAction: No bytes to write");
+                return;
+            }
+
+            auto address          = GetAddress(vars);
+            auto isWriteProtected = IsWriteProtected(vars);
 
             Log("WriteBytesAction: Writing {} bytes to 0x{:X}: {} (Protected: {})", bytes.size(),
-                address, Memory::BytesToString(bytes), _params.writeProtected);
+                address, Memory::BytesToString(bytes), isWriteProtected);
 
-            if (_params.writeProtected) Memory::WriteProtectedBytes(address, bytes);
+            if (isWriteProtected) Memory::WriteProtectedBytes(address, bytes);
             else Memory::WriteBytes(address, bytes);
         }
     };

@@ -12,6 +12,7 @@ namespace CodeInjection {
     class InjectionAction {
     public:
         uintptr_t                         ActionCurrentAddress;
+        bool                              CurrentAddressWriteProtected = false;
         std::shared_ptr<InjectionBuilder> Builder;
 
         virtual size_t GetByteCount(std::shared_ptr<InjectionVariables> vars) = 0;

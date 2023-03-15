@@ -6,19 +6,13 @@
 
 namespace CodeInjection {
 
-    int NEXT_VARS_ID = 1;
-
     class InjectionVariables {
-        int                                       id = NEXT_VARS_ID++;
         std::unordered_map<std::string, std::any> _variables;
 
     public:
         template <typename T>
-        T& Set(const std::string& name, T defaultValue) {
-            if (!_variables.contains(name)) {
-                _variables[name] = defaultValue;
-            }
-            return std::any_cast<T&>(_variables[name]);
+        void Set(const std::string& name, T defaultValue) {
+            _variables[name] = defaultValue;
         }
 
         template <typename T>

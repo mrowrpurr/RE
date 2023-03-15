@@ -61,7 +61,10 @@ namespace CodeInjection {
             }
             auto actions = state->GetActions();
             for (auto action : *actions) {
-                auto builder    = std::make_shared<InjectionBuilder>(_variables);
+                auto builder                = std::make_shared<InjectionBuilder>(_variables);
+                auto actionActionsContainer = action->GetActionContainer();
+                if (actionActionsContainer) builder->SetActionsContainer(actionActionsContainer);
+                else builder->SetActionsContainer(actions);
                 action->Builder = builder;
                 action->Perform(_variables);
             }

@@ -13,7 +13,6 @@ namespace CodeInjection {
         std::shared_ptr<InjectionVariables>                            _variables;
 
     public:
-        InjectionBuilder() = default;
         InjectionBuilder(std::shared_ptr<InjectionVariables> variables) : _variables(variables) {}
 
         void SetActionsContainer(
