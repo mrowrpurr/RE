@@ -13,7 +13,7 @@
 namespace CodeInjection::Actions {
 
     struct ReadBytesActionParams {
-        uintptr_t   address;
+        uintptr_t   address = 0;
         std::string addressVariable;
         std::string outVariable;
         size_t      byteCount;
@@ -29,14 +29,12 @@ namespace CodeInjection::Actions {
 
         void Perform(std::shared_ptr<InjectionVariables> vars) override {
             auto address = _params.address;
-            if (!_params.addressVariable.empty())
-                address = vars->Get<uintptr_t>(_params.addressVariable);
+            if (!_params.addressVariable.empty()) address = vars->Get<uintptr_t>(_params.addressVariable);
 
             Log("ReadBytesAction: Reading {} bytes from 0x{:X}", _params.byteCount, address);
             auto bytes = Memory::Read(address, _params.byteCount);
 
-            Log("ReadBytesAction: Set output variable {} to {}", _params.outVariable,
-                Memory::BytesToString(bytes));
+            Log("ReadBytesAction: Set output variable {} to {}", _params.outVariable, Memory::BytesToString(bytes));
             vars->Set<std::vector<uint8_t>>(_params.outVariable, bytes);
         }
     };

@@ -13,7 +13,7 @@
 namespace CodeInjection::Actions {
 
     struct WriteNopActionParams {
-        uintptr_t   address;
+        uintptr_t   address = 0;
         std::string addressVariable;
         size_t      count;
         bool        writeProtected = true;

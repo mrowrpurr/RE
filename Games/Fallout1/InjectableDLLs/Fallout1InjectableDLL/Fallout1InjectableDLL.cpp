@@ -44,6 +44,7 @@ void SetupHooks() {
                 .code =
                     [](Injection& trampoline) {
                         trampoline.WriteNop({.count = 5});
+                        trampoline.SaveRegisters({.registers = {Register::EAX}});
                         trampoline.WriteBytes({.bytesVariable = "OriginalBytes"});
                         trampoline.WriteNop({.count = 5});
                         trampoline.WriteJmp({.toAddressVariable = "JumpBack"});

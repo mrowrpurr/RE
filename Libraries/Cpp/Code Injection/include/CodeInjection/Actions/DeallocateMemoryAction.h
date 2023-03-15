@@ -14,7 +14,7 @@ namespace CodeInjection {
     namespace Actions {
 
         struct DeallocateMemoryActionParams {
-            uintptr_t   address;
+            uintptr_t   address = 0;
             std::string addressVariable;
         };
 
@@ -23,8 +23,7 @@ namespace CodeInjection {
 
         public:
             uintptr_t GetAddress(std::shared_ptr<InjectionVariables> vars) {
-                if (!_params.addressVariable.empty())
-                    return vars->Get<uintptr_t>(_params.addressVariable);
+                if (!_params.addressVariable.empty()) return vars->Get<uintptr_t>(_params.addressVariable);
                 else if (_params.address != 0) return _params.address;
                 else if (ActionCurrentAddress != 0) return ActionCurrentAddress;
                 else throw std::runtime_error("DeallocateMemoryAction: No address specified");

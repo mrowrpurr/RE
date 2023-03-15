@@ -13,7 +13,7 @@
 namespace CodeInjection::Actions {
 
     struct WriteJmpActionParams {
-        uintptr_t   address;
+        uintptr_t   address = 0;
         std::string addressVariable;
         uintptr_t   fromAddress;
         std::string fromAddressVariable;
