@@ -20,11 +20,12 @@ std::string PrintBytes(std::vector<uint8_t> bytes) {
 }
 
 // TODO: Uninstall all hooks on close!
-// TODO: Call Function
 // TODO: Call Lambda
 // TODO: SaveRegisters
 // TODO: RestoreRegisters
 // TODO: Array of Bytes
+// TODO: Write Assembly
+// TODO: Add a little Macro for the Write Assembly (just to using namespace Xbyak::util)
 // TODO: Overloads
 // TODO: Wrappers
 
@@ -109,6 +110,7 @@ void RunUI() {
 DLL_Main {
     SetupHooks();
     RunUI();
+    CodeInjection::UninstallAll();
     Injected_DLL::EjectDLL();
 }
 

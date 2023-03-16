@@ -17,4 +17,8 @@ namespace CodeInjection {
         Log("[{}] Register", name);
         return *injectionApp;
     }
+
+    void UninstallAll() {
+        for (auto& [name, injectionApp] : RegisteredInjections) injectionApp->Uninstall();
+    }
 }
