@@ -11,14 +11,15 @@
 #include <vector>
 
 #include "../InjectionAction.h"
+#include "../Registers.h"
 
 namespace CodeInjection::Actions {
 
     namespace CallActionController {
-        std::atomic<uint32_t>                               _nextCallableId = 0;
-        std::unordered_map<uint32_t, std::function<void()>> _callables;
+        std::atomic<uint32_t>                                                          _nextCallableId = 0;
+        std::unordered_map<uint32_t, std::function<void(Registers::RegistersReader&)>> _callables;
 
-        uint32_t RegisterCallable(std::function<void()> callable) {
+        uint32_t RegisterCallable(std::function<void(Registers::RegistersReader&)> callable) {
             auto callableId        = _nextCallableId++;
             _callables[callableId] = callable;
             return callableId;
@@ -27,15 +28,16 @@ namespace CodeInjection::Actions {
         void CallCallable(uint32_t callableId) {
             auto callable = _callables.find(callableId);
             if (callable == _callables.end()) throw std::runtime_error("CallActionController: Callable not found");
-            callable->second();
+            Registers::RegistersReader registersReader;
+            callable->second(registersReader);
         }
     }
 
     struct CallActionParams {
-        uintptr_t             address;
-        std::string           addressVariable;
-        std::function<void()> function;  // TODO - support 'Registers'
-        bool                  writeProtected = false;
+        uintptr_t                                        address;
+        std::string                                      addressVariable;
+        std::function<void(Registers::RegistersReader&)> function;
+        bool                                             writeProtected = false;
     };
 
     class CallAction : public InjectionAction {

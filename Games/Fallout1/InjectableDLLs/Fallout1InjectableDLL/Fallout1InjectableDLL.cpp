@@ -19,12 +19,9 @@ std::string PrintBytes(std::vector<uint8_t> bytes) {
     return result;
 }
 
-// TODO: SaveRegisters
-// TODO: RestoreRegisters
-// TODO: Update Call Lambda to support Registers object reference as a parameter
-// TODO: Array of Bytes
 // TODO: Write Assembly
 // TODO: Add a little Macro for the Write Assembly (just to using namespace Xbyak::util)
+// TODO: Array of Bytes
 // TODO: Overloads
 // TODO: Wrappers
 
@@ -49,7 +46,14 @@ void SetupHooks() {
                                           Register::EAX, Register::ECX, Register::EDX, Register::EBX, Register::ESI,
                                           Register::EDI, Register::EBP, Register::ESP}
                         });
-                        trampoline.Call({.function = []() { Output("I am a function and I was called!"); }});
+                        trampoline.Call({.function = [](Registers& regs) {
+                            Output("I am a function and I was called!");
+                            Output("EAX is {:x}", regs.eax());
+                            Output("EAX 0x0 is {}", regs.eax(0x0));
+                            Output("EAX 0x34 0x0 is {:x}", regs.eax({0x34, 0x0}));
+                            Output("EAX 0x34 0x4 is {}", regs.eax({0x34, 0x4}));
+                            Output("EAX 0x34 0x0 0x64 is {}", regs.eax({0x34, 0x0, 0x64}));
+                        }});
                         trampoline.RestoreRegisters({
                             .registers = {
                                           Register::EAX, Register::ECX, Register::EDX, Register::EBX, Register::ESI,

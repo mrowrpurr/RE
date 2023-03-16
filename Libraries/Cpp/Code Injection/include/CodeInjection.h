@@ -1,7 +1,4 @@
 #pragma once
 
+#include "CodeInjection/Aliases.h"
 #include "CodeInjection/CodeInjection.h"
-#include "CodeInjection/Registers.h"
-
-typedef CodeInjection::Injection Injection;
-typedef CodeInjection::Register  Register;

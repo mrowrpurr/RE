@@ -225,6 +225,251 @@ namespace CodeInjection {
             // uint256_t YMM24 = 0;
         }
 
+        class RegistersReader {
+        public:
+            uint32_t eax() { return CurrentValues::EAX; }
+            template <typename T>
+            T eax(uint32_t offset) {
+                auto address = *reinterpret_cast<uintptr_t*>(CurrentValues::EAX + offset);
+                return (T)(address);
+            }
+            template <typename T>
+            T eax(std::vector<uint32_t> offsets) {
+                auto address = CurrentValues::EAX;
+                for (auto offset : offsets) address = *reinterpret_cast<uintptr_t*>(address + offset);
+                return (T)(address);
+            }
+            uint32_t eax(uint32_t offset) { return eax<uint32_t>(offset); }
+            uint32_t eax(std::vector<uint32_t> offsets) { return eax<uint32_t>(offsets); }
+
+            uint32_t ebx() { return CurrentValues::EBX; }
+            template <typename T>
+            T ebx(uint32_t offset) {
+                auto address = *reinterpret_cast<uintptr_t*>(CurrentValues::EBX + offset);
+                return (T)(address);
+            }
+            template <typename T>
+            T ebx(std::vector<uint32_t> offsets) {
+                auto address = CurrentValues::EBX;
+                for (auto offset : offsets) address = *reinterpret_cast<uintptr_t*>(address + offset);
+                return (T)(address);
+            }
+            uint32_t ebx(uint32_t offset) { return ebx<uint32_t>(offset); }
+            uint32_t ebx(std::vector<uint32_t> offsets) { return ebx<uint32_t>(offsets); }
+
+            uint32_t ecx() { return CurrentValues::ECX; }
+            template <typename T>
+            T ecx(uint32_t offset) {
+                auto address = *reinterpret_cast<uintptr_t*>(CurrentValues::ECX + offset);
+                return (T)(address);
+            }
+            template <typename T>
+            T ecx(std::vector<uint32_t> offsets) {
+                auto address = CurrentValues::ECX;
+                for (auto offset : offsets) address = *reinterpret_cast<uintptr_t*>(address + offset);
+                return (T)(address);
+            }
+            uint32_t ecx(uint32_t offset) { return ecx<uint32_t>(offset); }
+            uint32_t ecx(std::vector<uint32_t> offsets) { return ecx<uint32_t>(offsets); }
+
+            uint32_t edx() { return CurrentValues::EDX; }
+            template <typename T>
+            T edx(uint32_t offset) {
+                auto address = *reinterpret_cast<uintptr_t*>(CurrentValues::EDX + offset);
+                return (T)(address);
+            }
+            template <typename T>
+            T edx(std::vector<uint32_t> offsets) {
+                auto address = CurrentValues::EDX;
+                for (auto offset : offsets) address = *reinterpret_cast<uintptr_t*>(address + offset);
+                return (T)(address);
+            }
+            uint32_t edx(uint32_t offset) { return edx<uint32_t>(offset); }
+            uint32_t edx(std::vector<uint32_t> offsets) { return edx<uint32_t>(offsets); }
+
+            uint32_t esi() { return CurrentValues::ESI; }
+            template <typename T>
+            T esi(uint32_t offset) {
+                auto address = *reinterpret_cast<uintptr_t*>(CurrentValues::ESI + offset);
+                return (T)(address);
+            }
+            template <typename T>
+            T esi(std::vector<uint32_t> offsets) {
+                auto address = CurrentValues::ESI;
+                for (auto offset : offsets) address = *reinterpret_cast<uintptr_t*>(address + offset);
+                return (T)(address);
+            }
+            uint32_t esi(uint32_t offset) { return esi<uint32_t>(offset); }
+            uint32_t esi(std::vector<uint32_t> offsets) { return esi<uint32_t>(offsets); }
+
+            uint32_t edi() { return CurrentValues::EDI; }
+            template <typename T>
+            T edi(uint32_t offset) {
+                auto address = *reinterpret_cast<uintptr_t*>(CurrentValues::EDI + offset);
+                return (T)(address);
+            }
+            template <typename T>
+            T edi(std::vector<uint32_t> offsets) {
+                auto address = CurrentValues::EDI;
+                for (auto offset : offsets) address = *reinterpret_cast<uintptr_t*>(address + offset);
+                return (T)(address);
+            }
+            uint32_t edi(uint32_t offset) { return edi<uint32_t>(offset); }
+            uint32_t edi(std::vector<uint32_t> offsets) { return edi<uint32_t>(offsets); }
+
+            uint32_t ebp() { return CurrentValues::EBP; }
+            template <typename T>
+            T ebp(uint32_t offset) {
+                auto address = *reinterpret_cast<uintptr_t*>(CurrentValues::EBP + offset);
+                return (T)(address);
+            }
+            template <typename T>
+            T ebp(std::vector<uint32_t> offsets) {
+                auto address = CurrentValues::EBP;
+                for (auto offset : offsets) address = *reinterpret_cast<uintptr_t*>(address + offset);
+                return (T)(address);
+            }
+            uint32_t ebp(uint32_t offset) { return ebp<uint32_t>(offset); }
+            uint32_t ebp(std::vector<uint32_t> offsets) { return ebp<uint32_t>(offsets); }
+
+            uint32_t esp() { return CurrentValues::ESP; }
+            template <typename T>
+            T esp(uint32_t offset) {
+                auto address = *reinterpret_cast<uintptr_t*>(CurrentValues::ESP + offset);
+                return (T)(address);
+            }
+            template <typename T>
+            T esp(std::vector<uint32_t> offsets) {
+                auto address = CurrentValues::ESP;
+                for (auto offset : offsets) address = *reinterpret_cast<uintptr_t*>(address + offset);
+                return (T)(address);
+            }
+            uint32_t esp(uint32_t offset) { return esp<uint32_t>(offset); }
+            uint32_t esp(std::vector<uint32_t> offsets) { return esp<uint32_t>(offsets); }
+
+            uint64_t rax() { return CurrentValues::RAX; }
+            template <typename T>
+            T rax(uint32_t offset) {
+                auto address = *reinterpret_cast<uintptr_t*>(CurrentValues::RAX + offset);
+                return (T)(address);
+            }
+            template <typename T>
+            T rax(std::vector<uint32_t> offsets) {
+                auto address = CurrentValues::RAX;
+                for (auto offset : offsets) address = *reinterpret_cast<uintptr_t*>(address + offset);
+                return (T)(address);
+            }
+            uint64_t rax(uint32_t offset) { return rax<uint64_t>(offset); }
+            uint64_t rax(std::vector<uint32_t> offsets) { return rax<uint64_t>(offsets); }
+
+            uint64_t rbx() { return CurrentValues::RBX; }
+            template <typename T>
+            T rbx(uint32_t offset) {
+                auto address = *reinterpret_cast<uintptr_t*>(CurrentValues::RBX + offset);
+                return (T)(address);
+            }
+            template <typename T>
+            T rbx(std::vector<uint32_t> offsets) {
+                auto address = CurrentValues::RBX;
+                for (auto offset : offsets) address = *reinterpret_cast<uintptr_t*>(address + offset);
+                return (T)(address);
+            }
+            uint64_t rbx(uint32_t offset) { return rbx<uint64_t>(offset); }
+            uint64_t rbx(std::vector<uint32_t> offsets) { return rbx<uint64_t>(offsets); }
+
+            uint64_t rcx() { return CurrentValues::RCX; }
+            template <typename T>
+            T rcx(uint32_t offset) {
+                auto address = *reinterpret_cast<uintptr_t*>(CurrentValues::RCX + offset);
+                return (T)(address);
+            }
+            template <typename T>
+            T rcx(std::vector<uint32_t> offsets) {
+                auto address = CurrentValues::RCX;
+                for (auto offset : offsets) address = *reinterpret_cast<uintptr_t*>(address + offset);
+                return (T)(address);
+            }
+            uint64_t rcx(uint32_t offset) { return rcx<uint64_t>(offset); }
+            uint64_t rcx(std::vector<uint32_t> offsets) { return rcx<uint64_t>(offsets); }
+
+            uint64_t rdx() { return CurrentValues::RDX; }
+            template <typename T>
+            T rdx(uint32_t offset) {
+                auto address = *reinterpret_cast<uintptr_t*>(CurrentValues::RDX + offset);
+                return (T)(address);
+            }
+            template <typename T>
+            T rdx(std::vector<uint32_t> offsets) {
+                auto address = CurrentValues::RDX;
+                for (auto offset : offsets) address = *reinterpret_cast<uintptr_t*>(address + offset);
+                return (T)(address);
+            }
+            uint64_t rdx(uint32_t offset) { return rdx<uint64_t>(offset); }
+            uint64_t rdx(std::vector<uint32_t> offsets) { return rdx<uint64_t>(offsets); }
+
+            uint64_t rsi() { return CurrentValues::RSI; }
+            template <typename T>
+            T rsi(uint32_t offset) {
+                auto address = *reinterpret_cast<uintptr_t*>(CurrentValues::RSI + offset);
+                return (T)(address);
+            }
+            template <typename T>
+            T rsi(std::vector<uint32_t> offsets) {
+                auto address = CurrentValues::RSI;
+                for (auto offset : offsets) address = *reinterpret_cast<uintptr_t*>(address + offset);
+                return (T)(address);
+            }
+            uint64_t rsi(uint32_t offset) { return rsi<uint64_t>(offset); }
+            uint64_t rsi(std::vector<uint32_t> offsets) { return rsi<uint64_t>(offsets); }
+
+            uint64_t rdi() { return CurrentValues::RDI; }
+            template <typename T>
+            T rdi(uint32_t offset) {
+                auto address = *reinterpret_cast<uintptr_t*>(CurrentValues::RDI + offset);
+                return (T)(address);
+            }
+            template <typename T>
+            T rdi(std::vector<uint32_t> offsets) {
+                auto address = CurrentValues::RDI;
+                for (auto offset : offsets) address = *reinterpret_cast<uintptr_t*>(address + offset);
+                return (T)(address);
+            }
+            uint64_t rdi(uint32_t offset) { return rdi<uint64_t>(offset); }
+            uint64_t rdi(std::vector<uint32_t> offsets) { return rdi<uint64_t>(offsets); }
+
+            uint64_t rbp() { return CurrentValues::RBP; }
+            template <typename T>
+            T rbp(uint32_t offset) {
+                auto address = *reinterpret_cast<uintptr_t*>(CurrentValues::RBP + offset);
+                return (T)(address);
+            }
+            template <typename T>
+            T rbp(std::vector<uint32_t> offsets) {
+                auto address = CurrentValues::RBP;
+                for (auto offset : offsets) address = *reinterpret_cast<uintptr_t*>(address + offset);
+                return (T)(address);
+            }
+            uint64_t rbp(uint32_t offset) { return rbp<uint64_t>(offset); }
+            uint64_t rbp(std::vector<uint32_t> offsets) { return rbp<uint64_t>(offsets); }
+
+            uint64_t rsp() { return CurrentValues::RSP; }
+            template <typename T>
+            T rsp(uint32_t offset) {
+                auto address = *reinterpret_cast<uintptr_t*>(CurrentValues::RSP + offset);
+                return (T)(address);
+            }
+            template <typename T>
+            T rsp(std::vector<uint32_t> offsets) {
+                auto address = CurrentValues::RSP;
+                for (auto offset : offsets) address = *reinterpret_cast<uintptr_t*>(address + offset);
+                return (T)(address);
+            }
+            uint64_t rsp(uint32_t offset) { return rsp<uint64_t>(offset); }
+            uint64_t rsp(std::vector<uint32_t> offsets) { return rsp<uint64_t>(offsets); }
+
+            // TODO : Add more registers
+        };
+
         namespace Instructions {
             namespace Store {
                 std::vector<uint8_t> EAX   = {0xA3};
