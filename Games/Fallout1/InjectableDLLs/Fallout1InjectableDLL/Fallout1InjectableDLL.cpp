@@ -19,13 +19,21 @@ std::string PrintBytes(std::vector<uint8_t> bytes) {
     return result;
 }
 
+// TODO: Remove the address AND fromAddress from Jmp ????? is it useful?
+// TODO: Call Function
+// TODO: Call Lambda
 // TODO: SaveRegisters
 // TODO: RestoreRegisters
 // TODO: Array of Bytes
-// TODO: Call Function
-// TODO: Call Lambda
 // TODO: Overloads
 // TODO: Wrappers
+
+void __declspec(naked) I_am_a_function() {
+    __asm {
+        mov eax, 0x69
+        ret
+    }
+}
 
 void SetupHooks() {
     CodeInjection::New("Drop Item")
@@ -44,15 +52,17 @@ void SetupHooks() {
                 .code =
                     [](Injection& trampoline) {
                         trampoline.WriteNop({.count = 5});
-                        trampoline.SaveRegisters({.registers = {Register::EAX}});
+                        // trampoline.SaveRegisters({.registers = {Register::EAX}});
+                        // trampoline.CallFunction({.function = I_am_a_function});
+                        trampoline.WriteNop({.count = 5});
                         trampoline.WriteBytes({.bytesVariable = "OriginalBytes"});
                         trampoline.WriteNop({.count = 5});
                         trampoline.WriteJmp({.toAddressVariable = "JumpBack"});
                     },
             });
             _.WriteJmp({
-                .addressVariable   = "Detour",
-                .toAddressVariable = "Trampoline",
+                .fromAddressVariable = "Detour",
+                .toAddressVariable   = "Trampoline",
             });
         })
         .OnUninstall([](Injection& _) {

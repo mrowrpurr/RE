@@ -13,8 +13,6 @@
 namespace CodeInjection::Actions {
 
     struct WriteJmpActionParams {
-        uintptr_t   address = 0;
-        std::string addressVariable;
         uintptr_t   fromAddress;
         std::string fromAddressVariable;
         uintptr_t   toAddress;
@@ -32,13 +30,6 @@ namespace CodeInjection::Actions {
             return _params.writeProtected || CurrentAddressWriteProtected;
         }
 
-        uintptr_t GetAddress(std::shared_ptr<InjectionVariables> vars) {
-            if (!_params.addressVariable.empty()) return vars->Get<uintptr_t>(_params.addressVariable);
-            else if (_params.address != 0) return _params.address;
-            else if (ActionCurrentAddress != 0) return ActionCurrentAddress;
-            else throw std::runtime_error("WriteJmpAction: No address specified");
-        }
-
         uintptr_t GetToAddress(std::shared_ptr<InjectionVariables> vars) {
             if (!_params.toAddressVariable.empty()) return vars->Get<uintptr_t>(_params.toAddressVariable);
             else if (_params.toAddress != 0) return _params.toAddress;
@@ -48,8 +39,6 @@ namespace CodeInjection::Actions {
         uintptr_t GetFromAddress(std::shared_ptr<InjectionVariables> vars) {
             if (!_params.fromAddressVariable.empty()) return vars->Get<uintptr_t>(_params.fromAddressVariable);
             else if (_params.fromAddress != 0) return _params.fromAddress;
-            else if (!_params.addressVariable.empty()) return vars->Get<uintptr_t>(_params.addressVariable);
-            else if (_params.address != 0) return _params.address;
             else if (ActionCurrentAddress != 0) return ActionCurrentAddress;
             else throw std::runtime_error("WriteJmpAction: No address specified");
         }
@@ -67,17 +56,16 @@ namespace CodeInjection::Actions {
         size_t GetByteCount(std::shared_ptr<InjectionVariables> vars) override { return GetBytes(vars).size(); }
 
         void Perform(std::shared_ptr<InjectionVariables> vars) override {
-            auto address          = GetAddress(vars);
-            auto toAddress        = GetToAddress(vars);
             auto fromAddress      = GetFromAddress(vars);
+            auto toAddress        = GetToAddress(vars);
             auto isWriteProtected = IsWriteProtected(vars);
             auto bytes            = GetBytes(vars);
 
-            Log("WriteJmpAction: Writing JMP at 0x{:X} to 0x{:X} from 0x{:X} (Protected: {})", address, toAddress,
-                fromAddress, isWriteProtected);
+            Log("WriteJmpAction: Writing JMP at 0x{:X} to 0x{:x} (Protected: {})", fromAddress, toAddress,
+                isWriteProtected);
 
-            if (isWriteProtected) Memory::WriteProtectedBytes(address, bytes);
-            else Memory::WriteBytes(address, bytes);
+            if (isWriteProtected) Memory::WriteProtectedBytes(fromAddress, bytes);
+            else Memory::WriteBytes(fromAddress, bytes);
         }
     };
 }
