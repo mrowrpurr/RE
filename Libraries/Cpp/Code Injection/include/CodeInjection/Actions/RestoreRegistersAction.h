@@ -127,7 +127,8 @@ namespace CodeInjection::Actions {
                 else registerStorageAddress = reinterpret_cast<uintptr_t>(&Registers::CurrentValues::EAX);
                 bytes.AddBytes(Registers::Instructions::Restore::EAX);
                 bytes.AddAddress(registerStorageAddress);
-            } else if (_params.registers.contains(Register::EBX)) {
+            }
+            if (_params.registers.contains(Register::EBX)) {
                 uintptr_t registerStorageAddress = 0;
                 if (!_params.ebxStorageAddressVariable.empty())
                     registerStorageAddress = vars->Get<uintptr_t>(_params.ebxStorageAddressVariable);
@@ -135,7 +136,8 @@ namespace CodeInjection::Actions {
                 else registerStorageAddress = reinterpret_cast<uintptr_t>(&Registers::CurrentValues::EBX);
                 bytes.AddBytes(Registers::Instructions::Restore::EBX);
                 bytes.AddAddress(registerStorageAddress);
-            } else if (_params.registers.contains(Register::ECX)) {
+            }
+            if (_params.registers.contains(Register::ECX)) {
                 uintptr_t registerStorageAddress = 0;
                 if (!_params.ecxStorageAddressVariable.empty())
                     registerStorageAddress = vars->Get<uintptr_t>(_params.ecxStorageAddressVariable);
@@ -143,7 +145,8 @@ namespace CodeInjection::Actions {
                 else registerStorageAddress = reinterpret_cast<uintptr_t>(&Registers::CurrentValues::ECX);
                 bytes.AddBytes(Registers::Instructions::Restore::ECX);
                 bytes.AddAddress(registerStorageAddress);
-            } else if (_params.registers.contains(Register::EDX)) {
+            }
+            if (_params.registers.contains(Register::EDX)) {
                 uintptr_t registerStorageAddress = 0;
                 if (!_params.edxStorageAddressVariable.empty())
                     registerStorageAddress = vars->Get<uintptr_t>(_params.edxStorageAddressVariable);
@@ -151,7 +154,8 @@ namespace CodeInjection::Actions {
                 else registerStorageAddress = reinterpret_cast<uintptr_t>(&Registers::CurrentValues::EDX);
                 bytes.AddBytes(Registers::Instructions::Restore::EDX);
                 bytes.AddAddress(registerStorageAddress);
-            } else if (_params.registers.contains(Register::ESI)) {
+            }
+            if (_params.registers.contains(Register::ESI)) {
                 uintptr_t registerStorageAddress = 0;
                 if (!_params.esiStorageAddressVariable.empty())
                     registerStorageAddress = vars->Get<uintptr_t>(_params.esiStorageAddressVariable);
@@ -159,7 +163,8 @@ namespace CodeInjection::Actions {
                 else registerStorageAddress = reinterpret_cast<uintptr_t>(&Registers::CurrentValues::ESI);
                 bytes.AddBytes(Registers::Instructions::Restore::ESI);
                 bytes.AddAddress(registerStorageAddress);
-            } else if (_params.registers.contains(Register::EDI)) {
+            }
+            if (_params.registers.contains(Register::EDI)) {
                 uintptr_t registerStorageAddress = 0;
                 if (!_params.ediStorageAddressVariable.empty())
                     registerStorageAddress = vars->Get<uintptr_t>(_params.ediStorageAddressVariable);
@@ -167,7 +172,8 @@ namespace CodeInjection::Actions {
                 else registerStorageAddress = reinterpret_cast<uintptr_t>(&Registers::CurrentValues::EDI);
                 bytes.AddBytes(Registers::Instructions::Restore::EDI);
                 bytes.AddAddress(registerStorageAddress);
-            } else if (_params.registers.contains(Register::EBP)) {
+            }
+            if (_params.registers.contains(Register::EBP)) {
                 uintptr_t registerStorageAddress = 0;
                 if (!_params.ebpStorageAddressVariable.empty())
                     registerStorageAddress = vars->Get<uintptr_t>(_params.ebpStorageAddressVariable);
@@ -175,7 +181,8 @@ namespace CodeInjection::Actions {
                 else registerStorageAddress = reinterpret_cast<uintptr_t>(&Registers::CurrentValues::EBP);
                 bytes.AddBytes(Registers::Instructions::Restore::EBP);
                 bytes.AddAddress(registerStorageAddress);
-            } else if (_params.registers.contains(Register::ESP)) {
+            }
+            if (_params.registers.contains(Register::ESP)) {
                 uintptr_t registerStorageAddress = 0;
                 if (!_params.espStorageAddressVariable.empty())
                     registerStorageAddress = vars->Get<uintptr_t>(_params.espStorageAddressVariable);
@@ -183,7 +190,8 @@ namespace CodeInjection::Actions {
                 else registerStorageAddress = reinterpret_cast<uintptr_t>(&Registers::CurrentValues::ESP);
                 bytes.AddBytes(Registers::Instructions::Restore::ESP);
                 bytes.AddAddress(registerStorageAddress);
-            } else if (_params.registers.contains(Register::RAX)) {
+            }
+            if (_params.registers.contains(Register::RAX)) {
                 uintptr_t registerStorageAddress = 0;
                 if (!_params.raxStorageAddressVariable.empty())
                     registerStorageAddress = vars->Get<uintptr_t>(_params.raxStorageAddressVariable);
@@ -191,7 +199,8 @@ namespace CodeInjection::Actions {
                 else registerStorageAddress = reinterpret_cast<uintptr_t>(&Registers::CurrentValues::RAX);
                 bytes.AddBytes(Registers::Instructions::Restore::RAX);
                 bytes.AddAddress(registerStorageAddress);
-            } else if (_params.registers.contains(Register::RBX)) {
+            }
+            if (_params.registers.contains(Register::RBX)) {
                 uintptr_t registerStorageAddress = 0;
                 if (!_params.rbxStorageAddressVariable.empty())
                     registerStorageAddress = vars->Get<uintptr_t>(_params.rbxStorageAddressVariable);
@@ -199,7 +208,8 @@ namespace CodeInjection::Actions {
                 else registerStorageAddress = reinterpret_cast<uintptr_t>(&Registers::CurrentValues::RBX);
                 bytes.AddBytes(Registers::Instructions::Restore::RBX);
                 bytes.AddAddress(registerStorageAddress);
-            } else if (_params.registers.contains(Register::RCX)) {
+            }
+            if (_params.registers.contains(Register::RCX)) {
                 uintptr_t registerStorageAddress = 0;
                 if (!_params.rcxStorageAddressVariable.empty())
                     registerStorageAddress = vars->Get<uintptr_t>(_params.rcxStorageAddressVariable);
@@ -207,7 +217,8 @@ namespace CodeInjection::Actions {
                 else registerStorageAddress = reinterpret_cast<uintptr_t>(&Registers::CurrentValues::RCX);
                 bytes.AddBytes(Registers::Instructions::Restore::RCX);
                 bytes.AddAddress(registerStorageAddress);
-            } else if (_params.registers.contains(Register::RDX)) {
+            }
+            if (_params.registers.contains(Register::RDX)) {
                 uintptr_t registerStorageAddress = 0;
                 if (!_params.rdxStorageAddressVariable.empty())
                     registerStorageAddress = vars->Get<uintptr_t>(_params.rdxStorageAddressVariable);
@@ -215,7 +226,8 @@ namespace CodeInjection::Actions {
                 else registerStorageAddress = reinterpret_cast<uintptr_t>(&Registers::CurrentValues::RDX);
                 bytes.AddBytes(Registers::Instructions::Restore::RDX);
                 bytes.AddAddress(registerStorageAddress);
-            } else if (_params.registers.contains(Register::RSI)) {
+            }
+            if (_params.registers.contains(Register::RSI)) {
                 uintptr_t registerStorageAddress = 0;
                 if (!_params.rsiStorageAddressVariable.empty())
                     registerStorageAddress = vars->Get<uintptr_t>(_params.rsiStorageAddressVariable);
@@ -223,7 +235,8 @@ namespace CodeInjection::Actions {
                 else registerStorageAddress = reinterpret_cast<uintptr_t>(&Registers::CurrentValues::RSI);
                 bytes.AddBytes(Registers::Instructions::Restore::RSI);
                 bytes.AddAddress(registerStorageAddress);
-            } else if (_params.registers.contains(Register::RDI)) {
+            }
+            if (_params.registers.contains(Register::RDI)) {
                 uintptr_t registerStorageAddress = 0;
                 if (!_params.rdiStorageAddressVariable.empty())
                     registerStorageAddress = vars->Get<uintptr_t>(_params.rdiStorageAddressVariable);
@@ -231,7 +244,8 @@ namespace CodeInjection::Actions {
                 else registerStorageAddress = reinterpret_cast<uintptr_t>(&Registers::CurrentValues::RDI);
                 bytes.AddBytes(Registers::Instructions::Restore::RDI);
                 bytes.AddAddress(registerStorageAddress);
-            } else if (_params.registers.contains(Register::RBP)) {
+            }
+            if (_params.registers.contains(Register::RBP)) {
                 uintptr_t registerStorageAddress = 0;
                 if (!_params.rbpStorageAddressVariable.empty())
                     registerStorageAddress = vars->Get<uintptr_t>(_params.rbpStorageAddressVariable);
@@ -239,7 +253,8 @@ namespace CodeInjection::Actions {
                 else registerStorageAddress = reinterpret_cast<uintptr_t>(&Registers::CurrentValues::RBP);
                 bytes.AddBytes(Registers::Instructions::Restore::RBP);
                 bytes.AddAddress(registerStorageAddress);
-            } else if (_params.registers.contains(Register::RSP)) {
+            }
+            if (_params.registers.contains(Register::RSP)) {
                 uintptr_t registerStorageAddress = 0;
                 if (!_params.rspStorageAddressVariable.empty())
                     registerStorageAddress = vars->Get<uintptr_t>(_params.rspStorageAddressVariable);
@@ -247,7 +262,8 @@ namespace CodeInjection::Actions {
                 else registerStorageAddress = reinterpret_cast<uintptr_t>(&Registers::CurrentValues::RSP);
                 bytes.AddBytes(Registers::Instructions::Restore::RSP);
                 bytes.AddAddress(registerStorageAddress);
-            } else if (_params.registers.contains(Register::R8)) {
+            }
+            if (_params.registers.contains(Register::R8)) {
                 uintptr_t registerStorageAddress = 0;
                 if (!_params.r8StorageAddressVariable.empty())
                     registerStorageAddress = vars->Get<uintptr_t>(_params.r8StorageAddressVariable);
@@ -255,7 +271,8 @@ namespace CodeInjection::Actions {
                 else registerStorageAddress = reinterpret_cast<uintptr_t>(&Registers::CurrentValues::R8);
                 bytes.AddBytes(Registers::Instructions::Restore::R8);
                 bytes.AddAddress(registerStorageAddress);
-            } else if (_params.registers.contains(Register::R9)) {
+            }
+            if (_params.registers.contains(Register::R9)) {
                 uintptr_t registerStorageAddress = 0;
                 if (!_params.r9StorageAddressVariable.empty())
                     registerStorageAddress = vars->Get<uintptr_t>(_params.r9StorageAddressVariable);
@@ -263,7 +280,8 @@ namespace CodeInjection::Actions {
                 else registerStorageAddress = reinterpret_cast<uintptr_t>(&Registers::CurrentValues::R9);
                 bytes.AddBytes(Registers::Instructions::Restore::R9);
                 bytes.AddAddress(registerStorageAddress);
-            } else if (_params.registers.contains(Register::R10)) {
+            }
+            if (_params.registers.contains(Register::R10)) {
                 uintptr_t registerStorageAddress = 0;
                 if (!_params.r10StorageAddressVariable.empty())
                     registerStorageAddress = vars->Get<uintptr_t>(_params.r10StorageAddressVariable);
@@ -271,7 +289,8 @@ namespace CodeInjection::Actions {
                 else registerStorageAddress = reinterpret_cast<uintptr_t>(&Registers::CurrentValues::R10);
                 bytes.AddBytes(Registers::Instructions::Restore::R10);
                 bytes.AddAddress(registerStorageAddress);
-            } else if (_params.registers.contains(Register::R11)) {
+            }
+            if (_params.registers.contains(Register::R11)) {
                 uintptr_t registerStorageAddress = 0;
                 if (!_params.r11StorageAddressVariable.empty())
                     registerStorageAddress = vars->Get<uintptr_t>(_params.r11StorageAddressVariable);
@@ -279,7 +298,8 @@ namespace CodeInjection::Actions {
                 else registerStorageAddress = reinterpret_cast<uintptr_t>(&Registers::CurrentValues::R11);
                 bytes.AddBytes(Registers::Instructions::Restore::R11);
                 bytes.AddAddress(registerStorageAddress);
-            } else if (_params.registers.contains(Register::R12)) {
+            }
+            if (_params.registers.contains(Register::R12)) {
                 uintptr_t registerStorageAddress = 0;
                 if (!_params.r12StorageAddressVariable.empty())
                     registerStorageAddress = vars->Get<uintptr_t>(_params.r12StorageAddressVariable);
@@ -287,7 +307,8 @@ namespace CodeInjection::Actions {
                 else registerStorageAddress = reinterpret_cast<uintptr_t>(&Registers::CurrentValues::R12);
                 bytes.AddBytes(Registers::Instructions::Restore::R12);
                 bytes.AddAddress(registerStorageAddress);
-            } else if (_params.registers.contains(Register::R13)) {
+            }
+            if (_params.registers.contains(Register::R13)) {
                 uintptr_t registerStorageAddress = 0;
                 if (!_params.r13StorageAddressVariable.empty())
                     registerStorageAddress = vars->Get<uintptr_t>(_params.r13StorageAddressVariable);
@@ -295,7 +316,8 @@ namespace CodeInjection::Actions {
                 else registerStorageAddress = reinterpret_cast<uintptr_t>(&Registers::CurrentValues::R13);
                 bytes.AddBytes(Registers::Instructions::Restore::R13);
                 bytes.AddAddress(registerStorageAddress);
-            } else if (_params.registers.contains(Register::R14)) {
+            }
+            if (_params.registers.contains(Register::R14)) {
                 uintptr_t registerStorageAddress = 0;
                 if (!_params.r14StorageAddressVariable.empty())
                     registerStorageAddress = vars->Get<uintptr_t>(_params.r14StorageAddressVariable);
@@ -303,7 +325,8 @@ namespace CodeInjection::Actions {
                 else registerStorageAddress = reinterpret_cast<uintptr_t>(&Registers::CurrentValues::R14);
                 bytes.AddBytes(Registers::Instructions::Restore::R14);
                 bytes.AddAddress(registerStorageAddress);
-            } else if (_params.registers.contains(Register::R15)) {
+            }
+            if (_params.registers.contains(Register::R15)) {
                 uintptr_t registerStorageAddress = 0;
                 if (!_params.r15StorageAddressVariable.empty())
                     registerStorageAddress = vars->Get<uintptr_t>(_params.r15StorageAddressVariable);
@@ -311,7 +334,8 @@ namespace CodeInjection::Actions {
                 else registerStorageAddress = reinterpret_cast<uintptr_t>(&Registers::CurrentValues::R15);
                 bytes.AddBytes(Registers::Instructions::Restore::R15);
                 bytes.AddAddress(registerStorageAddress);
-            } else if (_params.registers.contains(Register::XMM0)) {
+            }
+            if (_params.registers.contains(Register::XMM0)) {
                 uintptr_t registerStorageAddress = 0;
                 if (!_params.xmm0StorageAddressVariable.empty())
                     registerStorageAddress = vars->Get<uintptr_t>(_params.xmm0StorageAddressVariable);
@@ -319,7 +343,8 @@ namespace CodeInjection::Actions {
                 else registerStorageAddress = reinterpret_cast<uintptr_t>(&Registers::CurrentValues::XMM0);
                 bytes.AddBytes(Registers::Instructions::Restore::XMM0);
                 bytes.AddAddress(registerStorageAddress);
-            } else if (_params.registers.contains(Register::XMM1)) {
+            }
+            if (_params.registers.contains(Register::XMM1)) {
                 uintptr_t registerStorageAddress = 0;
                 if (!_params.xmm1StorageAddressVariable.empty())
                     registerStorageAddress = vars->Get<uintptr_t>(_params.xmm1StorageAddressVariable);
@@ -327,7 +352,8 @@ namespace CodeInjection::Actions {
                 else registerStorageAddress = reinterpret_cast<uintptr_t>(&Registers::CurrentValues::XMM1);
                 bytes.AddBytes(Registers::Instructions::Restore::XMM1);
                 bytes.AddAddress(registerStorageAddress);
-            } else if (_params.registers.contains(Register::XMM2)) {
+            }
+            if (_params.registers.contains(Register::XMM2)) {
                 uintptr_t registerStorageAddress = 0;
                 if (!_params.xmm2StorageAddressVariable.empty())
                     registerStorageAddress = vars->Get<uintptr_t>(_params.xmm2StorageAddressVariable);
@@ -335,7 +361,8 @@ namespace CodeInjection::Actions {
                 else registerStorageAddress = reinterpret_cast<uintptr_t>(&Registers::CurrentValues::XMM2);
                 bytes.AddBytes(Registers::Instructions::Restore::XMM2);
                 bytes.AddAddress(registerStorageAddress);
-            } else if (_params.registers.contains(Register::XMM3)) {
+            }
+            if (_params.registers.contains(Register::XMM3)) {
                 uintptr_t registerStorageAddress = 0;
                 if (!_params.xmm3StorageAddressVariable.empty())
                     registerStorageAddress = vars->Get<uintptr_t>(_params.xmm3StorageAddressVariable);
@@ -343,7 +370,8 @@ namespace CodeInjection::Actions {
                 else registerStorageAddress = reinterpret_cast<uintptr_t>(&Registers::CurrentValues::XMM3);
                 bytes.AddBytes(Registers::Instructions::Restore::XMM3);
                 bytes.AddAddress(registerStorageAddress);
-            } else if (_params.registers.contains(Register::XMM4)) {
+            }
+            if (_params.registers.contains(Register::XMM4)) {
                 uintptr_t registerStorageAddress = 0;
                 if (!_params.xmm4StorageAddressVariable.empty())
                     registerStorageAddress = vars->Get<uintptr_t>(_params.xmm4StorageAddressVariable);
@@ -351,7 +379,8 @@ namespace CodeInjection::Actions {
                 else registerStorageAddress = reinterpret_cast<uintptr_t>(&Registers::CurrentValues::XMM4);
                 bytes.AddBytes(Registers::Instructions::Restore::XMM4);
                 bytes.AddAddress(registerStorageAddress);
-            } else if (_params.registers.contains(Register::XMM5)) {
+            }
+            if (_params.registers.contains(Register::XMM5)) {
                 uintptr_t registerStorageAddress = 0;
                 if (!_params.xmm5StorageAddressVariable.empty())
                     registerStorageAddress = vars->Get<uintptr_t>(_params.xmm5StorageAddressVariable);
@@ -359,7 +388,8 @@ namespace CodeInjection::Actions {
                 else registerStorageAddress = reinterpret_cast<uintptr_t>(&Registers::CurrentValues::XMM5);
                 bytes.AddBytes(Registers::Instructions::Restore::XMM5);
                 bytes.AddAddress(registerStorageAddress);
-            } else if (_params.registers.contains(Register::XMM6)) {
+            }
+            if (_params.registers.contains(Register::XMM6)) {
                 uintptr_t registerStorageAddress = 0;
                 if (!_params.xmm6StorageAddressVariable.empty())
                     registerStorageAddress = vars->Get<uintptr_t>(_params.xmm6StorageAddressVariable);
@@ -367,7 +397,8 @@ namespace CodeInjection::Actions {
                 else registerStorageAddress = reinterpret_cast<uintptr_t>(&Registers::CurrentValues::XMM6);
                 bytes.AddBytes(Registers::Instructions::Restore::XMM6);
                 bytes.AddAddress(registerStorageAddress);
-            } else if (_params.registers.contains(Register::XMM7)) {
+            }
+            if (_params.registers.contains(Register::XMM7)) {
                 uintptr_t registerStorageAddress = 0;
                 if (!_params.xmm7StorageAddressVariable.empty())
                     registerStorageAddress = vars->Get<uintptr_t>(_params.xmm7StorageAddressVariable);
@@ -375,7 +406,8 @@ namespace CodeInjection::Actions {
                 else registerStorageAddress = reinterpret_cast<uintptr_t>(&Registers::CurrentValues::XMM7);
                 bytes.AddBytes(Registers::Instructions::Restore::XMM7);
                 bytes.AddAddress(registerStorageAddress);
-            } else if (_params.registers.contains(Register::XMM8)) {
+            }
+            if (_params.registers.contains(Register::XMM8)) {
                 uintptr_t registerStorageAddress = 0;
                 if (!_params.xmm8StorageAddressVariable.empty())
                     registerStorageAddress = vars->Get<uintptr_t>(_params.xmm8StorageAddressVariable);
@@ -383,7 +415,8 @@ namespace CodeInjection::Actions {
                 else registerStorageAddress = reinterpret_cast<uintptr_t>(&Registers::CurrentValues::XMM8);
                 bytes.AddBytes(Registers::Instructions::Restore::XMM8);
                 bytes.AddAddress(registerStorageAddress);
-            } else if (_params.registers.contains(Register::XMM9)) {
+            }
+            if (_params.registers.contains(Register::XMM9)) {
                 uintptr_t registerStorageAddress = 0;
                 if (!_params.xmm9StorageAddressVariable.empty())
                     registerStorageAddress = vars->Get<uintptr_t>(_params.xmm9StorageAddressVariable);
@@ -391,7 +424,8 @@ namespace CodeInjection::Actions {
                 else registerStorageAddress = reinterpret_cast<uintptr_t>(&Registers::CurrentValues::XMM9);
                 bytes.AddBytes(Registers::Instructions::Restore::XMM9);
                 bytes.AddAddress(registerStorageAddress);
-            } else if (_params.registers.contains(Register::XMM10)) {
+            }
+            if (_params.registers.contains(Register::XMM10)) {
                 uintptr_t registerStorageAddress = 0;
                 if (!_params.xmm10StorageAddressVariable.empty())
                     registerStorageAddress = vars->Get<uintptr_t>(_params.xmm10StorageAddressVariable);
@@ -399,7 +433,8 @@ namespace CodeInjection::Actions {
                 else registerStorageAddress = reinterpret_cast<uintptr_t>(&Registers::CurrentValues::XMM10);
                 bytes.AddBytes(Registers::Instructions::Restore::XMM10);
                 bytes.AddAddress(registerStorageAddress);
-            } else if (_params.registers.contains(Register::XMM11)) {
+            }
+            if (_params.registers.contains(Register::XMM11)) {
                 uintptr_t registerStorageAddress = 0;
                 if (!_params.xmm11StorageAddressVariable.empty())
                     registerStorageAddress = vars->Get<uintptr_t>(_params.xmm11StorageAddressVariable);
@@ -407,7 +442,8 @@ namespace CodeInjection::Actions {
                 else registerStorageAddress = reinterpret_cast<uintptr_t>(&Registers::CurrentValues::XMM11);
                 bytes.AddBytes(Registers::Instructions::Restore::XMM11);
                 bytes.AddAddress(registerStorageAddress);
-            } else if (_params.registers.contains(Register::XMM12)) {
+            }
+            if (_params.registers.contains(Register::XMM12)) {
                 uintptr_t registerStorageAddress = 0;
                 if (!_params.xmm12StorageAddressVariable.empty())
                     registerStorageAddress = vars->Get<uintptr_t>(_params.xmm12StorageAddressVariable);
@@ -415,7 +451,8 @@ namespace CodeInjection::Actions {
                 else registerStorageAddress = reinterpret_cast<uintptr_t>(&Registers::CurrentValues::XMM12);
                 bytes.AddBytes(Registers::Instructions::Restore::XMM12);
                 bytes.AddAddress(registerStorageAddress);
-            } else if (_params.registers.contains(Register::XMM13)) {
+            }
+            if (_params.registers.contains(Register::XMM13)) {
                 uintptr_t registerStorageAddress = 0;
                 if (!_params.xmm13StorageAddressVariable.empty())
                     registerStorageAddress = vars->Get<uintptr_t>(_params.xmm13StorageAddressVariable);
@@ -423,7 +460,8 @@ namespace CodeInjection::Actions {
                 else registerStorageAddress = reinterpret_cast<uintptr_t>(&Registers::CurrentValues::XMM13);
                 bytes.AddBytes(Registers::Instructions::Restore::XMM13);
                 bytes.AddAddress(registerStorageAddress);
-            } else if (_params.registers.contains(Register::XMM14)) {
+            }
+            if (_params.registers.contains(Register::XMM14)) {
                 uintptr_t registerStorageAddress = 0;
                 if (!_params.xmm14StorageAddressVariable.empty())
                     registerStorageAddress = vars->Get<uintptr_t>(_params.xmm14StorageAddressVariable);
@@ -431,7 +469,8 @@ namespace CodeInjection::Actions {
                 else registerStorageAddress = reinterpret_cast<uintptr_t>(&Registers::CurrentValues::XMM14);
                 bytes.AddBytes(Registers::Instructions::Restore::XMM14);
                 bytes.AddAddress(registerStorageAddress);
-            } else if (_params.registers.contains(Register::XMM15)) {
+            }
+            if (_params.registers.contains(Register::XMM15)) {
                 uintptr_t registerStorageAddress = 0;
                 if (!_params.xmm15StorageAddressVariable.empty())
                     registerStorageAddress = vars->Get<uintptr_t>(_params.xmm15StorageAddressVariable);
