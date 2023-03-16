@@ -74,6 +74,9 @@ namespace CodeInjection::Actions {
                 else bytes = Memory::Bytes::FromString(bytesString);
             else bytes = bytesVector;
 
+            // Remove me
+            Log("!!! Bytes: {}", bytes.ToHexString());
+
             Log("FindBytesAction: Searching for {} (mask: '{}') in module {}", bytes.ToHexString(), mask, moduleName);
             auto address = Memory::Find(moduleName, bytes, mask, startOffset);
             if (address == 0) {
