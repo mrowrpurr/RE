@@ -40,6 +40,11 @@ namespace CodeInjection {
             return *this;
         }
 
+        InjectionBuilder& WriteCall(Actions::WriteCallActionParams actionParams) {
+            AddAction(Actions::WriteCallAction(actionParams));
+            return *this;
+        }
+
         InjectionBuilder& WriteNop(Actions::WriteNopActionParams actionParams) {
             AddAction(Actions::WriteNopAction(actionParams));
             return *this;

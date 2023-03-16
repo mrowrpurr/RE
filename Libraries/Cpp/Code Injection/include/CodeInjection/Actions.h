@@ -5,6 +5,6 @@
 #include "Actions/ReadBytesAction.h"
 #include "Actions/SaveRegistersAction.h"
 #include "Actions/WriteBytesAction.h"
+#include "Actions/WriteCallAction.h"
 #include "Actions/WriteJmpAction.h"
 #include "Actions/WriteNopAction.h"
-

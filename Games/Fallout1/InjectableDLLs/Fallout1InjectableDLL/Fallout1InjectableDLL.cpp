@@ -19,7 +19,7 @@ std::string PrintBytes(std::vector<uint8_t> bytes) {
     return result;
 }
 
-// TODO: Remove the address AND fromAddress from Jmp ????? is it useful?
+// TODO: Uninstall all hooks on close!
 // TODO: Call Function
 // TODO: Call Lambda
 // TODO: SaveRegisters
@@ -53,7 +53,7 @@ void SetupHooks() {
                     [](Injection& trampoline) {
                         trampoline.WriteNop({.count = 5});
                         // trampoline.SaveRegisters({.registers = {Register::EAX}});
-                        // trampoline.CallFunction({.function = I_am_a_function});
+                        trampoline.WriteCall({.toAddress = reinterpret_cast<uintptr_t>(&I_am_a_function)});
                         trampoline.WriteNop({.count = 5});
                         trampoline.WriteBytes({.bytesVariable = "OriginalBytes"});
                         trampoline.WriteNop({.count = 5});
