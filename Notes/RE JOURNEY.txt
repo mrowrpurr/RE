@@ -2,6 +2,9 @@ Mrowr Purr's Reverse Engineering Journey
 
 TODO : Teleport
 
+--> "Finish" the new CodeInjection (AoB, DSL, DONE!)
+
+20. CodeInjection: Lambda Calls, Save/Restore Registers, WriteAssembly
 19. More CodeInjection (AllocateMemory etc) and Baldur's Gate 3
 18. Recreate CodeInjection (AGAIN) and then Read item names from .DAT
 17. xbyak + zydis Memory/Assembly libraries + Fallout 1 RE
