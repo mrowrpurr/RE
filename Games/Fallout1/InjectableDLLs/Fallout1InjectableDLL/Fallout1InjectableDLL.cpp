@@ -19,15 +19,17 @@ std::string PrintBytes(std::vector<uint8_t> bytes) {
     return result;
 }
 
-// TODO: Uninstall all hooks on close!
 // TODO: Call Lambda
 // TODO: SaveRegisters
 // TODO: RestoreRegisters
+// TODO: Update Call Lambda to support Registers object reference as a parameter
 // TODO: Array of Bytes
 // TODO: Write Assembly
 // TODO: Add a little Macro for the Write Assembly (just to using namespace Xbyak::util)
 // TODO: Overloads
 // TODO: Wrappers
+
+std::vector<std::string> output;
 
 void __declspec(naked) I_am_a_function() {
     __asm {
@@ -56,6 +58,13 @@ void SetupHooks() {
                         // trampoline.SaveRegisters({.registers = {Register::EAX}});
                         trampoline.WriteCall({.toAddress = reinterpret_cast<uintptr_t>(&I_am_a_function)});
                         trampoline.WriteNop({.count = 5});
+                        trampoline.Call({.function = []() { output.push_back("1 I am a function and I was called!"); }}
+                        );
+                        trampoline.Call({.function = []() { output.push_back("2 I am a function and I was called!"); }}
+                        );
+                        trampoline.Call({.function = []() { output.push_back("3 I am a function and I was called!"); }}
+                        );
+                        trampoline.WriteNop({.count = 5});
                         trampoline.WriteBytes({.bytesVariable = "OriginalBytes"});
                         trampoline.WriteNop({.count = 5});
                         trampoline.WriteJmp({.toAddressVariable = "JumpBack"});
@@ -75,26 +84,13 @@ void SetupHooks() {
         });
 }
 
-// void PrintOutCoolShit() {
-//     // From ASM to BYTES
-//     auto bytes = Assembly::GetBytes([](Assembly::Code code) {
-//         code.mov(eax, ptr[esp + 0x4]);
-//         code.nop();
-//         code.nop();
-//     });
-//     Output("Bytes: {}", Memory::BytesToString(bytes));
-
-//     // From BYTES to ASM
-//     auto        instructions = Assembly::Disassemble86(bytes);
-//     std::string asmCode;
-//     for (auto& instruction : instructions) asmCode += instruction + "\n";
-//     Output("ASM: {}", asmCode);
-// }
-
 void RunUI() {
     UserInterface::Run([&](auto& app) {
         app.SetTitle("Fallout 1").SetButtonHeight(50).SetHeight(500).SetWidth(500).ShowOutputTextBox();
-        // app.AddButton("Generate Bytes from ASM", [&]() { PrintOutCoolShit(); });
+        app.AddButton("Print Save Output", [&]() {
+            Output("Output ({}):", output.size());
+            for (auto& line : output) Output("{}", line);
+        });
         for (auto [name, injection] : CodeInjection::RegisteredInjections) {
             app.AddButton(string_format("Enable {}", injection->GetName()), [&, injection]() {
                 injection->Toggle();
