@@ -9,3 +9,4 @@ typedef CodeInjection::Injection                  Injection;
 typedef CodeInjection::Register                   Register;
 typedef CodeInjection::Registers::RegistersReader Registers;
 typedef Xbyak::CodeGenerator                      AssemblyCode;
+#define BeginAssembly using namespace Xbyak::util;

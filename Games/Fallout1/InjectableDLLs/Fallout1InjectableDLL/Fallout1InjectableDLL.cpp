@@ -19,8 +19,6 @@ std::string PrintBytes(std::vector<uint8_t> bytes) {
     return result;
 }
 
-// TODO: Write Assembly
-// TODO: Add a little Macro for the Write Assembly (just to using namespace Xbyak::util)
 // TODO: Array of Bytes
 // TODO: Overloads
 // TODO: Wrappers
@@ -44,7 +42,7 @@ void SetupHooks() {
                         trampoline.WriteAssembly({
                             .code =
                                 [](AssemblyCode& code) {
-                                    using namespace Xbyak::util;
+                                    BeginAssembly;
                                     code.mov(eax, ptr[esp + 0x4]);
                                     code.mov(ecx, ptr[esp + 0x8]);
                                 },
