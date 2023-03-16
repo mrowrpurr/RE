@@ -19,7 +19,6 @@ std::string PrintBytes(std::vector<uint8_t> bytes) {
     return result;
 }
 
-// TODO: Call Lambda
 // TODO: SaveRegisters
 // TODO: RestoreRegisters
 // TODO: Update Call Lambda to support Registers object reference as a parameter
@@ -28,8 +27,6 @@ std::string PrintBytes(std::vector<uint8_t> bytes) {
 // TODO: Add a little Macro for the Write Assembly (just to using namespace Xbyak::util)
 // TODO: Overloads
 // TODO: Wrappers
-
-std::vector<std::string> output;
 
 void __declspec(naked) I_am_a_function() {
     __asm {
@@ -58,12 +55,7 @@ void SetupHooks() {
                         // trampoline.SaveRegisters({.registers = {Register::EAX}});
                         trampoline.WriteCall({.toAddress = reinterpret_cast<uintptr_t>(&I_am_a_function)});
                         trampoline.WriteNop({.count = 5});
-                        trampoline.Call({.function = []() { output.push_back("1 I am a function and I was called!"); }}
-                        );
-                        trampoline.Call({.function = []() { output.push_back("2 I am a function and I was called!"); }}
-                        );
-                        trampoline.Call({.function = []() { output.push_back("3 I am a function and I was called!"); }}
-                        );
+                        trampoline.Call({.function = []() { Output("I am a function and I was called!"); }});
                         trampoline.WriteNop({.count = 5});
                         trampoline.WriteBytes({.bytesVariable = "OriginalBytes"});
                         trampoline.WriteNop({.count = 5});
@@ -87,10 +79,6 @@ void SetupHooks() {
 void RunUI() {
     UserInterface::Run([&](auto& app) {
         app.SetTitle("Fallout 1").SetButtonHeight(50).SetHeight(500).SetWidth(500).ShowOutputTextBox();
-        app.AddButton("Print Save Output", [&]() {
-            Output("Output ({}):", output.size());
-            for (auto& line : output) Output("{}", line);
-        });
         for (auto [name, injection] : CodeInjection::RegisteredInjections) {
             app.AddButton(string_format("Enable {}", injection->GetName()), [&, injection]() {
                 injection->Toggle();
@@ -106,24 +94,6 @@ void RunUI() {
 DLL_Main {
     SetupHooks();
     RunUI();
-    CodeInjection::UninstallAll();
+    // CodeInjection::UninstallAll();
     Injected_DLL::EjectDLL();
 }
-
-//     _.WriteAssembly(AssemblyCode {
-//         code.mov(eax, ptr[esp + 0x4]);
-//         code.nop();
-//         code.nop();
-//     })
-
-// void BeginTrackingEntities() {
-//     //
-// }
-
-// void PrintKnownEntities() {
-//     //
-// }
-
-// void ClearKnownEntities() {
-//     //
-// }
