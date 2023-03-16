@@ -80,6 +80,11 @@ namespace CodeInjection {
             return *this;
         }
 
+        InjectionBuilder& FindBytes(Actions::FindBytesActionParams actionParams) {
+            AddAction(Actions::FindBytesAction(actionParams));
+            return *this;
+        }
+
         template <typename T>
         InjectionBuilder& Var(const std::string& name, T value) {
             Log("Set Variable: {} ({})", name, typeid(T).name());

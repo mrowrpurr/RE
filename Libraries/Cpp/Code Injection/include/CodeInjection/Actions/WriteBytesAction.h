@@ -59,8 +59,8 @@ namespace CodeInjection::Actions {
             Log("WriteBytesAction: Writing {} bytes to 0x{:X} (Protected: {})", bytes.size(), address,
                 isWriteProtected);
 
-            if (isWriteProtected) Memory::WriteProtectedBytes(address, bytes);
-            else Memory::WriteBytes(address, bytes);
+            if (isWriteProtected) Memory::WriteProtected(address, bytes);
+            else Memory::Write(address, bytes);
         }
     };
 }

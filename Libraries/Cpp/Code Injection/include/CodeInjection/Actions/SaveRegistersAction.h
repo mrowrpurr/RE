@@ -492,8 +492,8 @@ namespace CodeInjection::Actions {
             Log("SaveRegistersAction: Saving Registers using {} bytes to 0x{:x} (Protected: {})", bytes.size(), address,
                 isWriteProtected);
 
-            if (isWriteProtected) Memory::WriteProtectedBytes(address, bytes);
-            else Memory::WriteBytes(address, bytes);
+            if (isWriteProtected) Memory::WriteProtected(address, bytes);
+            else Memory::Write(address, bytes);
         }
     };
 }

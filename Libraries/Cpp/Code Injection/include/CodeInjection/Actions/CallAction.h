@@ -86,8 +86,8 @@ namespace CodeInjection::Actions {
 
             Log("CallAction: Writing CALL at 0x{:X} to 0x{:x} (Protected: {})", address, toAddress, isWriteProtected);
 
-            if (isWriteProtected) Memory::WriteProtectedBytes(address, bytes);
-            else Memory::WriteBytes(address, bytes);
+            if (isWriteProtected) Memory::WriteProtected(address, bytes);
+            else Memory::Write(address, bytes);
         }
     };
 }

@@ -64,8 +64,8 @@ namespace CodeInjection::Actions {
             Log("WriteJmpAction: Writing JMP at 0x{:X} to 0x{:x} (Protected: {})", fromAddress, toAddress,
                 isWriteProtected);
 
-            if (isWriteProtected) Memory::WriteProtectedBytes(fromAddress, bytes);
-            else Memory::WriteBytes(fromAddress, bytes);
+            if (isWriteProtected) Memory::WriteProtected(fromAddress, bytes);
+            else Memory::Write(fromAddress, bytes);
         }
     };
 }
