@@ -70,6 +70,11 @@ namespace CodeInjection {
             return *this;
         }
 
+        InjectionBuilder& RestoreRegisters(Actions::RestoreRegistersActionParams actionParams) {
+            AddAction(Actions::RestoreRegistersAction(actionParams));
+            return *this;
+        }
+
         template <typename T>
         InjectionBuilder& Var(const std::string& name, T value) {
             Log("Set Variable: {} ({})", name, typeid(T).name());

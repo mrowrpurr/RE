@@ -3,6 +3,7 @@
 #include <uint128_t.h>
 
 #include <cstdint>
+#include <unordered_map>
 
 namespace CodeInjection {
 

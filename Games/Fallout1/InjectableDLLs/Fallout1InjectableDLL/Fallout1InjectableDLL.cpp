@@ -28,13 +28,6 @@ std::string PrintBytes(std::vector<uint8_t> bytes) {
 // TODO: Overloads
 // TODO: Wrappers
 
-void __declspec(naked) I_am_a_function() {
-    __asm {
-        mov eax, 0x69
-        ret
-    }
-}
-
 void SetupHooks() {
     CodeInjection::New("Drop Item")
         .Configure([](Injection& _) {
@@ -51,14 +44,18 @@ void SetupHooks() {
                 .addressVariable = "Trampoline",
                 .code =
                     [](Injection& trampoline) {
-                        trampoline.WriteNop({.count = 5});
-                        // trampoline.SaveRegisters({.registers = {Register::EAX}});
-                        trampoline.WriteCall({.toAddress = reinterpret_cast<uintptr_t>(&I_am_a_function)});
-                        trampoline.WriteNop({.count = 5});
+                        trampoline.SaveRegisters({
+                            .registers = {
+                                          Register::EAX, Register::ECX, Register::EDX, Register::EBX, Register::ESI,
+                                          Register::EDI, Register::EBP, Register::ESP}
+                        });
                         trampoline.Call({.function = []() { Output("I am a function and I was called!"); }});
-                        trampoline.WriteNop({.count = 5});
+                        trampoline.RestoreRegisters({
+                            .registers = {
+                                          Register::EAX, Register::ECX, Register::EDX, Register::EBX, Register::ESI,
+                                          Register::EDI, Register::EBP, Register::ESP}
+                        });
                         trampoline.WriteBytes({.bytesVariable = "OriginalBytes"});
-                        trampoline.WriteNop({.count = 5});
                         trampoline.WriteJmp({.toAddressVariable = "JumpBack"});
                     },
             });
@@ -94,6 +91,6 @@ void RunUI() {
 DLL_Main {
     SetupHooks();
     RunUI();
-    // CodeInjection::UninstallAll();
+    CodeInjection::UninstallAll();
     Injected_DLL::EjectDLL();
 }
