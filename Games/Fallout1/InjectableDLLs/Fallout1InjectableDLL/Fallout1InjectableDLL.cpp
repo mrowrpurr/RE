@@ -57,16 +57,17 @@ void ReadPlayerInventory() {
     auto moduleBase         = 0x400000;  // Hardcoded for now
     auto staticCharacterPtr = moduleBase + 0x262844;
 
-    auto playerInventoryPtr = Memory::Read<uint32_t>(staticCharacterPtr, {0x0, 0x34});
+    auto playerInventoryItemCount = Memory::Read<uint32_t>(staticCharacterPtr, {0x0, 0x2c});
+    auto playerInventoryPtr       = Memory::Read<uint32_t>(staticCharacterPtr, {0x0, 0x34});
 
     uintptr_t itemPtr  = 0;
     size_t    quantity = 0;
 
-    while (itemPtr != 0xCCCCCCCC) {
+    Output("The player has {} items in their inventory", playerInventoryItemCount);
+    for (size_t i = 0; i < playerInventoryItemCount; ++i) {
         itemPtr  = Memory::Read<uintptr_t>(playerInventoryPtr, 0x0);
         quantity = Memory::Read<uint32_t>(playerInventoryPtr, 0x4);
         playerInventoryPtr += 0x8;
-        if (itemPtr == 0xCCCCCCCC) break;
 
         auto itemPID  = Memory::Read<uint32_t>(itemPtr, 0x64);
         auto itemName = GetNameOfItem(itemPID);
