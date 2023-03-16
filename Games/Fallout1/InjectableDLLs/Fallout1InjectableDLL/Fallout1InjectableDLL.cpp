@@ -41,6 +41,14 @@ void SetupHooks() {
                 .addressVariable = "Trampoline",
                 .code =
                     [](Injection& trampoline) {
+                        trampoline.WriteAssembly({
+                            .code =
+                                [](AssemblyCode& code) {
+                                    using namespace Xbyak::util;
+                                    code.mov(eax, ptr[esp + 0x4]);
+                                    code.mov(ecx, ptr[esp + 0x8]);
+                                },
+                        });
                         trampoline.SaveRegisters({
                             .registers = {
                                           Register::EAX, Register::ECX, Register::EDX, Register::EBX, Register::ESI,

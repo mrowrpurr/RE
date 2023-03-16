@@ -45,13 +45,13 @@ namespace CodeInjection {
             return *this;
         }
 
-        InjectionBuilder& Call(Actions::CallActionParams actionParams) {
-            AddAction(Actions::CallAction(actionParams));
+        InjectionBuilder& WriteNop(Actions::WriteNopActionParams actionParams) {
+            AddAction(Actions::WriteNopAction(actionParams));
             return *this;
         }
 
-        InjectionBuilder& WriteNop(Actions::WriteNopActionParams actionParams) {
-            AddAction(Actions::WriteNopAction(actionParams));
+        InjectionBuilder& WriteAssembly(Actions::WriteAssemblyActionParams actionParams) {
+            AddAction(Actions::WriteAssemblyAction(actionParams));
             return *this;
         }
 
@@ -62,6 +62,11 @@ namespace CodeInjection {
 
         InjectionBuilder& DeallocateMemory(Actions::DeallocateMemoryActionParams actionParams) {
             AddAction(Actions::DeallocateMemoryAction(actionParams));
+            return *this;
+        }
+
+        InjectionBuilder& Call(Actions::CallActionParams actionParams) {
+            AddAction(Actions::CallAction(actionParams));
             return *this;
         }
 
