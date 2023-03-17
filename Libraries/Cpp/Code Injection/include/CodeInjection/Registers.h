@@ -4,6 +4,7 @@
 
 #include <cstdint>
 #include <unordered_map>
+#include <unordered_set>
 
 namespace CodeInjection {
 
@@ -223,6 +224,22 @@ namespace CodeInjection {
             // uint256_t YMM22 = 0;
             // uint256_t YMM23 = 0;
             // uint256_t YMM24 = 0;
+        }
+
+        std::unordered_set<Register> x86_GeneralPurposeRegisters = {Register::EAX, Register::EBX, Register::ECX,
+                                                                    Register::EDX, Register::ESI, Register::EDI,
+                                                                    Register::ESP, Register::EBP};
+
+        std::unordered_set<Register> x64_GeneralPurposeRegisters = {
+            Register::RAX, Register::RBX, Register::RCX, Register::RDX, Register::RSI, Register::RDI,
+            Register::RSP, Register::RBP, Register::R8,  Register::R9,  Register::R10, Register::R11,
+            Register::R12, Register::R13, Register::R14, Register::R15};
+
+        std::unordered_set<Register> GetGeneralPurposeRegisters() {
+            auto registers = x86_GeneralPurposeRegisters;
+            if (sizeof(intptr_t) == 8)
+                registers.insert(x64_GeneralPurposeRegisters.begin(), x64_GeneralPurposeRegisters.end());
+            return registers;
         }
 
         class RegistersReader {

@@ -22,9 +22,9 @@ namespace CodeInjection::Actions {
         std::string          bytesVariable;
         std::string          mask;
         std::string          maskVariable;
+        std::string          outVariable;
         uintptr_t            startOffset = 0;
         std::string          startOffsetVariable;
-        std::string          outVariable;
     };
 
     class FindBytesAction : public InjectionAction {
