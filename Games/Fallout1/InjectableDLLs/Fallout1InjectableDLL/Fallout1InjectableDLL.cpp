@@ -13,46 +13,15 @@ SetLogFilePath("InjectedDLL.log");
 
 #define Output(...) UserInterface::App().AppendOutput(string_format(__VA_ARGS__))
 
-std::string PrintBytes(std::vector<uint8_t> bytes) {
-    std::string result;
-    for (auto b : bytes) result += string_format("{:02x} ", b);
-    return result;
-}
-
-// TODO: Overloads
-
-// TODO: Wrappers
-
 void SetupHooks() {
-    CodeInjection::New("Drop Item")
-        .Configure([](Injection& _) {
-            _.Var<uintptr_t>("Detour", 0x46a41c);
-            _.Var<size_t>("DetourSize", 5);
-            _.Var<uintptr_t>("JumpBack", _.Var<uintptr_t>("Detour") + _.Var<size_t>("DetourSize"));
-            _.Var<uintptr_t>("Trampoline", 0);
-            _.ReadBytes("Detour", "OriginalBytes", _.Var<size_t>("DetourSize"));
-        })
-        .OnInstall([](Injection& _) {
-            _.AllocateMemory("Trampoline", [](Injection& trampoline) {
-                trampoline.SaveGeneralPurposeRegisters();
-                trampoline.Call([](Registers& regs) {
-                    Output("I am a function and I was called!");
-                    Output("EAX is {:x}", regs.eax());
-                    Output("EAX 0x0 is {}", regs.eax(0x0));
-                    Output("EAX 0x34 0x0 is {:x}", regs.eax({0x34, 0x0}));
-                    Output("EAX 0x34 0x4 is {}", regs.eax({0x34, 0x4}));
-                    Output("EAX 0x34 0x0 0x64 is {}", regs.eax({0x34, 0x0, 0x64}));
-                });
-                trampoline.RestoreGeneralPurposeRegisters();
-                trampoline.WriteBytes("OriginalBytes");
-                trampoline.WriteJmp("JumpBack");
-            });
-            _.WriteJmp("Detour", "Trampoline");
-        })
-        .OnUninstall([](Injection& _) {
-            _.WriteBytes("Detour", "OriginalBytes");
-            _.DeallocateMemory("Trampoline");
-        });
+    CodeInjection::InjectFunction<11>("Drop Item", 0x46a41c, [](Registers& regs) {
+        Output("I am a function and I was called!");
+        Output("EAX is {:x}", regs.eax());
+        Output("EAX 0x0 is {}", regs.eax(0x0));
+        Output("EAX 0x34 0x0 is {:x}", regs.eax({0x34, 0x0}));
+        Output("EAX 0x34 0x4 is {}", regs.eax({0x34, 0x4}));
+        Output("EAX 0x34 0x0 0x64 is {}", regs.eax({0x34, 0x0, 0x64}));
+    });
 }
 
 void RunUI() {

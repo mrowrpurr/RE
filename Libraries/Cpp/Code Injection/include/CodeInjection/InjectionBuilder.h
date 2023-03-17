@@ -89,6 +89,11 @@ namespace CodeInjection {
             return *this;
         }
 
+        InjectionBuilder& WriteNop(const std::string& addressVariable, size_t count) {
+            AddAction(Actions::WriteNopAction({.addressVariable = addressVariable, .count = count}));
+            return *this;
+        }
+
         InjectionBuilder& WriteAssembly(Actions::WriteAssemblyActionParams actionParams) {
             AddAction(Actions::WriteAssemblyAction(actionParams));
             return *this;
