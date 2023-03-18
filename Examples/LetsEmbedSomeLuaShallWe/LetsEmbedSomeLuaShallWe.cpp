@@ -22,6 +22,35 @@ void report_lua_errors(lua_State* luaState, int status) {
 
 int Cpp_Function_To_Call_From_Lua() { return 69; }
 
+class Dog {
+    std::string _name;
+
+public:
+    Dog(const std::string& name) : _name(name) {}
+    std::string GetName() const { return _name; }
+    void        Bark() const {
+        std::cout << string_format("[C++ STDOUT] Woof, my name is {}", _name) << std::endl;
+    }
+};
+
+void Construct_Cpp_Dog_Class_From_Lua() {
+    auto       scriptPath = PathToScript("Construct_Cpp_Class.lua");
+    lua_State* L          = luaL_newstate();
+    luaL_openlibs(L);
+
+    // Make C++ class Dog available to Lua
+    luabridge::getGlobalNamespace(L)
+        .beginClass<Dog>("Dog")
+        .addConstructor<void (*)(const std::string&)>()
+        .addFunction("Bark", &Dog::Bark)
+        .addFunction("GetName", &Dog::GetName)
+        .endClass();
+
+    auto status = luaL_dofile(L, scriptPath.c_str());
+    report_lua_errors(L, status);
+    lua_close(L);
+}
+
 void Call_Cpp_Function_From_Lua() {
     auto       scriptPath = PathToScript("Call_Cpp_Function.lua");
     lua_State* L          = luaL_newstate();
@@ -57,5 +86,6 @@ int main() {
     Call_Lua_String_Lua_From_Cpp();
     Call_Lua_File_Script_From_Cpp();
     Call_Cpp_Function_From_Lua();
+    Construct_Cpp_Dog_Class_From_Lua();
     std::cout << "[END]" << std::endl;
 }
