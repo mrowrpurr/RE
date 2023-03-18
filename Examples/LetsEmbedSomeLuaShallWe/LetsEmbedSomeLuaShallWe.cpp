@@ -1,6 +1,9 @@
 #include <Logging.h>
 #include <StringFormatting.h>
 
+#include <memory>
+#include <unordered_map>
+
 // Learn how to make our own 'libraries'
 // to require for autocompletion
 
@@ -31,23 +34,30 @@ void report_lua_errors(lua_State* luaState, int status) {
 //     //
 // }
 
-std::unordered_map<std::string, std::string> _eventListeners;
+std::unordered_map<std::string, std::shared_ptr<luabridge::LuaRef>> _eventListeners;
 
-void RegisterEventListener(const std::string& eventName, const std::string& listenerName) {
+void RegisterEventListener(const std::string& eventName, luabridge::LuaRef listenerFn) {
+    auto listenerName = listenerFn.tostring();
     Log("Registering event listener '{}' for event '{}'", listenerName, eventName);
-    _eventListeners[eventName] = listenerName;
+    _eventListeners[eventName] = std::make_shared<luabridge::LuaRef>(listenerFn);
 }
+
 void DelegateEvent(lua_State* L, const std::string& eventName, const std::string& eventPayload) {
     Log("Delegating event '{}' with payload '{}'", eventName, eventPayload);
-    auto listenerName = _eventListeners[eventName];
-    if (listenerName.empty()) return;
+    auto listenerFnResult = _eventListeners.find(eventName);
+    if (listenerFnResult == _eventListeners.end()) {
+        Log("No listener registered for event '{}'", eventName);
+        return;
+    }
+    auto listenerFn   = listenerFnResult->second;
+    auto listenerName = listenerFn->tostring();
 
     Log("Calling listener '{}' for event '{}' with payload '{}'", listenerName, eventName,
         eventPayload);
-    auto gotFunctionOk   = lua_getglobal(L, listenerName.c_str());
-    auto pushedStringOk  = lua_pushstring(L, eventPayload.c_str());
-    auto eventCallResult = lua_pcall(L, 1, 0, 0);
-    report_lua_errors(L, eventCallResult);
+
+    // Call listener function
+    auto eventCallResult = (*listenerFn)(eventPayload);
+    report_lua_errors(L, eventCallResult.hasFailed());
 }
 
 void Delegate_Simple_Strings_To_Loaded_Lua_State() {
@@ -65,7 +75,7 @@ void Delegate_Simple_Strings_To_Loaded_Lua_State() {
     report_lua_errors(L, pluginCallResult);
 
     // Delegate Bark Event
-    DelegateEvent(L, "Bark", "Woof, from C++ string 'event'!");
+    DelegateEvent(L, "Bark", "Parker");
 
     // Delegate Butts Event
     DelegateEvent(L, "Butts", "Butts, from C++ string 'event'!");
