@@ -33,20 +33,22 @@ void SetupHooks() {
 }
 
 void FollowAndLogMysteriousLinkedList() {
-    auto startAddress = 0x87E1C98;
-    auto nextPointer  = 0x98;
-    auto identifier   = 0x0;
-    auto tileNumber   = 0x4;
-    auto nextAddress  = startAddress;
-    while (true) {
-        auto next = Memory::Read<uintptr_t>(nextAddress);
-        if (next == 0x0) break;
-        auto identifierValue = Memory::Read<uint32_t>(next + identifier);
-        auto tileNumberValue = Memory::Read<uint32_t>(next + tileNumber);
-        Output(
-            "Next: {:x} Identifier: {:x} TileNumber: {:x}", next, identifierValue, tileNumberValue
-        );
-        nextAddress = next + nextPointer;
+    auto address           = 0x87F9E64;  // From what 0xf1_res.dll+DE6F accesses
+    auto nextPointerOffset = 0x98;
+    auto identifierOffset  = 0x0;
+    auto tileNumberOffset  = 0x4;
+
+    while (address != 0) {
+        Log("Address: {:x}", address);
+
+        auto identifier = Memory::Read<uint32_t>(address, identifierOffset);
+        Log("Identifier: {}", identifier);
+
+        auto tileNumber = Memory::Read<uint32_t>(address, tileNumberOffset);
+        Log("Tile Number: {}", tileNumber);
+
+        address = Memory::Read<uintptr_t>(address, nextPointerOffset);
+        Log("Next Address: {:x}", address);
     }
 }
 
