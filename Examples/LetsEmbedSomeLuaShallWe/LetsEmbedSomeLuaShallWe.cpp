@@ -40,11 +40,13 @@ void Construct_Cpp_Dog_Class_From_Lua() {
 
     // Make C++ class Dog available to Lua
     luabridge::getGlobalNamespace(L)
+        .beginNamespace("Animals")
         .beginClass<Dog>("Dog")
         .addConstructor<void (*)(const std::string&)>()
         .addFunction("Bark", &Dog::Bark)
         .addFunction("GetName", &Dog::GetName)
-        .endClass();
+        .endClass()
+        .endNamespace();
 
     auto status = luaL_dofile(L, scriptPath.c_str());
     report_lua_errors(L, status);

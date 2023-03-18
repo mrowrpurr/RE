@@ -4,7 +4,7 @@
 -- The Dog class has a method named Bark
 
 -- Create a new Dog object
-local dog = Dog("Parker")
+local dog = Animals.Dog("Parker")
 
 -- Call the Bark method
 dog:Bark()
