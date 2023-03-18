@@ -1,9 +1,11 @@
 Mrowr Purr's Reverse Engineering Journey
 
-TODO : Teleport
+--> Compile simple C++ apps and DISASSEBLE THEM ???
+--> Fallout RE
+--> Fallout CT cleanup :)
 
---> "Finish" the new CodeInjection (AoB, DSL, DONE!)
-
+22. ...
+21. FINISHED the Hook CodeInjection library. Did some Fallout RE
 20. CodeInjection: Lambda Calls, Save/Restore Registers, WriteAssembly
 19. More CodeInjection (AllocateMemory etc) and Baldur's Gate 3
 18. Recreate CodeInjection (AGAIN) and then Read item names from .DAT
@@ -28,12 +30,11 @@ TODO : Teleport
 
 
 
-TODO:
-- !midnight
-- Cheat Engine Lua Scripting!
-- let's hook an entire function call! In Fallout 1.
-- VTables. RTTI. etc etc. godbolt C++?
 
+TODO:
+- Cheat Engine Lua Scripting!
+- Hook an entire function call! In Fallout 1.
+- VTables
 
 Notes:
 ESP will point to the top of the stack
