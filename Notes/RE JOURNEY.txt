@@ -2,9 +2,10 @@ Mrowr Purr's Reverse Engineering Journey
 
 --> Compile simple C++ apps and DISASSEBLE THEM ???
 --> Fallout RE
---> Fallout CT cleanup :)
+--> Embed Lua!
 
-22. ...
+23. Embed Lua!
+22. Fallout CT cleanup! New code list items.
 21. FINISHED the Hook CodeInjection library. Did some Fallout RE
 20. CodeInjection: Lambda Calls, Save/Restore Registers, WriteAssembly
 19. More CodeInjection (AllocateMemory etc) and Baldur's Gate 3
