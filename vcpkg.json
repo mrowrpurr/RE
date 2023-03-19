@@ -3,6 +3,7 @@
   "dependencies": [
     "boost-program-options",
     "fmt",
+    "luabridge3",
     "luajit",
     "nana",
     "simpleini",

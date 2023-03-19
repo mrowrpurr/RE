@@ -7,25 +7,70 @@
 #include <UserInterface.h>
 
 #include <cstdint>
-#include <luajit/lua.hpp>
+#include <limits>
 #include <string>
+#include <thread>
+
+//
+#include <luajit/lua.hpp>
+
+//
+#include <luabridge3/LuaBridge/LuaBridge.h>
 
 SetLogFilePath("InjectedDLL.log");
 
 #define Output(...) UserInterface::App().AppendOutput(string_format(__VA_ARGS__))
 
+std::string PathToLuaScript(const std::string& scriptName) {
+    auto RE_ProjectPath = std::getenv("RE_PROJECT");
+    return string_format(
+        "{}/Games/Fallout1/InjectableDLLs/Fallout1InjectableDLL/{}", RE_ProjectPath, scriptName
+    );
+}
+
+void OutputLuaErrors(lua_State* luaState, int status) {
+    if (status == 0) return;
+    Output("[LUA ERROR] {}", lua_tostring(luaState, -1));
+    lua_pop(luaState, 1);  // remove error message from Lua state
+}
+
 void DoLuaStuff() {
     lua_State* L = luaL_newstate();
-    luaL_openlibs(L);
+    // luabridge::registerMainThread(L);
 
-    // Make a Lua function and get the result
-    luaL_dostring(L, "function add(a, b) return a + b end");
-    lua_getglobal(L, "add");
-    lua_pushnumber(L, 60);
-    lua_pushnumber(L, 9);
-    lua_call(L, 2, 1);
-    auto result = lua_tonumber(L, -1);
-    Output("Result from Lua: {}", result);
+    luaL_openlibs(L);
+    auto scriptPath = PathToLuaScript("read_from_fallout1_memory.lua");
+    auto status     = luaL_dofile(L, scriptPath.c_str());
+    OutputLuaErrors(L, status);
+
+    if (status != 0) {
+        Log("Failed to load Lua script");
+        return;
+    }
+
+    lua_getglobal(L, "CallMeMaybe");
+    status = lua_pcall(L, 0, 1, 0);
+    OutputLuaErrors(L, status);
+
+    if (status != 0) {
+        Log("Failed to call Lua function");
+        return;
+    }
+
+    auto value = lua_tointeger(L, -1);
+    lua_pop(L, 1);
+
+    Log("Simpler Response! - {}", value);
+
+    // luabridge::LuaRef callMeMaybe = luabridge::getGlobal(L, "CallMeMaybe");
+    // auto              response    = callMeMaybe();
+    // auto              value       = response[0].cast<uint32_t>();
+
+    // Log("Response: {}", value);
+
+    Log("Gonna call the Lua function");
+
+    lua_close(L);
 }
 
 void SetupHooks() {
@@ -92,7 +137,7 @@ void RunUI() {
 }
 
 DLL_Main {
-    SetupHooks();
+    // SetupHooks();
     RunUI();
     CodeInjection::UninstallAll();
     Injected_DLL::EjectDLL();
