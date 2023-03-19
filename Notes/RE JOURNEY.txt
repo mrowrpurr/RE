@@ -1,8 +1,9 @@
 Mrowr Purr's Reverse Engineering Journey
 
 *TODAY*
-- [ ] Lua read struct from Fallout
-- [ ] --> Lua to require "our library" with intellisense for 1 function
+- [x] Lua read struct from Fallout
+- [ ] Lua read struct from the Fallout1 Injected DLL
+- [x] Lua to require "our library" with intellisense for 1 function
 - [ ] Use Lua's FFI interface to call a function from Fallout 1
 - [ ] Lua can GET one value from Fallout 1
 - [ ] Lua can SET one value from Fallout 1
