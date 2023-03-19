@@ -1,15 +1,20 @@
 Mrowr Purr's Reverse Engineering Journey
 
 *TODAY*
-- [x] Play with Lua from C++ (using Lua Bridge)
-- [ ] Use Lua's FFI interface to read something from Fallout 1
+- [ ] Lua read struct from Fallout
+- [ ] --> Lua to require "our library" with intellisense for 1 function
 - [ ] Use Lua's FFI interface to call a function from Fallout 1
-- [ ] Lua to require "our library" with intellisense for 1 function
 - [ ] Lua can GET one value from Fallout 1
 - [ ] Lua can SET one value from Fallout 1
 - [ ] Lua can listen for one EVENT in Fallout 1
+- [ ] Setup modding framework
+  - [ ] Game .exe loader / injector
+  - [ ] Native plugin loader
+  - [ ] Lua plugin loader
+  - [ ] ....
 
-23. Embed Lua! Embed LuaJIT!
+24. ???
+23. Embed Lua! Embed LuaJIT! Read from Fallout using FFI
 22. Fallout CT cleanup! New code list items.
 21. FINISHED the Hook CodeInjection library. Did some Fallout RE
 20. CodeInjection: Lambda Calls, Save/Restore Registers, WriteAssembly

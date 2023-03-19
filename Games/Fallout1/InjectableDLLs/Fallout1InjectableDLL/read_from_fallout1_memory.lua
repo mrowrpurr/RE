@@ -1,7 +1,13 @@
+local fallout1 = require("fallout1")
+
 local ffi = require("ffi")
 
 function CallMeMaybe()
     local output = ""
+
+    output = output .. "Hello friends!\n"
+
+    output = output .. fallout1.fallout1_function_from_init() .. "\n"
 
     local moduleBase = 0x400000
     output = output .. "Module Base: " .. string.format("%X", moduleBase) .. "\n"

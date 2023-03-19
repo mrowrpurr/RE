@@ -36,7 +36,13 @@ void OutputLuaErrors(lua_State* luaState, int status) {
 
 void DoLuaStuff() {
     lua_State* L = luaL_newstate();
+
     // luabridge::registerMainThread(L);
+    auto FALLOUT1_LUA_PATH = std::getenv("FALLOUT1_LUA_PATH");
+    auto packagePathLua =
+        string_format("package.path = package.path .. ';{}\\?\\init.lua'", FALLOUT1_LUA_PATH);
+    Log("packagePathLua: {}", packagePathLua);
+    luaL_dostring(L, packagePathLua.c_str());
 
     luaL_openlibs(L);
     auto scriptPath = PathToLuaScript("read_from_fallout1_memory.lua");
