@@ -57,10 +57,11 @@ void DoLuaStuff() {
         return;
     }
 
-    auto value = lua_tointeger(L, -1);
+    // auto value = lua_tointeger(L, -1);
+    auto value = lua_tostring(L, -1);
     lua_pop(L, 1);
 
-    Log("Simpler Response! - {}", value);
+    Log("Lua Says: '{}'", value);
 
     // luabridge::LuaRef callMeMaybe = luabridge::getGlobal(L, "CallMeMaybe");
     // auto              response    = callMeMaybe();
