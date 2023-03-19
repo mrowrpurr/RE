@@ -2,7 +2,7 @@ Mrowr Purr's Reverse Engineering Journey
 
 *TODAY*
 - [x] Lua read struct from Fallout
-- [ ] Lua read struct from the Fallout1 Injected DLL
+- [x] Lua read struct from the Fallout1 Injected DLL
 - [x] Lua to require "our library" with intellisense for 1 function
 - [ ] Use Lua's FFI interface to call a function from Fallout 1
 - [ ] Lua can GET one value from Fallout 1
@@ -14,7 +14,7 @@ Mrowr Purr's Reverse Engineering Journey
   - [ ] Lua plugin loader
   - [ ] ....
 
-24. ???
+24. Get require() working. Read structs from Fallout1/injected DLL.
 23. Embed Lua! Embed LuaJIT! Read from Fallout using FFI
 22. Fallout CT cleanup! New code list items.
 21. FINISHED the Hook CodeInjection library. Did some Fallout RE

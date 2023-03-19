@@ -34,20 +34,27 @@ void OutputLuaErrors(lua_State* luaState, int status) {
     lua_pop(luaState, 1);  // remove error message from Lua state
 }
 
+struct SomeRandomStruct {
+    uint32_t    intA;
+    uint32_t    intB;
+    const char* text;
+};
+
+SomeRandomStruct InstanceOfRandomStruct = {69, 420, "Hello from C++"};
+
 void DoLuaStuff() {
     lua_State* L = luaL_newstate();
-
-    // luabridge::registerMainThread(L);
-    auto FALLOUT1_LUA_PATH = std::getenv("FALLOUT1_LUA_PATH");
-    auto packagePathLua =
-        string_format("package.path = package.path .. ';{}\\?\\init.lua'", FALLOUT1_LUA_PATH);
-    Log("packagePathLua: {}", packagePathLua);
-    luaL_dostring(L, packagePathLua.c_str());
 
     luaL_openlibs(L);
     auto scriptPath = PathToLuaScript("read_from_fallout1_memory.lua");
     auto status     = luaL_dofile(L, scriptPath.c_str());
     OutputLuaErrors(L, status);
+
+    luaL_dostring(
+        L,
+        string_format("theAddress = 0x{:x}", reinterpret_cast<uintptr_t>(&InstanceOfRandomStruct))
+            .c_str()
+    );
 
     if (status != 0) {
         Log("Failed to load Lua script");

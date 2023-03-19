@@ -4,6 +4,12 @@ local ffi = require("ffi")
 
 ffi.cdef[[
     typedef struct { uint32_t objID, tileNum; } NPC;
+
+    typedef struct {
+        uint32_t    intA;
+        uint32_t    intB;
+        const char* text;
+    } SomeRandomStruct;
 ]]
 
 function CallMeMaybe()
@@ -30,6 +36,16 @@ function CallMeMaybe()
     local player_struct = ffi.cast("NPC*", player_ptr)
     output = output .. "Player Struct objID (should be same as player ID): " .. string.format("%i", player_struct.objID) .. "\n"
     output = output .. "Player Struct tileNum (should be same as player tile number): " .. string.format("%i", player_struct.tileNum) .. "\n"
+
+    output = output .. "The address: " .. string.format("%X", theAddress) .. "\n"
+
+    local some_random_struct = ffi.cast("SomeRandomStruct*", theAddress)
+    output = output .. "SomeRandomStruct intA: " .. string.format("%i", some_random_struct.intA) .. "\n"
+    output = output .. "SomeRandomStruct intB: " .. string.format("%i", some_random_struct.intB) .. "\n"
+    output = output .. "SomeRandomStruct text: " .. string.format("%s", ffi.string(some_random_struct.text)) .. "\n"
+
+    output = output .. fallout1.skyrim_fuss() .. "\n"
+    output = output .. fallout1.paladin_tam_and_all_of_our_friends() .. "\n"
 
     return output
 end
