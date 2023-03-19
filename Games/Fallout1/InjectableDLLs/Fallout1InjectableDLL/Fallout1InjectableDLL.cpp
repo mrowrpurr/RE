@@ -7,11 +7,26 @@
 #include <UserInterface.h>
 
 #include <cstdint>
+#include <luajit/lua.hpp>
 #include <string>
 
 SetLogFilePath("InjectedDLL.log");
 
 #define Output(...) UserInterface::App().AppendOutput(string_format(__VA_ARGS__))
+
+void DoLuaStuff() {
+    lua_State* L = luaL_newstate();
+    luaL_openlibs(L);
+
+    // Make a Lua function and get the result
+    luaL_dostring(L, "function add(a, b) return a + b end");
+    lua_getglobal(L, "add");
+    lua_pushnumber(L, 60);
+    lua_pushnumber(L, 9);
+    lua_call(L, 2, 1);
+    auto result = lua_tonumber(L, -1);
+    Output("Result from Lua: {}", result);
+}
 
 void SetupHooks() {
     CodeInjection::InjectFunction<11>("Drop Item", 0x46a41c, [](Registers& regs) {
@@ -67,6 +82,7 @@ void RunUI() {
                 else app.ChangeButtonText(string_format("Enable {}", injection->GetName()));
             });
         }
+        app.AddButton("Do Lua Stuff", [&]() { DoLuaStuff(); });
         app.AddButton("Follow and Log Mysterious Linked List", [&]() {
             FollowAndLogMysteriousLinkedList();
         });

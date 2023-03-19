@@ -1,10 +1,15 @@
 Mrowr Purr's Reverse Engineering Journey
 
---> Compile simple C++ apps and DISASSEBLE THEM ???
---> Fallout RE
---> Embed Lua!
+*TODAY*
+- [x] Play with Lua from C++ (using Lua Bridge)
+- [ ] Use Lua's FFI interface to read something from Fallout 1
+- [ ] Use Lua's FFI interface to call a function from Fallout 1
+- [ ] Lua to require "our library" with intellisense for 1 function
+- [ ] Lua can GET one value from Fallout 1
+- [ ] Lua can SET one value from Fallout 1
+- [ ] Lua can listen for one EVENT in Fallout 1
 
-23. Embed Lua!
+23. Embed Lua! Embed LuaJIT!
 22. Fallout CT cleanup! New code list items.
 21. FINISHED the Hook CodeInjection library. Did some Fallout RE
 20. CodeInjection: Lambda Calls, Save/Restore Registers, WriteAssembly
@@ -33,6 +38,8 @@ Mrowr Purr's Reverse Engineering Journey
 
 
 TODO:
+--> Compile simple C++ apps and DISASSEBLE THEM ???
+--> Fallout RE
 - Cheat Engine Lua Scripting!
 - Hook an entire function call! In Fallout 1.
 - VTables
