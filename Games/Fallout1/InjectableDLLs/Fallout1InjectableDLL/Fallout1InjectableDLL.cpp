@@ -7,7 +7,7 @@
 #include <UserInterface.h>
 
 #include <cstdint>
-#include <limits>
+#include <memory>
 #include <string>
 #include <thread>
 
@@ -15,7 +15,7 @@
 #include <luajit/lua.hpp>
 
 //
-#include <luabridge3/LuaBridge/LuaBridge.h>
+#include <LuaBridge/LuaBridge.h>
 
 SetLogFilePath("InjectedDLL.log");
 
@@ -61,28 +61,18 @@ void DoLuaStuff() {
         return;
     }
 
-    lua_getglobal(L, "CallMeMaybe");
-    status = lua_pcall(L, 0, 1, 0);
-    OutputLuaErrors(L, status);
+    {
+        auto callMeMaybe = luabridge::getGlobal(L, "CallMeMaybe");
+        auto result      = callMeMaybe();
+        auto output      = result[0];
 
-    if (status != 0) {
-        Log("Failed to call Lua function");
-        return;
+        if (result.hasFailed()) {
+            Log("Failed to call Lua function");
+            return;
+        }
+
+        Log("Lua Says: '{}'", output.tostring());
     }
-
-    // auto value = lua_tointeger(L, -1);
-    auto value = lua_tostring(L, -1);
-    lua_pop(L, 1);
-
-    Log("Lua Says: '{}'", value);
-
-    // luabridge::LuaRef callMeMaybe = luabridge::getGlobal(L, "CallMeMaybe");
-    // auto              response    = callMeMaybe();
-    // auto              value       = response[0].cast<uint32_t>();
-
-    // Log("Response: {}", value);
-
-    Log("Gonna call the Lua function");
 
     lua_close(L);
 }
