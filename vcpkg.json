@@ -9,6 +9,7 @@
     "simpleini",
     "spdlog",
     "xbyak",
+    "yaml-cpp",
     "zydis",
     "zlib"
   ]

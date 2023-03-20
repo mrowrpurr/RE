@@ -1,7 +1,17 @@
 {
-  "default-registry": {
-    "kind": "git",
-    "repository": "https://github.com/microsoft/vcpkg.git",
-    "baseline": "3790b6a283c2def60f5ccfc9913d98f77feb751f"
-  }
+    "default-registry": {
+        "kind": "git",
+        "repository": "https://github.com/microsoft/vcpkg.git",
+        "baseline": "ffe7360e0f5ba62f98b620575294ecb9d8a02980"
+    },
+    "registries": [
+        {
+            "kind": "git",
+            "repository": "https://github.com/mrowrpurr/vcpkg-registry",
+            "baseline": "46729930abab8bb72e08371afbe5842c2c539a23",
+            "packages": [
+                "luabridge3"
+            ]
+        }
+    ]
 }
