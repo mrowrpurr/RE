@@ -77,6 +77,14 @@ void DoLuaStuff() {
     lua_close(L);
 }
 
+void PrintOutSomeOffsets() {
+    // Get some LibFallout offsets
+    // ...
+
+    // Print them out! :)
+    // Output("...")
+}
+
 void SetupHooks() {
     CodeInjection::InjectFunction<11>("Drop Item", 0x46a41c, [](Registers& regs) {
         Output("I am a function and I was called!");

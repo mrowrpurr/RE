@@ -1,1 +1,1 @@
-add_subdirectory(Fallout1Lib)
+add_subdirectory(Fallout1)

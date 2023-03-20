@@ -1,0 +1,10 @@
+# This should be automatically detected:
+module_base: [0x400000]
+
+# Offsets
+player_object: [0x105734]
+player_name: [0x16bf1c]
+player_age: [0x1076c8]
+player_stats: [0x8ed34, 0x1c]
+player_xp: [0x265224]
+map_current_name: [0x2302F4]

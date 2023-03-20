@@ -13,6 +13,19 @@ ffi.cdef[[
 ]]
 
 function CallMeMaybe()
+    output = "Addresses:"
+    for k,v in pairs(fallout1.addresses) do
+        -- v is an list table of addresses
+        -- output it
+        output = output .. "\n" .. k .. ": "
+        for i, address in ipairs(v) do
+            output = output .. string.format("%X", address) .. " "
+        end
+    end
+    return output
+end
+
+function CallMeMaybe_()
     local output = ""
 
     output = output .. "Hello friends!\n"
