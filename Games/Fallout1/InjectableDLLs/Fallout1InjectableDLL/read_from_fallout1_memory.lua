@@ -44,8 +44,5 @@ function CallMeMaybe()
     output = output .. "SomeRandomStruct intB: " .. string.format("%i", some_random_struct.intB) .. "\n"
     output = output .. "SomeRandomStruct text: " .. string.format("%s", ffi.string(some_random_struct.text)) .. "\n"
 
-    output = output .. fallout1.skyrim_fuss() .. "\n"
-    output = output .. fallout1.paladin_tam_and_all_of_our_friends() .. "\n"
-
     return output
 end

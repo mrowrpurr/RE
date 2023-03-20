@@ -3,8 +3,8 @@ project(Fallout1InjectableDLL)
 cmake_policy(SET CMP0079 NEW)
 set(Boost_NO_WARN_NEW_VERSIONS 1)
 
-find_path(LUABRIDGE3_INCLUDE_DIRS "luabridge3/LuaBridge/LuaBridge.h")
 find_package(ZLIB REQUIRED)
+find_path(LUABRIDGE3_INCLUDE_DIRS "LuaBridge/Array.h")
 find_package(LuaJIT REQUIRED)
 set(LUAJIT_LIB_PATH "${CMAKE_BINARY_DIR}/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/lib/lua51.lib")
 

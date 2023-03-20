@@ -1,6 +1,7 @@
 add_subdirectory("uint128_t")
 add_subdirectory("String Formatting")
 add_subdirectory("Logging")
+add_subdirectory("Serialization")
 add_subdirectory("User Interface")
 add_subdirectory("Assembly")
 add_subdirectory("Memory")
