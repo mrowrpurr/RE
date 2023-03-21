@@ -5,7 +5,7 @@
 
 #include <iostream>
 
-SetLogFilePath("modding_framework.log");
+SetLogFilePath("modding_framework.loader.log");
 
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     // TODO: make this not suck (don't directly use std::any)
