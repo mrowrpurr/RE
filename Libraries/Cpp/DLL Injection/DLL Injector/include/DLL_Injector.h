@@ -1,11 +1,12 @@
 #pragma once
 
 #include <Windows.h>
-
 // ^ require Windows.h first
 
+#include <Logging.h>
 #include <TlHelp32.h>
 
+#include <filesystem>
 #include <string>
 
 namespace DLL_Injector {
@@ -39,10 +40,13 @@ namespace DLL_Injector {
             }
             return procId;
         }
+
+        bool IsProcessRunning(const std::string& exeName) { return GetProcId(exeName) != 0; }
     }
 
     namespace Techniques {
 
+        // TODO: add option for whether to WAIT for the process (or preferably don't wait at all!)
         void InjectDLL_CreateRemoteThread_LoadLibraryA(
             const std::string& exeName, const std::string& dllPath
         ) {
@@ -56,14 +60,16 @@ namespace DLL_Injector {
                 HANDLE hThread = CreateRemoteThread(
                     hProc, 0, 0, (LPTHREAD_START_ROUTINE)LoadLibraryA, loc, 0, 0
                 );
-                if (hThread) {
-                    CloseHandle(hThread);
-                }
+                if (hThread) CloseHandle(hThread);
             }
         }
     }
 
     void InjectDLL(const std::string& exeName, const std::string& dllPath) {
+        if (!std::filesystem::exists(dllPath)) {
+            Log("DLL does not exist: {}", dllPath);
+            return;
+        }
         Techniques::InjectDLL_CreateRemoteThread_LoadLibraryA(exeName, dllPath);
     }
 }
