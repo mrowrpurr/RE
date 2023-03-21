@@ -33,7 +33,9 @@ namespace UserInterface {
         Application& operator=(const Application&) = delete;
         Application& operator=(Application&&)      = delete;
 
-        void Resize() { _form.size({_width, _height + (_buttonInitialText.size() * _buttonHeight)}); }
+        void Resize() {
+            _form.size({_width, _height + (_buttonInitialText.size() * _buttonHeight)});
+        }
         void RunApp() {
             if (_isRunning.exchange(true)) return;
 
@@ -41,7 +43,8 @@ namespace UserInterface {
 
             std::string arrangement{"5"};
             if (!_headerLabel.caption().empty()) arrangement += "," + std::to_string(_buttonHeight);
-            for (size_t i = 0; i < _buttonInitialText.size(); i++) arrangement += "," + std::to_string(_buttonHeight);
+            for (size_t i = 0; i < _buttonInitialText.size(); i++)
+                arrangement += "," + std::to_string(_buttonHeight);
             if (_showOutputTextBox) arrangement += ",10000";
 
             _place.div("<><width=90% <vertical fields gap=10 arrange=[" + arrangement + "]>><>");
@@ -59,11 +62,15 @@ namespace UserInterface {
                         _currentButtonBeingClicked = btnPtr;
                         callback();
                     } catch (const std::exception& e) {
-                        _outputTextBox.caption(_outputTextBox.caption() + "\n" + "Exception: " + e.what());
+                        _outputTextBox.caption(
+                            _outputTextBox.caption() + "\n" + "Exception: " + e.what()
+                        );
                     } catch (const char* e) {
                         _outputTextBox.caption(_outputTextBox.caption() + "\n" + "Exception: " + e);
                     } catch (...) {
-                        _outputTextBox.caption(_outputTextBox.caption() + "\n" + "Unknown exception");
+                        _outputTextBox.caption(
+                            _outputTextBox.caption() + "\n" + "Unknown exception"
+                        );
                     }
                 });
                 _place.field("fields") << *btn;
@@ -135,20 +142,9 @@ namespace UserInterface {
             return *this;
         }
 
-        // void Close(size_t threadId) { nana::detail::bedrock::instance().close_thread_window(threadId); }
-
         void Close() {
-            // _currentButtonBeingClicked = nullptr;
-            // _buttons                   = {};
             _form.close();
-            // auto threadId = std::hash<std::thread::id>{}(std::this_thread::get_id());
-            // nana::detail::bedrock::instance().close_thread_window(threadId);
             nana::API::exit_all();
         }
     };
 }
-
-// std::atexit([]() {
-//     UserInterface::Application::Current().Close(Injected_DLL::InjectedIntoThreadIDT);
-//     UserInterface::Close();
-// });
