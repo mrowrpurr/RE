@@ -5,6 +5,10 @@
 
 namespace UserInterface {
     Application& App() { return Application::Current(); }
-    void         Run(std::function<void(Application& app)> callback = [](auto&) {}) { Application::Run(callback); }
-    void         Close() { Application::Current().Close(); }
+    void         Run(std::function<void(Application& app)> callback = [](auto&) {}) {
+        Application::Run(callback);
+    }
+    void Close() { Application::Current().Close(); }
 }
+
+typedef UserInterface::Application UIApp;
