@@ -1,13 +1,14 @@
 #include <Logging.h>
+#include <Windows.h>
 
-SetLogFilePath("LoadThisDLL1.log");
+#include <cstdint>
+#include <thread>
 
-// 1. No Args
-// 2. An arg!
-// 3. A return value!
+EXTERN_C IMAGE_DOS_HEADER __ImageBase;
+#define __CURRENT_HMODULE ((HMODULE)&__ImageBase)
 
-extern "C" __declspec(dllexport) void CallMeMaybe() {
-    int me = 0x69;
-    //
-    Log("Call me, maybe!");
-}
+SetLogFilePath("CallMeMaybe.log");
+
+extern "C" __declspec(dllexport) void Load() {}
+extern "C" __declspec(dllexport) void Unload() { FreeLibrary(__CURRENT_HMODULE); }
+extern "C" __declspec(dllexport) uint32_t CallMeMaybe(uint32_t x) { return (x * 100) + 69; }

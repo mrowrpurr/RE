@@ -13,10 +13,11 @@ DLL_Main {
     // Load the DLL using LoadLibrary
     auto dllHandle = LoadLibraryA(dllPath);
 
-    // Call the void "CallMeMaybe" function in the DLL
-    auto callMeMaybe = (void (*)())GetProcAddress(dllHandle, "CallMeMaybe");
+    auto callMeMaybe = (uint32_t(*)(uint32_t))GetProcAddress(dllHandle, "CallMeMaybe");
 
-    callMeMaybe();
+    auto result = callMeMaybe(420);
+
+    Log("Result from calling CallMeMaybe() in the loaded DLL is: {}", result);
 
     EjectDLL();
 }
