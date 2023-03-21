@@ -11,3 +11,4 @@ x64
 .cache
 *.PTR*
 *.scandata*
+target
