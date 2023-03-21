@@ -1,22 +1,30 @@
 Mrowr Purr's Reverse Engineering Journey
 
-*TODAY*
+*TODO*
 
-- [ ] Generate structs include files for both C++ and Lua
+- [ ] Generate structs for both C++ and Lua
 
-- [ ] Clean up LibFallout C++
-- [ ] Setup LibFallout Lua
+- [ ] Clean up Fallout1 C++ Library
+- [ ] Setup Fallout1 Lua Library
 
 - [ ] Lua can SET one value from Fallout 1
 - [ ] Lua can listen for one EVENT in Fallout 1
 
 - [ ] Setup modding framework
   - [ ] Game .exe loader / injector
-  - [ ] Native plugin loader
-  - [ ] Lua plugin loader
+  - [ ] Native plugin loader <----- YOU ARE HERE 		---> Note: different ON START loaded plugins vs DEFERRED
+	 - [ ] C++
+    - [ ] Rust
+    - [ ] Zig 
+  - [ ] Lua plugin loader     							---> Note: different ON START loaded plugins vs DEFERRED
 
+- [ ] Plugin configuration (.ini and config UI)
+
+- [ ] uint256_t/uint128_t ---> vcpkg
+
+25. DLL Injector uses .ini file, ...?????
 24. Get require() working. Read structs from Fallout1/injected DLL.
-    LuaBridge3 w/ MP vcpkg. YAML addresses to C++/Lua. Fallout1 MO2 plugin.
+    LuaBridge3 w/ MP vcpkg. Gen YAML addresses to C++/Lua. Fallout1 MO2 plugin.
     Prototype/design Lua plugin syntax.
 23. Embed Lua! Embed LuaJIT! Read from Fallout using FFI
 22. Fallout CT cleanup! New code list items.
@@ -44,7 +52,7 @@ Mrowr Purr's Reverse Engineering Journey
 1. Cheat Engine / Ghidra
 
 
-
+- [ ] inipp ---> vcpkg (simpleini ok in the meantime)
 
 TODO:
 - [ ] Use Lua's FFI interface to call a function from Fallout 1
