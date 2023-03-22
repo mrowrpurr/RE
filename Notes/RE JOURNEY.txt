@@ -1,6 +1,14 @@
 Mrowr Purr's Reverse Engineering Journey
 
+*GOAL*
+> cd dir
+> modding_framework.exe -e falloutwHR.exe Whatever.lua
+
 *TODO*
+
+- [ ] "Plugin Manager" ----> "Mod Manager" ??????????????
+
+- [ ] Fix Serialization clangd hating us!
 
 - [ ] Generate structs for both C++ and Lua
 
@@ -22,7 +30,14 @@ Mrowr Purr's Reverse Engineering Journey
 
 - [ ] uint256_t/uint128_t ---> vcpkg
 
-25. DLL Injector uses .ini file, ...?????
+
+GOAL: UI which loads/unloads NATIVE plugins
+	    and then Lua!
+
+27. ????
+26. Setup modding_framework.dll and modding_framework.exe (in MO2) to inject it
+    Setup basics of plugin loading.
+25. DLL Injector uses .ini file, got LoadLibrary working for both C++ and Rust
 24. Get require() working. Read structs from Fallout1/injected DLL.
     LuaBridge3 w/ MP vcpkg. Gen YAML addresses to C++/Lua. Fallout1 MO2 plugin.
     Prototype/design Lua plugin syntax.
