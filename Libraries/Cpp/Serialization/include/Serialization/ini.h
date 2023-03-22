@@ -7,11 +7,13 @@
 #include <string>
 #include <unordered_map>
 
+#include "Helpers/UnorderedMapReader.h"
 #include "SimpleIni.h"
+
 
 namespace Serialization {
 
-    std::unordered_map<std::string, std::any> LoadIniFile(const std::string& path) {
+    Helpers::UnorderedMapReader LoadIniFile(const std::string& path) {
         CSimpleIniA ini;
 
         ini.SetUnicode();
@@ -39,6 +41,6 @@ namespace Serialization {
             resultMap[section.pItem] = sectionMap;
         }
 
-        return resultMap;
+        return Helpers::UnorderedMapReader{resultMap};
     }
 }

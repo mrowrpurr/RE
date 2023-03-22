@@ -1,4 +1,4 @@
-project(ModdingFramework.Native.PluginManager)
+project(ModdingFramework.Native)
 
 add_library(${PROJECT_NAME} INTERFACE)
 target_include_directories(${PROJECT_NAME} INTERFACE include)
