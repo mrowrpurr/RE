@@ -1,5 +1,5 @@
 add_subdirectory("Core")
-add_subdirectory("Mod Manager")
+add_subdirectory("Mod Management")
 add_subdirectory("Native Mod Support")
 add_subdirectory("Lua Mod Support")
 add_subdirectory("UI")
