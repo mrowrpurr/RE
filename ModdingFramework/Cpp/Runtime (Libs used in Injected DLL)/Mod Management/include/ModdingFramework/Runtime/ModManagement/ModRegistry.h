@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Logging.h>
 #include <ModdingFramework/Runtime/Core/Mod.h>
 #include <StringFormatting.h>
 
@@ -32,6 +33,7 @@ namespace ModdingFramework::Runtime::ModManagement {
                     mod.GetVersion()
                 ));
             }
+            Log("Registered mod '{}'", mod.GetName());
             _mods.emplace(std::make_pair(mod.GetName(), mod.GetVersion()), std::move(mod));
         }
     };

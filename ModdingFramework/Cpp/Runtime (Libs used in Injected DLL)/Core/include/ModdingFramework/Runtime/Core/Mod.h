@@ -11,7 +11,6 @@ namespace ModdingFramework::Runtime::Core {
         std::string _source;
 
     public:
-        // Mod() = default;
         Mod(const std::string& name, const std::string& version, const std::string& type,
             const std::string& source)
             : _name(name), _version(version), _type(type), _source(source) {}
