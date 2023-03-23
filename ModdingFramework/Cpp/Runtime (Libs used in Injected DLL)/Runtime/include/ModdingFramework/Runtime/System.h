@@ -2,6 +2,9 @@
 
 #include <ModdingFramework/Runtime/ModManagement/ModRegistry.h>
 
+#include <filesystem>
+#include <string>
+
 namespace ModdingFramework::Runtime {
 
     class System {
@@ -13,6 +16,9 @@ namespace ModdingFramework::Runtime {
             return instance;
         }
 
-        ModManagement::ModRegistry& GetModRegistry() { return _registry; }
+        ModManagement::ModRegistry& GetRegistry() { return _registry; }
+
+        // TODO - make this a path
+        std::filesystem::path GetModsFolder() const { return "Modding/Mods"; }
     };
 }
