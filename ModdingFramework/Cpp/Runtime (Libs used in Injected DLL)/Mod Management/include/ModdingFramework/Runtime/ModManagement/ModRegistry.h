@@ -36,5 +36,10 @@ namespace ModdingFramework::Runtime::ModManagement {
             Log("Registered mod '{}'", mod.GetName());
             _mods.emplace(std::make_pair(mod.GetName(), mod.GetVersion()), std::move(mod));
         }
+
+        const std::unordered_map<std::tuple<std::string, std::string>, Core::Mod, hash_tuple>&
+        GetMods() const {
+            return _mods;
+        }
     };
 }
