@@ -1,4 +1,4 @@
-project(ModdingFramework.ModManager)
+project(ModdingFramework.Runtime.ModManager)
 
 add_library(${PROJECT_NAME} INTERFACE)
 target_include_directories(${PROJECT_NAME} INTERFACE include)

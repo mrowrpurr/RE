@@ -2,6 +2,6 @@
 
 #include <Logging.h>
 
-namespace ModdingFramework::UI {
+namespace ModdingFramework::Runtime::UI {
     void Boot() { Log("Booting Modding Framework UI"); }
 }

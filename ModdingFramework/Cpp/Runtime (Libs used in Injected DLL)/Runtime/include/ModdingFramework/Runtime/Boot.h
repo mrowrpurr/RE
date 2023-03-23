@@ -1,14 +1,14 @@
 #pragma once
 
 #include <Logging.h>
-#include <ModdingFramework/PluginManager.h>
-#include <ModdingFramework/UI.h>
+#include <ModdingFramework/Runtime/ModManager.h>
+#include <ModdingFramework/Runtime/UI.h>
 
 namespace ModdingFramework::Runtime {
 
     void Boot() {
         Log("Booting Modding Framework");
-        PluginManager::Boot();
+        ModManager::Boot();
         UI::Boot();
     }
 }
