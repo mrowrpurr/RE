@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Logging.h>
 #include <ModdingFramework/Runtime/System.h>
 #include <StringFormatting.h>
 #include <UserInterface.h>
@@ -14,32 +15,35 @@ namespace ModdingFramework::Runtime::UI {
                 app.SetHeight(500);
                 app.SetWidth(500);
 
-                auto system   = System::GetSystem();
-                auto registry = system.GetRegistry();
-                auto loader   = system.GetLoader();
-
-                for (auto& [_, mod] : System::GetSystem().GetRegistry().GetMods()) {
-                    std::string buttonText = loader.IsLoaded(mod) ? "Unload " : "Load ";
+                auto registry = System::GetSystem().GetRegistry();
+                registry.ForEachMod([&app](const Core::Mod& mod) {
+                    std::string buttonText = System::GetSystem().GetLoader().IsLoaded(mod) ? "Unload " : "Load ";
                     buttonText += mod.GetName();
 
-                    app.AddButton(buttonText, [&]() {
+                    app.AddButton(buttonText, [mod, &app]() {
+                        auto& loader = System::GetSystem().GetLoader();
                         if (loader.IsLoaded(mod)) {
+                            Log("Unloading mod: {}", mod.GetName());
                             loader.Unload(mod);
                             if (loader.IsLoaded(mod)) {
+                                Log("Failed to unload mod: {}", mod.GetName());
                                 app.ChangeButtonText("Failed to unload " + mod.GetName());
                             } else {
+                                Log("Unloaded mod: {}", mod.GetName());
                                 app.ChangeButtonText("Load " + mod.GetName());
                             }
                         } else {
                             loader.Load(mod);
                             if (loader.IsLoaded(mod)) {
+                                Log("Loaded mod: {}", mod.GetName());
                                 app.ChangeButtonText("Unload " + mod.GetName());
                             } else {
+                                Log("Failed to load mod: {}", mod.GetName());
                                 app.ChangeButtonText("Failed to load " + mod.GetName());
                             }
                         }
                     });
-                }
+                });
             });
         }
     };

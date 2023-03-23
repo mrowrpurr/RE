@@ -11,10 +11,8 @@ namespace ModdingFramework::Runtime::ModManagement {
         auto ini        = Serialization::LoadFile(iniPath);
         auto modSection = ini["Mod"];
         return Core::Mod{
-            modSection.Get("name"),
-            modSection.Get("version"),
-            modSection.Get("type"),
-            modSection.Get("source"),
+            modSection.Get("name"),   modSection.Get("version"), modSection.Get("type"),
+            modSection.Get("source"), iniPath.parent_path(),
         };
     }
 }
