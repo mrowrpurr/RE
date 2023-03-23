@@ -1,23 +1,26 @@
 #pragma once
 
 #include <Logging.h>
-#include <ModdingFramework/Runtime/System.h>
 #include <StringFormatting.h>
 #include <UserInterface.h>
 
-namespace ModdingFramework::Runtime::UI {
-    class App {
+#include "System.h"
+
+namespace ModdingFramework::Runtime {
+
+    class UI {
     public:
-        void static RunUI() {
+        void static Run() {
             UserInterface::Run([](UIApp& app) {
                 app.SetTitle("Hello from the injected .dll!");
                 app.SetButtonHeight(50);
                 app.SetHeight(500);
                 app.SetWidth(500);
 
-                auto registry = System::GetSystem().GetRegistry();
-                registry.ForEachMod([&app](const Core::Mod& mod) {
-                    std::string buttonText = System::GetSystem().GetLoader().IsLoaded(mod) ? "Unload " : "Load ";
+                auto& registry = System::GetSystem().GetRegistry();
+                registry.ForEachMod([&app](const Mod& mod) {
+                    std::string buttonText =
+                        System::GetSystem().GetLoader().IsLoaded(mod) ? "Unload " : "Load ";
                     buttonText += mod.GetName();
 
                     app.AddButton(buttonText, [mod, &app]() {

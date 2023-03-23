@@ -1,19 +1,28 @@
 #pragma once
 
 #include <Logging.h>
-#include <ModdingFramework/Runtime/Core/Mod.h>
 #include <StringFormatting.h>
 
 #include <string>
 #include <unordered_map>
 
-namespace ModdingFramework::Runtime::ModManagement {
+#include "Mod.h"
+
+namespace ModdingFramework::Runtime {
 
     class ModRegistry {
-        std::unordered_map<std::string, std::unordered_map<std::string, Core::Mod>> _mods;
+        std::unordered_map<std::string, std::unordered_map<std::string, Mod>> _mods;
+
+        ModRegistry(const ModRegistry&)            = delete;
+        ModRegistry(ModRegistry&&)                 = delete;
+        ModRegistry& operator=(const ModRegistry&) = delete;
+        ModRegistry& operator=(ModRegistry&&)      = delete;
 
     public:
-        void RegisterMod(Core::Mod mod) {
+        ModRegistry()  = default;
+        ~ModRegistry() = default;
+
+        void RegisterMod(Mod mod) {
             auto found = _mods.find(mod.GetName());
             if (found == _mods.end()) {
                 _mods[mod.GetName()].emplace(mod.GetVersion(), std::move(mod));
@@ -28,7 +37,7 @@ namespace ModdingFramework::Runtime::ModManagement {
             }
         }
 
-        void ForEachMod(std::function<void(Core::Mod&)> callback) {
+        void ForEachMod(std::function<void(Mod&)> callback) {
             for (auto& [name, versions] : _mods)
                 for (auto& [version, mod] : versions) callback(mod);
         }

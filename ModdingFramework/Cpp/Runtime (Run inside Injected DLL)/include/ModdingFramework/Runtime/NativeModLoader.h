@@ -1,16 +1,17 @@
 #pragma once
 
 #include <Logging.h>
-#include <ModdingFramework/Runtime/Core/Mod.h>
 
 #include <filesystem>
 
-namespace ModdingFramework::Runtime::ModManagement::NativeModLoader {
+#include "Mod.h"
+
+namespace ModdingFramework::Runtime::NativeModLoader {
 
     // Lazy for now...
     std::unordered_map<std::string, HMODULE> _dllModules;
 
-    bool Load(const Core::Mod& mod) {
+    bool Load(const Mod& mod) {
         Log("Loading native mod: {}", mod.GetName());
 
         auto dllPath = mod.GetPath() / mod.GetSource();
@@ -45,7 +46,7 @@ namespace ModdingFramework::Runtime::ModManagement::NativeModLoader {
         return false;
     }
 
-    bool Unload(const Core::Mod& mod) {
+    bool Unload(const Mod& mod) {
         Log("Unloading native mod: {}", mod.GetName());
 
         auto dllPath = mod.GetPath() / mod.GetSource();

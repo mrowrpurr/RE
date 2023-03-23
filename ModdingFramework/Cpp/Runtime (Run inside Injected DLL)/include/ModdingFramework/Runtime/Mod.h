@@ -3,7 +3,7 @@
 #include <filesystem>
 #include <string>
 
-namespace ModdingFramework::Runtime::Core {
+namespace ModdingFramework::Runtime {
 
     class Mod {
         std::string           _name;

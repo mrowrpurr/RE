@@ -1,12 +1,11 @@
 #pragma once
 
-#include <ModdingFramework/Runtime/System.h>
-
 #include <vector>
 
 #include "ModDiscoverer.h"
+#include "System.h"
 
-namespace ModdingFramework::Runtime::ModManagement {
+namespace ModdingFramework::Runtime {
 
     class ModDiscovery {
         System&                    _system;

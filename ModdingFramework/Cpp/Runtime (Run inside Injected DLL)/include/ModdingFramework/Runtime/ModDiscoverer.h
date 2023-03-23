@@ -1,12 +1,13 @@
 #pragma once
 
 #include <Logging.h>
-#include <ModdingFramework/Runtime/ModManagement/ModINI.h>
-#include <ModdingFramework/Runtime/System.h>
 
 #include <filesystem>
 
-namespace ModdingFramework::Runtime::ModManagement {
+#include "ModINI.h"
+#include "System.h"
+
+namespace ModdingFramework::Runtime {
 
     // XXX - This is a hardcoded implementation of a mod discoverer for .dll native mods
 

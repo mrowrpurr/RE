@@ -1,16 +1,17 @@
 #pragma once
 
-#include <ModdingFramework/Runtime/Core/Mod.h>
 #include <Serialization.h>
 
 #include <filesystem>
 
-namespace ModdingFramework::Runtime::ModManagement {
+#include "Mod.h"
 
-    Core::Mod ModFromINI(const std::filesystem::path& iniPath) {
+namespace ModdingFramework::Runtime {
+
+    Mod ModFromINI(const std::filesystem::path& iniPath) {
         auto ini        = Serialization::LoadFile(iniPath);
         auto modSection = ini["Mod"];
-        return Core::Mod{
+        return Mod{
             modSection.Get("name"),   modSection.Get("version"), modSection.Get("type"),
             modSection.Get("source"), iniPath.parent_path(),
         };
