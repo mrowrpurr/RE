@@ -1,10 +1,16 @@
 #pragma once
 
+#include <Logging.h>
 #include <ModdingFramework/Runtime/System.h>
 
-namespace ModdingFramewor::Runtime::ModManagement {
+namespace ModdingFramework::Runtime::ModManagement {
 
+    // TODO - make this abstract and have multiple implementations
     class ModDiscoverer {
-        // Structure to discover mods
+    public:
+        void DiscoverMods(System&) {
+            // TODO - implement
+            Log("ModDiscoverer instance is fiscovering mods");
+        }
     };
 }

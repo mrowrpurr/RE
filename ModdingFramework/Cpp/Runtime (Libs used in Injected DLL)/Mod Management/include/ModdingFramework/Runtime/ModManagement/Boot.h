@@ -1,18 +1,20 @@
 #pragma once
 
 #include <Logging.h>
+#include <ModdingFramework/Runtime/System.h>
 #include <Serialization.h>
 
 #include <filesystem>
 
-#include "ModDiscoverer.h"
+#include "ModDiscovery.h"
 
 namespace ModdingFramework::Runtime::ModManagement {
 
     void Boot() {
         Log("Booting Mod Management");
-        // Discover mods...
-        // WHERE?????????
-        Log("THIS WILL NOW RUN THE DISCOVERY PHASE TO FIND MODS!");
+
+        // Do, like, something... I dunno, to get/create a variety
+        // of ModDiscoverer instances for different types of mods
+        ModDiscovery(System::GetSystem(), {{}}).DiscoverMods();
     }
 }
