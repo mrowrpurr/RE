@@ -1,7 +1,7 @@
 project(Morrowind.LogInventory.Cpp)
 
 add_library(${PROJECT_NAME} SHARED LogInventoryCpp.cpp)
-target_link_libraries(${PROJECT_NAME} PRIVATE CodeInjection Logging)
+target_link_libraries(${PROJECT_NAME} PRIVATE CodeInjection Memory Logging)
 set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME "LogInventory")
 
 set(OUTPUT_FOLDER "${CMAKE_SOURCE_DIR}/Games/Morrowind/Mods/Output/Log Inventory - C++/Modding/Mods")

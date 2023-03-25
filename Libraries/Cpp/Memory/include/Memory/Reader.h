@@ -31,13 +31,13 @@ namespace Memory {
         return (T)(address);
     }
 
-    template <typename T>
-    T Read(uintptr_t address, uint32_t offset1, uint32_t offset2) {
-        return Read<T>(address, {offset1, offset2});
-    }
+    // template <typename T>
+    // T Read(uintptr_t address, uint32_t offset1, uint32_t offset2) {
+    //     return Read<T>(address, {offset1, offset2});
+    // }
 
-    template <typename T>
-    T Read(uintptr_t address, uint32_t offset1, uint32_t offset2, uint32_t offset3) {
-        return Read<T>(address, {offset1, offset2, offset3});
-    }
+    // template <typename T>
+    // T Read(uintptr_t address, uint32_t offset1, uint32_t offset2, uint32_t offset3) {
+    //     return Read<T>(address, {offset1, offset2, offset3});
+    // }
 }
