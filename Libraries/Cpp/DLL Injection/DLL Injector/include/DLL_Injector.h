@@ -51,6 +51,7 @@ namespace DLL_Injector {
             const std::string& exeName, const std::string& dllPath
         ) {
             auto procId = Util::WaitForProcId(exeName);
+            Log("Injecting DLL '{}' into process '{}' (PID: {})", dllPath, exeName, procId);
 
             HANDLE hProc = OpenProcess(PROCESS_ALL_ACCESS, 0, procId);
             if (hProc && hProc != INVALID_HANDLE_VALUE) {
@@ -70,6 +71,7 @@ namespace DLL_Injector {
             Log("DLL does not exist: {}", dllPath);
             return;
         }
-        Techniques::InjectDLL_CreateRemoteThread_LoadLibraryA(exeName, dllPath);
+        auto absoluteDllPath = std::filesystem::absolute(dllPath).string();
+        Techniques::InjectDLL_CreateRemoteThread_LoadLibraryA(exeName, absoluteDllPath);
     }
 }

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Logging.h>
 #include <Windows.h>
 
 #include <thread>
@@ -11,14 +12,15 @@ void OnDllInjection();
 #define DLL_Main void OnDllInjection()
 
 namespace Injected_DLL {
-    HMODULE         InjectedIntoModule;
-    std::thread::id InjectedIntoThreadID = std::this_thread::get_id();
-    size_t          InjectedIntoThreadIDT;
-    void            EjectDLL() { FreeLibraryAndExitThread(InjectedIntoModule, 0); }
+    HMODULE InjectedIntoModule;
+    void    EjectDLL() { FreeLibraryAndExitThread(InjectedIntoModule, 0); }
 }
 
 DWORD __stdcall DllInjectionMainThread(PVOID base) {
     Injected_DLL::InjectedIntoModule = static_cast<HMODULE>(base);
+    Log("Injected DLL main thread started (PID: {})", GetCurrentProcessId());
+    Log("Module base address: {:x}", reinterpret_cast<uintptr_t>(Injected_DLL::InjectedIntoModule));
+    Log("Calling OnDllInjection()");
     OnDllInjection();
     return 0;
 }
@@ -26,7 +28,7 @@ DWORD __stdcall DllInjectionMainThread(PVOID base) {
 int __stdcall DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID) {
     switch (ul_reason_for_call) {
         case DLL_PROCESS_ATTACH:
-            Injected_DLL::InjectedIntoThreadIDT = std::hash<std::thread::id>{}(std::this_thread::get_id());
+            Log("Injected DLL loaded into process (PID: {})", GetCurrentProcessId());
             CreateThread(nullptr, 0, DllInjectionMainThread, hModule, 0, nullptr);
             break;
         case DLL_THREAD_ATTACH:
