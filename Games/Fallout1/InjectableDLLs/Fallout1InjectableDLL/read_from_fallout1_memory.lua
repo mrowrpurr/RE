@@ -2,6 +2,20 @@ local fallout1 = require("fallout1")
 
 local ffi = require("ffi")
 
+local function on_game_saved(game_save_file)
+    -- ....
+end
+
+function Load()
+    RegisterEvent("GameSave", on_game_saved)
+end
+
+function Unload()
+end
+
+
+
+
 ffi.cdef[[
     typedef struct { uint32_t objID, tileNum; } NPC;
 

@@ -12,3 +12,5 @@ x64
 *.PTR*
 *.scandata*
 target
+*.dll
+*.exe

@@ -1,9 +1,9 @@
 #include <Logging.h>
-#include <Windows.h>
+#include <ModdingFramework/Lua.h>
+#include <ModdingFramework/Mod.h>
 
-SetLogFilePath("Modding/Logs/ModdingFramework/modding_framework.lua.log");
+SetModName("ModdingFramework.Lua");
 
-// 2. GetSomething() to something which HAS the FUNCTION* to something and call it from somewhere
+OnLoad { Log("Hello from ModdingFramework.Lua.dll!"); }
 
-extern "C" __declspec(dllexport) void Load() { Log("Load()"); }
-extern "C" __declspec(dllexport) void Unload() { Log("Unload()"); }
+OnUnload {}
