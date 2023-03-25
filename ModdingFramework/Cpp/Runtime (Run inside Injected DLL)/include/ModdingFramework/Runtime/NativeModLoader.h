@@ -7,26 +7,25 @@
 
 #include "Mod.h"
 
-struct DumbStruct {
-    const char* text;
-    uint32_t    number;
-};
-
-DumbStruct ADumbStruct = {"Wassup?", 69};
-
-class SlightlyIntelligentClass {
-    uint32_t neatNumber;
+class SomeRandomSingleton {
+    const char* cStringsAreAnnoying                            = "I hate C strings";
+    SomeRandomSingleton()                                      = default;
+    ~SomeRandomSingleton()                                     = default;
+    SomeRandomSingleton(const SomeRandomSingleton&)            = delete;
+    SomeRandomSingleton(SomeRandomSingleton&&)                 = delete;
+    SomeRandomSingleton& operator=(const SomeRandomSingleton&) = delete;
+    SomeRandomSingleton& operator=(SomeRandomSingleton&&)      = delete;
 
 public:
-    SlightlyIntelligentClass(const char* text, uint32_t number) : neatNumber(number) {}
-
-    virtual uint32_t GetNumber() const { return neatNumber; }
+    static SomeRandomSingleton& GetSingleton() {
+        static SomeRandomSingleton singleton;
+        return singleton;
+    }
+    const char* GetCString() const { return cStringsAreAnnoying; }
+    uint32_t    GetNumber() const { return 42; }
 };
 
-SlightlyIntelligentClass ASlightlyIntelligentThing{"I am class", 420};
-
 namespace ModdingFramework::Runtime::NativeModLoader {
-
     // Lazy for now...
     std::unordered_map<std::string, HMODULE> _dllModules;
 
@@ -47,14 +46,14 @@ namespace ModdingFramework::Runtime::NativeModLoader {
 
         _dllModules[mod.GetName()] = dll;
 
-        auto loadMod = (void (*)(SlightlyIntelligentClass*))GetProcAddress(dll, "Load");
+        auto loadMod = (void (*)())GetProcAddress(dll, "Load");
         if (!loadMod) {
             Log("Failed to find Load function in native mod DLL: {}", dllPath.string());
             return false;
         }
 
         try {
-            loadMod(&ASlightlyIntelligentThing);
+            loadMod();
             Log("Loaded native mod DLL: {}", dllPath.string());
             return true;
         } catch (const std::exception& e) {
