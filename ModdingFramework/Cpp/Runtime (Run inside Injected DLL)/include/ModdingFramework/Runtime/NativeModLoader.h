@@ -7,24 +7,6 @@
 
 #include "Mod.h"
 
-class SomeRandomSingleton {
-    const char* cStringsAreAnnoying                            = "I hate C strings";
-    SomeRandomSingleton()                                      = default;
-    ~SomeRandomSingleton()                                     = default;
-    SomeRandomSingleton(const SomeRandomSingleton&)            = delete;
-    SomeRandomSingleton(SomeRandomSingleton&&)                 = delete;
-    SomeRandomSingleton& operator=(const SomeRandomSingleton&) = delete;
-    SomeRandomSingleton& operator=(SomeRandomSingleton&&)      = delete;
-
-public:
-    static SomeRandomSingleton& GetSingleton() {
-        static SomeRandomSingleton singleton;
-        return singleton;
-    }
-    const char* GetCString() const { return cStringsAreAnnoying; }
-    uint32_t    GetNumber() const { return 42; }
-};
-
 namespace ModdingFramework::Runtime::NativeModLoader {
     // Lazy for now...
     std::unordered_map<std::string, HMODULE> _dllModules;

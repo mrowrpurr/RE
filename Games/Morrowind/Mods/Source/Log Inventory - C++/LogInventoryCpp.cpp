@@ -31,6 +31,12 @@ void PrintOutThePlayerInventory() {
     }
 }
 
+// #include "The Framework Shit.h"
+// struct AllTehAddresses {};
+// AllTehAddresses* allTehAddresses = nullptr;
+// extern "C" __declspec(dllexport) void Init(AllTehAddresses*) {}
+///////////////////////////////////
+
 extern "C" __declspec(dllexport) void Load() {
     Log("Load()");
     PrintOutThePlayerInventory();
