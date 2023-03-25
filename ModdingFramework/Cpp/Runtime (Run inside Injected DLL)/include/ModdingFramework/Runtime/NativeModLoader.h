@@ -1,10 +1,29 @@
 #pragma once
 
 #include <Logging.h>
+#include <StringFormatting.h>
 
 #include <filesystem>
 
 #include "Mod.h"
+
+struct DumbStruct {
+    const char* text;
+    uint32_t    number;
+};
+
+DumbStruct ADumbStruct = {"Wassup?", 69};
+
+class SlightlyIntelligentClass {
+    uint32_t neatNumber;
+
+public:
+    SlightlyIntelligentClass(const char* text, uint32_t number) : neatNumber(number) {}
+
+    virtual uint32_t GetNumber() const { return neatNumber; }
+};
+
+SlightlyIntelligentClass ASlightlyIntelligentThing{"I am class", 420};
 
 namespace ModdingFramework::Runtime::NativeModLoader {
 
@@ -28,14 +47,14 @@ namespace ModdingFramework::Runtime::NativeModLoader {
 
         _dllModules[mod.GetName()] = dll;
 
-        auto loadMod = (void (*)())GetProcAddress(dll, "Load");
+        auto loadMod = (void (*)(SlightlyIntelligentClass*))GetProcAddress(dll, "Load");
         if (!loadMod) {
             Log("Failed to find Load function in native mod DLL: {}", dllPath.string());
             return false;
         }
 
         try {
-            loadMod();
+            loadMod(&ASlightlyIntelligentThing);
             Log("Loaded native mod DLL: {}", dllPath.string());
             return true;
         } catch (const std::exception& e) {
