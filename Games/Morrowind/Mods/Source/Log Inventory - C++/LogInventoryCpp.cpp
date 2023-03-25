@@ -17,26 +17,18 @@ struct InventoryItem {
 void PrintOutThePlayerInventory() {
     Log("Printing out the player inventory");
 
-    auto ptr0 = Memory::Read<uintptr_t>(0x400000 + 0x3C67DC);
-    Log("ptr0: {}", ptr0);
+    auto inventoryItemsPtr = Memory::Read<uintptr_t>(0x400000 + 0x3C67DC, {0x0, 0x2E8, 0x4});
 
-    auto ptr1 = Memory::Read<uintptr_t>(0x400000 + 0x3C67DC, {0x0, 0x2E8});
-    Log("ptr1: {}", ptr1);
+    uint32_t itemPtrOffset = 0x0;
+    while (true) {
+        auto value = Memory::Read<uint32_t>(inventoryItemsPtr, itemPtrOffset);
+        if (value == 0) break;
 
-    auto ptr2 = Memory::Read<uintptr_t>(0x400000 + 0x3C67DC, {0x0, 0x2E8, 0x4});
-    Log("ptr2: {}", ptr2);
+        auto* item = Memory::Read<InventoryItem*>(inventoryItemsPtr, itemPtrOffset);
+        Log("Item: {}, Qty: {}", item->name, item->qty);
 
-    auto ptr3 = Memory::Read<uintptr_t>(0x400000 + 0x3C67DC, {0x0, 0x2E8, 0x4, 0x1c});
-    Log("ptr3: {}", ptr3);
-    // ^ gives an inventory item.
-
-    auto qty = Memory::Read<uintptr_t>(0x400000 + 0x3C67DC, {0x0, 0x2E8, 0x4, 0x1c, 0xc});
-    Log("item qty: {}", qty);
-
-    auto* inventoryItem =
-        Memory::Read<InventoryItem*>(0x400000 + 0x3C67DC, {0x0, 0x2E8, 0x4, 0x1c});
-    Log("item qty: {}", inventoryItem->qty);
-    Log("item name: {}", inventoryItem->name);
+        itemPtrOffset += 0x04;
+    }
 }
 
 extern "C" __declspec(dllexport) void Load() {

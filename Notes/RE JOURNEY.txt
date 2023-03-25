@@ -7,21 +7,24 @@ Mrowr Purr's Reverse Engineering Journey
 *TODO*
 
 - [ ] Generate structs for both C++ and Lua
-
 - [ ] Clean up Fallout1 C++ Library
 - [ ] Setup Fallout1 Lua Library
-
-- [ ] Plugin configuration (.ini and config UI)
-
+- [ ] Plugin configuration (with config UI!)
 - [ ] uint256_t/uint128_t ---> vcpkg
 
-GOAL: UI which loads/unloads Lua plugins!
+GOAL: Track <... other stuff ...> about registered mods
+GOAL: UI which triggers mod discovery
+
 GOAL: Plugin can:
       - get registered plugins (.dll and Lua)
       - message with other plugins (.dll and then Lua)
       - ...
 
-28. ?????
+
+NEXT GOAL: UI which loads/unloads Lua plugins!
+
+
+28. Setup Morrowind for modding. Loop thru player inventory (name/qty) in C++ mod.
 27. Mod Discovery! Mod .ini parsing. Mod Registy. Mod Loading with UI.
 26. Setup modding_framework.dll and modding_framework.exe (in MO2) to inject it
     Setup basics of plugin loading.
