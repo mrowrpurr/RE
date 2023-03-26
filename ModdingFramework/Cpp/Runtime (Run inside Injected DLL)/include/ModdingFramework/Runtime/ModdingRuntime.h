@@ -37,30 +37,15 @@ namespace ModdingFramework::Runtime {
         }
 
         //! Load modding_framework.ini
-        void ReloadConfig() { auto configPath = _fileSearchPaths.Find(CONFIG_FILE_NAME); }
+        void ReloadConfig() {
+            Log("Reloading config...");
+            FileSearchPaths::Load(_fileSearchPaths);
+            auto configPath = _fileSearchPaths.Find(CONFIG_FILE_NAME);
+            Log("Loading config from: {}", configPath);
+        }
 
         //! Boot the Modding Framework runtime!
-        void Boot() {
-            Log("Wassup y'all? That totally sucked, omg right?");
-
-            auto moddingFrameworkIniPath = "Data Files/modding_framework.ini";
-
-            if (!std::filesystem::exists(moddingFrameworkIniPath)) {
-                Log("Modding Framework config file not found! ({})", moddingFrameworkIniPath);
-                return;
-            }
-
-            auto moddingFrameworkIni = Serialization::LoadFile(moddingFrameworkIniPath);
-            auto config              = moddingFrameworkIni["Modding Framework"];
-            auto game                = config.Get("game");
-            Log("Game: {}", game);
-
-            // FileSearchPaths::LoadFromEnvironmentVariable(_fileSearchPaths);
-            // ReloadConfig();
-
-            // Use Serialization...
-            // auto x = Serialization::LoadFile("butts.ini");
-        }
+        void Boot() { ReloadConfig(); }
 
         IFileSearchPaths* GetFileSearchPaths() override { return &_fileSearchPaths; }
     };

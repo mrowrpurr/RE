@@ -24,31 +24,37 @@ namespace ModdingFramework::Runtime {
         const char* Get(size_t i) override { return _paths[i].c_str(); }
         void        Append(const char* path) override { _paths.push_back(path); }
         void        Clear() override { _paths.clear(); }
-        const char* Find(const char* path) override {
-            for (const auto& p : _paths)
-                if (std::filesystem::exists(p + path)) return p.c_str();
-            return nullptr;
+
+        std::string Find(const std::string& fileName) {
+            for (auto& path : _paths) {
+                auto fullPath = std::filesystem::path{path} / fileName;
+                if (std::filesystem::exists(fullPath)) return fullPath.string();
+            }
+            return "";
         }
 
         const std::vector<std::string>& GetPaths() const { return _paths; }
 
         static constexpr auto SEARCH_PATHS_ENV_VAR_NAME = "MODDING_FRAMEWORK_SEARCH_PATHS";
+        static constexpr auto SEARCH_PATHS_DEFAULT      = ";Data;Data Files";
 
         static void LoadFromEnvironmentVariable(
-            FileSearchPaths& paths, const char* envVarName = SEARCH_PATHS_ENV_VAR_NAME
+            FileSearchPaths& paths, const char* envVarName = SEARCH_PATHS_ENV_VAR_NAME,
+            const char* defaultPaths = SEARCH_PATHS_DEFAULT
         ) {
-            const char* envVar = getenv(envVarName);
-            if (envVar) {
-                std::string envVarStr(envVar);
-                size_t      start = 0;
-                size_t      end   = envVarStr.find(';');
-                while (end != std::string::npos) {
-                    paths.Append(envVarStr.substr(start, end - start).c_str());
-                    start = end + 1;
-                    end   = envVarStr.find(';', start);
-                }
+            const char* searchPaths = std::getenv(envVarName);
+            if (!searchPaths) searchPaths = defaultPaths;
+            auto   envVarStr = std::string{searchPaths};
+            size_t start     = 0;
+            size_t end       = envVarStr.find(';');
+            while (end != std::string::npos) {
                 paths.Append(envVarStr.substr(start, end - start).c_str());
+                start = end + 1;
+                end   = envVarStr.find(';', start);
             }
+            paths.Append(envVarStr.substr(start, end - start).c_str());
         }
+
+        static void Load(FileSearchPaths& paths) { LoadFromEnvironmentVariable(paths); }
     };
 }

@@ -7,6 +7,5 @@ namespace ModdingFramework {
         virtual const char* Get(size_t i)            = 0;
         virtual void        Append(const char* path) = 0;
         virtual void        Clear()                  = 0;
-        virtual const char* Find(const char* path)   = 0;
     };
 }
