@@ -1,6 +1,7 @@
 #include <Injected_DLL.h>
 #include <Logging.h>
 #include <ModdingFramework/Runtime.h>
+#include <Serialization.h>
 
 SetLogFilePath("Modding/Logs/ModdingFramework/modding_framework.dll.log");
 

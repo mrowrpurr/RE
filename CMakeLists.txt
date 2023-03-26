@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 3.25.1)
 
 project(ReverseEngineeringPlayground LANGUAGES CXX)
 
+# ?
+include_directories("${CMAKE_SOURCE_DIR}/Libraries/Cpp/Serialization/include")
+
 if(${CMAKE_EXE_LINKER_FLAGS} STREQUAL "/machine:x64")
     set (ARCH "x64")
 else()

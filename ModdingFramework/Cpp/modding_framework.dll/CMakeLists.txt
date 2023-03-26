@@ -1,8 +1,15 @@
 project(ModdingFramework.DLL)
 
 add_library(${PROJECT_NAME} SHARED ModdingFrameworkDLL.cpp)
-target_link_libraries(${PROJECT_NAME} PRIVATE ModdingFramework.Runtime Injected_DLL Logging StringFormatting)
+target_link_libraries(${PROJECT_NAME} PRIVATE ModdingFramework.Runtime ModdingFramework.Runtime.Lib Injected_DLL Logging StringFormatting Serialization Serialization.Lib)
 set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME "modding_framework")
+
+# Find a way around this disgusting hack
+find_path(SIMPLEINI_INCLUDE_DIRS "SimpleIni.h")
+target_include_directories(${PROJECT_NAME} PRIVATE ${SIMPLEINI_INCLUDE_DIRS})
+target_include_directories(${PROJECT_NAME} PRIVATE "${CMAKE_SOURCE_DIR}/Libraries/Cpp/Serialization/include")
+
+message(STATUS "Including: ${CMAKE_SOURCE_DIR}/Libraries/Cpp/Serialization/include")
 
 set(
     OUTPUT_FOLDERS

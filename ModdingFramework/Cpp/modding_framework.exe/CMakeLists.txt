@@ -1,9 +1,14 @@
 project(ModdingFramework.EXE)
 
 add_executable(${PROJECT_NAME} ModdingFrameworkEXE.cpp ModdingFramework.rc)
-target_link_libraries(${PROJECT_NAME} PRIVATE DLL_Injector Serialization Logging)
+target_link_libraries(${PROJECT_NAME} PRIVATE DLL_Injector Logging)
 set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME "modding_framework")
 set_target_properties(${PROJECT_NAME} PROPERTIES WIN32_EXECUTABLE TRUE)
+
+# Find a way around this disgusting hack
+find_path(SIMPLEINI_INCLUDE_DIRS "SimpleIni.h")
+target_include_directories(${PROJECT_NAME} INTERFACE include ${SIMPLEINI_INCLUDE_DIRS})
+target_include_directories(${PROJECT_NAME} INTERFACE "${CMAKE_SOURCE_DIR}/Libraries/Cpp/Serialization/include")
 
 set(
     OUTPUT_FOLDERS
