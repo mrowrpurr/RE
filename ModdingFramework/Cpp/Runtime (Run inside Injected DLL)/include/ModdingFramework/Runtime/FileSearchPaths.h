@@ -56,5 +56,9 @@ namespace ModdingFramework::Runtime {
         }
 
         static void Load(FileSearchPaths& paths) { LoadFromEnvironmentVariable(paths); }
+        static void Reload(FileSearchPaths& paths) {
+            paths.Clear();
+            Load(paths);
+        }
     };
 }

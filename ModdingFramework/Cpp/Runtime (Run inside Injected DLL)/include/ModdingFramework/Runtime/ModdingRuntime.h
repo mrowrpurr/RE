@@ -32,17 +32,13 @@ namespace ModdingFramework::Runtime {
 
         //! Load modding_framework.ini
         void ReloadConfig() {
-            FileSearchPaths::Load(_fileSearchPaths);
+            FileSearchPaths::Reload(_fileSearchPaths);
             auto configPath = _fileSearchPaths.Find(CONFIG_FILE_NAME);
             if (configPath.empty()) {
                 Log("Could not find Modding Framework config file: {}", CONFIG_FILE_NAME);
                 return;
             }
             RuntimeConfig::Load(_runtimeConfig, configPath);
-
-            Log("Loaded Modding Framework config file: {}", configPath);
-            Log("Config game executable: {}", _runtimeConfig.GetGameExecutable());
-            Log("Config mods folder path: {}", _runtimeConfig.GetModsFolderPath());
         }
 
         //! Boot the Modding Framework runtime!
