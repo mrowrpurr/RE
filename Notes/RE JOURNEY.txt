@@ -20,6 +20,12 @@ GOAL: Plugin can:
       - message with other plugins (.dll and then Lua)
       - ...
 
+GOALS:
+- Mod knows who it is
+- Mod can read runtime config (.exe name etc)
+- Mod can list all mods
+- Mod can add a button with a click handler (to a sub-tab of the main UI)
+
 NEXT GOAL: UI which loads/unloads Lua plugins!
 
 - "Lib Modding Framework" is used by C++
@@ -31,6 +37,7 @@ NEXT GOAL: UI which loads/unloads Lua plugins!
 SOLVED: - "GetSingleton-ish" interface for getting address* from C++ mod
            ^--- use an Init() - and the game-specific frameworks can add their own Init()'s too
 
+30. 
 29. ???????????
 28. Setup Morrowind modding framework. Loop thru player inventory (name/qty) in C++ mod.
 27. Mod Discovery! Mod .ini parsing. Mod Registy. Mod Loading with UI.

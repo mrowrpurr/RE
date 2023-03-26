@@ -1,3 +1,4 @@
+add_subdirectory("Types (Shared by Runtime and mods)")
 add_subdirectory("Runtime (Run inside Injected DLL)")
 add_subdirectory("modding_framework.dll")
 add_subdirectory("modding_framework.exe")

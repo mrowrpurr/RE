@@ -2,5 +2,5 @@
 
 namespace ModdingFramework::Runtime {
 
-    class ModRegistry {};
+    class FileSearchPaths {};
 }

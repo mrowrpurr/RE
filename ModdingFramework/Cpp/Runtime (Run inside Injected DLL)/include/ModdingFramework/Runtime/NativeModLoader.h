@@ -6,7 +6,6 @@
 #include <filesystem>
 
 #include "Mod.h"
-#include "ModdingFrameworkTypeInstance.h"
 
 namespace ModdingFramework::Runtime::NativeModLoader {
     // Lazy for now...
@@ -29,26 +28,27 @@ namespace ModdingFramework::Runtime::NativeModLoader {
 
         _dllModules[mod.GetName()] = dll;
 
-        auto initModdingFrameworkFn = (void (*)(Types::ModdingFrameworkType*)
-        )GetProcAddress(dll, "__MODDING_FRAMEWORK_INIT__");
+        // auto initModdingFrameworkFn = (void (*)(Types::ModdingFrameworkType*)
+        // )GetProcAddress(dll, "__MODDING_FRAMEWORK_INIT__");
 
-        if (!initModdingFrameworkFn) {
-            Log("Failed to find __MODDING_FRAMEWORK_INIT__ function in native mod DLL: {}",
-                dllPath.string());
-            return false;
-        }
+        // if (!initModdingFrameworkFn) {
+        //     Log("Failed to find __MODDING_FRAMEWORK_INIT__ function in native mod DLL: {}",
+        //         dllPath.string());
+        //     return false;
+        // }
 
-        try {
-            initModdingFrameworkFn(
-                &ModdingFramework::Runtime::ModdingFrameworkTypeImpl::GetSingleton()
-            );
-        } catch (const std::exception& e) {
-            Log("Failed to call __MODDING_FRAMEWORK_INIT__ in native mod DLL: {}", e.what());
-            return false;
-        } catch (...) {
-            Log("Failed to call __MODDING_FRAMEWORK_INIT__ in native mod DLL: Unknown error");
-            return false;
-        }
+        // try {
+        //     initModdingFrameworkFn(
+        //         nullptr
+        //         // &ModdingFramework::Runtime::ModdingFrameworkTypeImpl::GetSingleton()
+        //     );
+        // } catch (const std::exception& e) {
+        //     Log("Failed to call __MODDING_FRAMEWORK_INIT__ in native mod DLL: {}", e.what());
+        //     return false;
+        // } catch (...) {
+        //     Log("Failed to call __MODDING_FRAMEWORK_INIT__ in native mod DLL: Unknown error");
+        //     return false;
+        // }
 
         auto loadMod = (void (*)())GetProcAddress(dll, "Load");
         if (!loadMod) {
