@@ -37,8 +37,8 @@ NEXT GOAL: UI which loads/unloads Lua plugins!
 SOLVED: - "GetSingleton-ish" interface for getting address* from C++ mod
            ^--- use an Init() - and the game-specific frameworks can add their own Init()'s too
 
-30. 
-29. ???????????
+30. ???????????
+29. Call functions in Modding Runtime from a Mod. RE in Morrowind, e.g. Entity List + Attributes
 28. Setup Morrowind modding framework. Loop thru player inventory (name/qty) in C++ mod.
 27. Mod Discovery! Mod .ini parsing. Mod Registy. Mod Loading with UI.
 26. Setup modding_framework.dll and modding_framework.exe (in MO2) to inject it
