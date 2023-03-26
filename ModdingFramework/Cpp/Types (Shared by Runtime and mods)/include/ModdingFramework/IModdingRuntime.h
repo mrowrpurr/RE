@@ -1,8 +1,10 @@
 #pragma once
 
+#include "IFileSearchPaths.h"
+
 namespace ModdingFramework {
 
-    class IModdingRuntime {
-    public:
+    struct IModdingRuntime {
+        virtual IFileSearchPaths* GetFileSearchPaths() = 0;
     };
 }

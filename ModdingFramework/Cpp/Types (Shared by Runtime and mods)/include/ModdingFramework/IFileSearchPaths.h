@@ -3,7 +3,10 @@
 namespace ModdingFramework {
 
     struct IFileSearchPaths {
-        virtual const char* GetPath()                 = 0;
-        virtual void        SetPath(const char* path) = 0;
+        virtual size_t      GetCount()               = 0;
+        virtual const char* Get(size_t i)            = 0;
+        virtual void        Append(const char* path) = 0;
+        virtual void        Clear()                  = 0;
+        virtual const char* Find(const char* path)   = 0;
     };
 }

@@ -15,17 +15,6 @@ Mrowr Purr's Reverse Engineering Journey
 GOAL: Track <... other stuff ...> about registered mods
 GOAL: UI which triggers mod discovery
 
-GOAL: Plugin can:
-      - get registered plugins (.dll and Lua)
-      - message with other plugins (.dll and then Lua)
-      - ...
-
-GOALS:
-- Mod knows who it is
-- Mod can read runtime config (.exe name etc)
-- Mod can list all mods
-- Mod can add a button with a click handler (to a sub-tab of the main UI)
-
 NEXT GOAL: UI which loads/unloads Lua plugins!
 
 - "Lib Modding Framework" is used by C++
@@ -34,8 +23,20 @@ NEXT GOAL: UI which loads/unloads Lua plugins!
 - Lua use a "Lib Morrowind"
 - Lua use a "Lib Modding Framework"
 
-SOLVED: - "GetSingleton-ish" interface for getting address* from C++ mod
-           ^--- use an Init() - and the game-specific frameworks can add their own Init()'s too
+GOAL: Plugin can:
+      - get registered plugins (.dll and Lua)
+      - message with other plugins (.dll and then Lua)
+      - ...
+
+--------
+
+GOALS:
+- MODDING_FRAMEWORK_SEARCH_PATHS
+  modding_framework.ini ---> "Data Files"
+- Mod knows who it is
+- Mod can read runtime config (.exe name etc)
+- Mod can list all mods
+- Mod can add a button with a click handler (to a sub-tab of the main UI)
 
 30. ???????????
 29. Call functions in Modding Runtime from a Mod. RE in Morrowind, e.g. Entity List + Attributes
