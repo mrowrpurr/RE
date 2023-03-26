@@ -1,16 +1,10 @@
 #pragma once
 
 #include <Logging.h>
-// #include <SimpleIni.h>  // <----
-
-// ^ Require this first, because stupid.
-
 #include <ModdingFramework\IModdingRuntime.h>
-#include <Serialization.h>
-
-#include <filesystem>
 
 #include "FileSearchPaths.h"
+#include "RuntimeConfig.h"
 
 namespace ModdingFramework::Runtime {
 
@@ -25,8 +19,8 @@ namespace ModdingFramework::Runtime {
         ModdingRuntime& operator=(ModdingRuntime&&)      = delete;
 
         FileSearchPaths _fileSearchPaths;
+        RuntimeConfig   _runtimeConfig;
 
-        // Config
         // ModManager --> (ModLoader + ModRegistry)
         // FileSearchPaths
 
@@ -38,15 +32,23 @@ namespace ModdingFramework::Runtime {
 
         //! Load modding_framework.ini
         void ReloadConfig() {
-            Log("Reloading config...");
             FileSearchPaths::Load(_fileSearchPaths);
             auto configPath = _fileSearchPaths.Find(CONFIG_FILE_NAME);
-            Log("Loading config from: {}", configPath);
+            if (configPath.empty()) {
+                Log("Could not find Modding Framework config file: {}", CONFIG_FILE_NAME);
+                return;
+            }
+            RuntimeConfig::Load(_runtimeConfig, configPath);
+
+            Log("Loaded Modding Framework config file: {}", configPath);
+            Log("Config game executable: {}", _runtimeConfig.GetGameExecutable());
+            Log("Config mods folder path: {}", _runtimeConfig.GetModsFolderPath());
         }
 
         //! Boot the Modding Framework runtime!
         void Boot() { ReloadConfig(); }
 
+        IRuntimeConfig*   GetRuntimeConfig() override { return &_runtimeConfig; }
         IFileSearchPaths* GetFileSearchPaths() override { return &_fileSearchPaths; }
     };
 }

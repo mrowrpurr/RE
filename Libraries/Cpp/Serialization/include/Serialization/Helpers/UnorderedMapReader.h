@@ -12,6 +12,8 @@ namespace Serialization::Helpers {
     public:
         UnorderedMapReader(const std::unordered_map<std::string, std::any>& map) : _map(map) {}
 
+        bool HasKey(const std::string& key) const { return _map.contains(key); }
+
         template <typename T>
         T Get(const std::string& key) const {
             return std::any_cast<T>(_map.at(key));
