@@ -9,7 +9,20 @@
 
 namespace ModdingFramework::Runtime {
 
-    class RuntimeConfig : public IRuntimeConfig {
+    class RuntimeConfig {
+    public:
+        class CInterface : public IRuntimeConfig {
+            RuntimeConfig& _config;
+
+        public:
+            CInterface(RuntimeConfig& config) : _config(config) {}
+            const char* GetGameExecutable() override { return _config.GetGameExecutable().c_str(); }
+            const char* GetModsFolderPath() override { return _config.GetModsFolderPath().c_str(); }
+        };
+
+    private:
+        CInterface _cInterface{*this};
+
         RuntimeConfig(const RuntimeConfig&)            = delete;
         RuntimeConfig(RuntimeConfig&&)                 = delete;
         RuntimeConfig& operator=(const RuntimeConfig&) = delete;
@@ -28,6 +41,9 @@ namespace ModdingFramework::Runtime {
         void SetModsFolderPath(const std::string& modsFolderPath) {
             _modsFolderPath = modsFolderPath;
         }
+
+        const std::string& GetGameExecutable() const { return _gameExecutable; }
+        const std::string& GetModsFolderPath() const { return _modsFolderPath; }
 
         static constexpr auto MODDING_FRAMEWORK_CONFIG_SECTION_NAME = "Modding Framework";
         static constexpr auto MODDING_FRAMEWORK_CONFIG_KEY_GAME     = "game";
@@ -54,8 +70,6 @@ namespace ModdingFramework::Runtime {
                 );
         }
 
-        const char* GetGameExecutable() override { return _gameExecutable.c_str(); }
-        const char* GetModsFolderPath() override { return _modsFolderPath.c_str(); }
+        IRuntimeConfig* GetCInterface() { return &_cInterface; }
     };
-
 }

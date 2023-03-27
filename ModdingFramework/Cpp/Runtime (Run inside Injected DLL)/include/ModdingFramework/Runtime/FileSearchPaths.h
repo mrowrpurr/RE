@@ -8,7 +8,23 @@
 
 namespace ModdingFramework::Runtime {
 
-    class FileSearchPaths : public IFileSearchPaths {
+    class FileSearchPaths {
+    public:
+        class CInterface : public IFileSearchPaths {
+            FileSearchPaths& _paths;
+
+        public:
+            CInterface(FileSearchPaths& paths) : _paths(paths) {}
+
+            size_t      GetCount() override { return _paths.GetPaths().size(); }
+            const char* Get(size_t i) override { return _paths.GetPaths().at(i).c_str(); }
+            void        Append(const char* path) override { _paths.Append(path); }
+            void        Clear() override { _paths.Clear(); }
+        };
+
+    private:
+        CInterface _cInterface{*this};
+
         std::vector<std::string> _paths;
 
         FileSearchPaths(const FileSearchPaths&)            = delete;
@@ -20,11 +36,6 @@ namespace ModdingFramework::Runtime {
         FileSearchPaths()  = default;
         ~FileSearchPaths() = default;
 
-        size_t      GetCount() override { return _paths.size(); }
-        const char* Get(size_t i) override { return _paths[i].c_str(); }
-        void        Append(const char* path) override { _paths.push_back(path); }
-        void        Clear() override { _paths.clear(); }
-
         std::string Find(const std::string& fileName) {
             for (auto& path : _paths) {
                 auto fullPath = std::filesystem::path{path} / fileName;
@@ -34,6 +45,8 @@ namespace ModdingFramework::Runtime {
         }
 
         const std::vector<std::string>& GetPaths() const { return _paths; }
+        void                            Append(const std::string& path) { _paths.push_back(path); }
+        void                            Clear() { _paths.clear(); }
 
         static constexpr auto SEARCH_PATHS_ENV_VAR_NAME = "MODDING_FRAMEWORK_SEARCH_PATHS";
         static constexpr auto SEARCH_PATHS_DEFAULT      = ";Data;Data Files";
@@ -60,5 +73,7 @@ namespace ModdingFramework::Runtime {
             paths.Clear();
             Load(paths);
         }
+
+        IFileSearchPaths* GetCInterface() { return &_cInterface; }
     };
 }

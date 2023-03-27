@@ -7,6 +7,7 @@ find_path(SIMPLEINI_INCLUDE_DIRS "SimpleIni.h")
 include_directories(${SIMPLEINI_INCLUDE_DIRS})
 include_directories("${CMAKE_SOURCE_DIR}/Libraries/Cpp/Serialization/include")
 include_directories("${CMAKE_SOURCE_DIR}/Libraries/Cpp/User Interface/include")
+include_directories("${CMAKE_SOURCE_DIR}/Libraries/Cpp/Logging/include")
 #############################################################################
 
 if(${CMAKE_EXE_LINKER_FLAGS} STREQUAL "/machine:x64")

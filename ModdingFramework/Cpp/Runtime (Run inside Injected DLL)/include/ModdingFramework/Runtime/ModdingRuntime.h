@@ -13,7 +13,26 @@ namespace ModdingFramework::Runtime {
 
     constexpr auto CONFIG_FILE_NAME = "modding_framework.ini";
 
-    class ModdingRuntime : public IModdingRuntime {
+    class ModdingRuntime {
+    public:
+        class CInterface : public IModdingRuntime {
+            ModdingRuntime& _runtime;
+
+        public:
+            CInterface(ModdingRuntime& runtime) : _runtime(runtime) {}
+
+            IFileSearchPaths* GetFileSearchPaths() override {
+                return _runtime.GetFileSearchPaths().GetCInterface();
+            }
+            IRuntimeConfig* GetRuntimeConfig() override {
+                return _runtime.GetRuntimeConfig().GetCInterface();
+            }
+            IModRegistry* GetRegistry() override { return _runtime.GetRegistry().GetCInterface(); }
+        };
+
+    private:
+        CInterface _cInterface{*this};
+
         ModdingRuntime()                                 = default;
         ~ModdingRuntime()                                = default;
         ModdingRuntime(const ModdingRuntime&)            = delete;
@@ -31,7 +50,6 @@ namespace ModdingFramework::Runtime {
             return runtime;
         }
 
-        //! Load modding_framework.ini
         void ReloadConfig() {
             FileSearchPaths::Reload(_fileSearchPaths);
             auto configPath = _fileSearchPaths.Find(CONFIG_FILE_NAME);
@@ -42,9 +60,7 @@ namespace ModdingFramework::Runtime {
             RuntimeConfig::Load(_runtimeConfig, configPath);
         }
 
-        //! Do this inline and extract to something with the responsibility of handling this soon
         void DiscoverMods() {
-            // For now, just look for all mods in the mods folder
             auto modsPath = _fileSearchPaths.Find(_runtimeConfig.GetModsFolderPath());
 
             if (!std::filesystem::exists(modsPath)) {
@@ -68,7 +84,10 @@ namespace ModdingFramework::Runtime {
             DiscoverMods();
         }
 
-        IRuntimeConfig*   GetRuntimeConfig() override { return &_runtimeConfig; }
-        IFileSearchPaths* GetFileSearchPaths() override { return &_fileSearchPaths; }
+        FileSearchPaths& GetFileSearchPaths() { return _fileSearchPaths; }
+        RuntimeConfig&   GetRuntimeConfig() { return _runtimeConfig; }
+        ModRegistry&     GetRegistry() { return _modRegistry; }
+
+        IModdingRuntime* GetCInterface() { return &_cInterface; }
     };
 }
