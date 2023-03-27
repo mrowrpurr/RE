@@ -37,8 +37,15 @@ void PrintOutThePlayerInventory() {
 // extern "C" __declspec(dllexport) void Init(AllTehAddresses*) {}
 ///////////////////////////////////
 
+struct ButtsStruct {
+    std::string butts;
+};
+
+ButtsStruct butts;
+
 extern "C" __declspec(dllexport) void Load() {
     Log("Load()");
-    PrintOutThePlayerInventory();
+    Log("The address of butts is: {:x}", reinterpret_cast<uintptr_t>(&butts));
+    // PrintOutThePlayerInventory();
 }
 extern "C" __declspec(dllexport) void Unload() { Log("Unload()"); }

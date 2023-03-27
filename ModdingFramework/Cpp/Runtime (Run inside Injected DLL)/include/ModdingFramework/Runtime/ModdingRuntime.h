@@ -8,6 +8,7 @@
 #include "FileSearchPaths.h"
 #include "ModLoaders.h"
 #include "ModRegistry.h"
+#include "NativeModLoader.h"
 #include "RuntimeConfig.h"
 
 namespace ModdingFramework::Runtime {
@@ -48,6 +49,7 @@ namespace ModdingFramework::Runtime {
         RuntimeConfig   _runtimeConfig;
         ModRegistry     _modRegistry;
         ModLoaders      _modLoaders;
+        NativeModLoader _nativeModLoader;
 
     public:
         static ModdingRuntime& GetRuntime() {
@@ -78,6 +80,7 @@ namespace ModdingFramework::Runtime {
                 if (entry.path().extension() != ".ini") continue;
 
                 auto mod = Mod::FromINI(entry.path().string());
+                mod->SetFolder(entry.path().parent_path().string());
                 if (mod == nullptr) continue;
 
                 _modRegistry.RegisterMod(mod);
@@ -87,6 +90,7 @@ namespace ModdingFramework::Runtime {
         void Boot() {
             ReloadConfig();
             DiscoverMods();
+            _modLoaders.RegisterLoader("native", &_nativeModLoader);
         }
 
         FileSearchPaths& GetFileSearchPaths() { return _fileSearchPaths; }

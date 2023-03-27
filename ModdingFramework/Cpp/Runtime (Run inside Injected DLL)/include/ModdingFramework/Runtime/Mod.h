@@ -23,7 +23,7 @@ namespace ModdingFramework::Runtime {
         std::string                             _type;
         std::string                             _source;
         std::string                             _folder;
-        bool                                    _loaded = true;
+        bool                                    _loaded = false;
         std::unordered_map<std::string, void*>  _data;
         std::unordered_map<std::string, size_t> _dataSizes;
         std::vector<std::string>                _dataKeys;
@@ -41,7 +41,17 @@ namespace ModdingFramework::Runtime {
         const char* GetType() const override { return _type.c_str(); }
         const char* GetSource() const override { return _source.c_str(); }
         bool        IsLoaded() const override { return _loaded; }
-        void        SetData(const char* key, void* data, size_t size) override {
+
+        // TODO - make this NOT available on the C interface, please :)
+        void SetLoaded(bool loaded = true) override { _loaded = loaded; }
+
+        void SetName(const std::string& name) { _name = name; }
+        void SetVersion(const std::string& version) { _version = version; }
+        void SetFolder(const std::string& folder) { _folder = folder; }
+        void SetType(const std::string& type) { _type = type; }
+        void SetSource(const std::string& source) { _source = source; }
+
+        void SetData(const char* key, void* data, size_t size) override {
             _data[key]      = data;
             _dataSizes[key] = size;
             _dataKeys.push_back(key);
@@ -58,6 +68,11 @@ namespace ModdingFramework::Runtime {
             return reinterpret_cast<const char**>(_dataKeys.data());
         }
         bool HasDataKey(const char* key) override { return _data.find(key) != _data.end(); }
+        void RemoveDataKey(const char* key) override {
+            _data.erase(key);
+            _dataSizes.erase(key);
+            _dataKeys.erase(std::remove(_dataKeys.begin(), _dataKeys.end(), key), _dataKeys.end());
+        }
 
         // TODO - move this into something else which can be responsible for loading Mod from
         // configs/etc
