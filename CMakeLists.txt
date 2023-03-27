@@ -2,8 +2,12 @@ cmake_minimum_required(VERSION 3.25.1)
 
 project(ReverseEngineeringPlayground LANGUAGES CXX)
 
-# ?
+# Evil....
+find_path(SIMPLEINI_INCLUDE_DIRS "SimpleIni.h")
+include_directories(${SIMPLEINI_INCLUDE_DIRS})
 include_directories("${CMAKE_SOURCE_DIR}/Libraries/Cpp/Serialization/include")
+include_directories("${CMAKE_SOURCE_DIR}/Libraries/Cpp/User Interface/include")
+#############################################################################
 
 if(${CMAKE_EXE_LINKER_FLAGS} STREQUAL "/machine:x64")
     set (ARCH "x64")

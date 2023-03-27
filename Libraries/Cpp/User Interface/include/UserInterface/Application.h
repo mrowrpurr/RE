@@ -13,9 +13,9 @@
 namespace UserInterface {
     class Application {
         bool                                       _showOutputTextBox{false};
-        size_t                                     _buttonHeight{25};
-        size_t                                     _height{300};
-        size_t                                     _width{250};
+        unsigned int                               _buttonHeight{25};
+        unsigned int                               _height{300};
+        unsigned int                               _width{250};
         std::atomic_bool                           _isRunning{false};
         nana::form                                 _form;
         nana::place                                _place;
@@ -34,7 +34,10 @@ namespace UserInterface {
         Application& operator=(Application&&)      = delete;
 
         void Resize() {
-            _form.size({_width, _height + (_buttonInitialText.size() * _buttonHeight)});
+            _form.size(
+                {_width,
+                 _height + (static_cast<unsigned int>(_buttonInitialText.size()) * _buttonHeight)}
+            );
         }
         void RunApp() {
             if (_isRunning.exchange(true)) return;
