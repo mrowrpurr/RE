@@ -5,9 +5,10 @@
 
 #include <memory>
 #include <string>
+#include <unordered_map>
+#include <vector>
 
 #include "ModdingFramework/IMod.h"
-
 
 namespace ModdingFramework::Runtime {
 
@@ -17,12 +18,15 @@ namespace ModdingFramework::Runtime {
         Mod& operator=(const Mod&) = delete;
         Mod& operator=(Mod&&)      = delete;
 
-        std::string _name;
-        std::string _version;
-        std::string _type;
-        std::string _source;
-        std::string _folder;
-        bool        _loaded = true;
+        std::string                             _name;
+        std::string                             _version;
+        std::string                             _type;
+        std::string                             _source;
+        std::string                             _folder;
+        bool                                    _loaded = true;
+        std::unordered_map<std::string, void*>  _data;
+        std::unordered_map<std::string, size_t> _dataSizes;
+        std::vector<std::string>                _dataKeys;
 
     public:
         Mod() = default;
@@ -37,8 +41,23 @@ namespace ModdingFramework::Runtime {
         const char* GetType() const override { return _type.c_str(); }
         const char* GetSource() const override { return _source.c_str(); }
         bool        IsLoaded() const override { return _loaded; }
-        bool        Load() override { return _loaded = true; }
-        bool        Unload() override { return _loaded = false; }
+        void        SetData(const char* key, void* data, size_t size) override {
+            _data[key]      = data;
+            _dataSizes[key] = size;
+            _dataKeys.push_back(key);
+        }
+        void*  GetData(const char* key) override { return _data[key]; }
+        size_t GetDataSize(const char* key) override { return _dataSizes[key]; }
+        size_t GetDataCount() override { return _data.size(); }
+        void   ClearData() override {
+            _data.clear();
+            _dataSizes.clear();
+            _dataKeys.clear();
+        }
+        const char** GetDataKeys() override {
+            return reinterpret_cast<const char**>(_dataKeys.data());
+        }
+        bool HasDataKey(const char* key) override { return _data.find(key) != _data.end(); }
 
         // TODO - move this into something else which can be responsible for loading Mod from
         // configs/etc

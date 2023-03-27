@@ -6,6 +6,7 @@
 #include <filesystem>
 
 #include "FileSearchPaths.h"
+#include "ModLoaders.h"
 #include "ModRegistry.h"
 #include "RuntimeConfig.h"
 
@@ -28,6 +29,9 @@ namespace ModdingFramework::Runtime {
                 return _runtime.GetRuntimeConfig().GetCInterface();
             }
             IModRegistry* GetRegistry() override { return _runtime.GetRegistry().GetCInterface(); }
+            IModLoaders*  GetModLoaders() override {
+                return _runtime.GetModLoaders().GetCInterface();
+            }
         };
 
     private:
@@ -43,6 +47,7 @@ namespace ModdingFramework::Runtime {
         FileSearchPaths _fileSearchPaths;
         RuntimeConfig   _runtimeConfig;
         ModRegistry     _modRegistry;
+        ModLoaders      _modLoaders;
 
     public:
         static ModdingRuntime& GetRuntime() {
@@ -87,6 +92,7 @@ namespace ModdingFramework::Runtime {
         FileSearchPaths& GetFileSearchPaths() { return _fileSearchPaths; }
         RuntimeConfig&   GetRuntimeConfig() { return _runtimeConfig; }
         ModRegistry&     GetRegistry() { return _modRegistry; }
+        ModLoaders&      GetModLoaders() { return _modLoaders; }
 
         IModdingRuntime* GetCInterface() { return &_cInterface; }
     };
