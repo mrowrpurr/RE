@@ -3,7 +3,10 @@
 #include <Logging.h>
 #include <ModdingFramework\IModdingRuntime.h>
 
+#include <filesystem>
+
 #include "FileSearchPaths.h"
+#include "ModRegistry.h"
 #include "RuntimeConfig.h"
 
 namespace ModdingFramework::Runtime {
@@ -20,9 +23,7 @@ namespace ModdingFramework::Runtime {
 
         FileSearchPaths _fileSearchPaths;
         RuntimeConfig   _runtimeConfig;
-
-        // ModManager --> (ModLoader + ModRegistry)
-        // FileSearchPaths
+        ModRegistry     _modRegistry;
 
     public:
         static ModdingRuntime& GetRuntime() {
@@ -41,8 +42,31 @@ namespace ModdingFramework::Runtime {
             RuntimeConfig::Load(_runtimeConfig, configPath);
         }
 
-        //! Boot the Modding Framework runtime!
-        void Boot() { ReloadConfig(); }
+        //! Do this inline and extract to something with the responsibility of handling this soon
+        void DiscoverMods() {
+            // For now, just look for all mods in the mods folder
+            auto modsPath = _fileSearchPaths.Find(_runtimeConfig.GetModsFolderPath());
+
+            if (!std::filesystem::exists(modsPath)) {
+                Log("Could not find mods folder: {}", modsPath);
+                return;
+            }
+
+            for (const auto& entry : std::filesystem::recursive_directory_iterator(modsPath)) {
+                if (entry.is_directory()) continue;
+                if (entry.path().extension() != ".ini") continue;
+
+                auto mod = Mod::FromINI(entry.path().string());
+                if (mod == nullptr) continue;
+
+                _modRegistry.RegisterMod(mod);
+            }
+        }
+
+        void Boot() {
+            ReloadConfig();
+            DiscoverMods();
+        }
 
         IRuntimeConfig*   GetRuntimeConfig() override { return &_runtimeConfig; }
         IFileSearchPaths* GetFileSearchPaths() override { return &_fileSearchPaths; }
