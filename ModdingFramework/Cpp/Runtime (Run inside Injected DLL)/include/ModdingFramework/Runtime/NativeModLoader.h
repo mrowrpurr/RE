@@ -11,10 +11,10 @@
 namespace ModdingFramework::Runtime {
 
     class NativeModLoader : public IModLoader {
-        IModdingRuntime* _runtime;
+        // IModdingRuntime* _runtime;
 
     public:
-        NativeModLoader(IModdingRuntime* runtime) : _runtime(runtime) {}
+        // NativeModLoader(IModdingRuntime* runtime) : _runtime(runtime) {}
 
         static constexpr auto DLL_HMODULE_DATA_KEY = "DLL_HMODULE";
 
@@ -47,7 +47,7 @@ namespace ModdingFramework::Runtime {
             }
 
             try {
-                loadMod(_runtime);
+                // loadMod(_runtime);
                 Log("Loaded native mod DLL: {}", dllPath.string());
                 mod->SetLoaded(true);
                 return true;
