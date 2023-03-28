@@ -25,20 +25,14 @@ namespace ModdingFramework::Runtime {
             ) override {
                 _registry.RegisterMod(std::make_shared<Mod>(name, version, type, source, folder));
             }
-
             void UnregisterMod(const char* name, const char* version) override {
                 _registry.UnregisterMod(name, version);
             }
-
-            void UnregisterAllMods() override { _registry.UnregisterAllMods(); }
-
+            void   UnregisterAllMods() override { _registry.UnregisterAllMods(); }
             size_t GetModCount() const override { return _registry.GetModCount(); }
-
-            IMod* GetMod(size_t index) const override { return _registry.GetMod(index).get(); }
-
-            IMod* GetMod(const char* name) const override { return _registry.GetMod(name).get(); }
-
-            IMod* GetMod(const char* name, const char* version) const override {
+            IMod*  GetMod(size_t index) const override { return _registry.GetMod(index).get(); }
+            IMod*  GetMod(const char* name) const override { return _registry.GetMod(name).get(); }
+            IMod*  GetMod(const char* name, const char* version) const override {
                 return _registry.GetMod(name, version).get();
             }
         };

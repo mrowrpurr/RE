@@ -4,6 +4,7 @@
 #include <ModdingFramework/IModLoader.h>
 #include <ModdingFramework/IModLoaders.h>
 
+#include <memory>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -46,8 +47,8 @@ namespace ModdingFramework::Runtime {
         ModLoaders& operator=(const ModLoaders&) = delete;
         ModLoaders& operator=(ModLoaders&&)      = delete;
 
-        std::unordered_map<std::string, IModLoader*> _loaders;
-        std::vector<const char*>                     _loaderTypes;
+        std::unordered_map<std::string, std::shared_ptr<IModLoader>> _loaders;
+        std::vector<const char*>                                     _loaderTypes;
 
     public:
         ModLoaders()  = default;
@@ -57,6 +58,15 @@ namespace ModdingFramework::Runtime {
             return _loaders.find(type) != _loaders.end();
         }
         bool RegisterLoader(const std::string& type, IModLoader* loader) {
+            if (IsSupportedType(type)) {
+                Log("ModLoaders", "Loader for type '{}' already registered", type);
+                return false;
+            }
+            _loaders[type] = std::shared_ptr<IModLoader>(loader);
+            _loaderTypes.push_back(type.c_str());
+            return true;
+        }
+        bool RegisterLoader(const std::string& type, std::shared_ptr<IModLoader> loader) {
             if (IsSupportedType(type)) {
                 Log("ModLoaders", "Loader for type '{}' already registered", type);
                 return false;
@@ -79,14 +89,14 @@ namespace ModdingFramework::Runtime {
                 Log("ModLoaders", "Loader for type '{}' not registered", type);
                 return nullptr;
             }
-            return _loaders[type];
+            return _loaders[type].get();
         }
         IModLoader* GetLoader(size_t index) {
             if (index >= _loaderTypes.size()) {
                 Log("ModLoaders", "Loader index '{}' out of bounds", index);
                 return nullptr;
             }
-            return _loaders[_loaderTypes[index]];
+            return _loaders[_loaderTypes[index]].get();
         }
         void UnregisterAll() {
             _loaders.clear();

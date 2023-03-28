@@ -31,14 +31,15 @@ GOAL: Plugin can:
 --------
 
 GOALS:
-- MODDING_FRAMEWORK_SEARCH_PATHS
-  modding_framework.ini ---> "Data Files"
-- Mod knows who it is
-- Mod can read runtime config (.exe name etc)
-- Mod can list all mods
-- Mod can add a button with a click handler (to a sub-tab of the main UI)
+- [ ] Fix unloading (lol) <---
+- [ ] Make a nice interface for defining mods *AND* getting the RUNTIME*
+- [ ] Mod knows who it is (name and version)
+- [x] Mod can read runtime config (.exe name etc)
+- [x] Mod can list all mods
+- [ ] Mod can add a button with a click handler (to a sub-tab of the main UI)
 
-30. ???????????
+31. ???????????
+30. Rewrite all the things so they have 'C interfaces'. Got native loading working again!
 29. Call functions in Modding Runtime from a Mod. RE in Morrowind, e.g. Entity List + Attributes
 28. Setup Morrowind modding framework. Loop thru player inventory (name/qty) in C++ mod.
 27. Mod Discovery! Mod .ini parsing. Mod Registy. Mod Loading with UI.

@@ -49,7 +49,7 @@ namespace ModdingFramework::Runtime {
         RuntimeConfig   _runtimeConfig;
         ModRegistry     _modRegistry;
         ModLoaders      _modLoaders;
-        NativeModLoader _nativeModLoader;
+        NativeModLoader _nativeModLoader{&_cInterface};
 
     public:
         static ModdingRuntime& GetRuntime() {

@@ -3,6 +3,7 @@
 #include <Logging.h>
 #include <ModdingFramework/IMod.h>
 #include <ModdingFramework/IModLoader.h>
+#include <ModdingFramework/IModdingRuntime.h>
 #include <StringFormatting.h>
 
 #include <filesystem>
@@ -10,7 +11,11 @@
 namespace ModdingFramework::Runtime {
 
     class NativeModLoader : public IModLoader {
+        IModdingRuntime* _runtime;
+
     public:
+        NativeModLoader(IModdingRuntime* runtime) : _runtime(runtime) {}
+
         static constexpr auto DLL_HMODULE_DATA_KEY = "DLL_HMODULE";
 
         bool LoadMod(IMod* mod) override {
@@ -35,14 +40,14 @@ namespace ModdingFramework::Runtime {
 
             mod->SetData(DLL_HMODULE_DATA_KEY, dllHMODULE, 0);
 
-            auto loadMod = (void (*)())GetProcAddress(dllHMODULE, "Load");
+            auto loadMod = (void (*)(IModdingRuntime*))GetProcAddress(dllHMODULE, "Load");
             if (!loadMod) {
                 Log("Failed to find Load function in native mod DLL: {}", dllPath.string());
                 return false;
             }
 
             try {
-                loadMod();
+                loadMod(_runtime);
                 Log("Loaded native mod DLL: {}", dllPath.string());
                 mod->SetLoaded(true);
                 return true;
@@ -51,6 +56,7 @@ namespace ModdingFramework::Runtime {
             } catch (...) {
                 Log("Failed to load native mod DLL: Unknown error");
             }
+            return false;
         }
 
         bool UnloadMod(IMod* mod) override {
@@ -93,6 +99,7 @@ namespace ModdingFramework::Runtime {
             } catch (...) {
                 Log("Failed to unload native mod DLL: Unknown error");
             }
+            return false;
         }
     };
 }
