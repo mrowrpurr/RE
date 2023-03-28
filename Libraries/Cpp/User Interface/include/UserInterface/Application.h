@@ -6,8 +6,13 @@
 #include <nana/gui.hpp>
 #include <nana/gui/detail/bedrock.hpp>
 #include <nana/gui/widgets/button.hpp>
+#include <nana/gui/widgets/checkbox.hpp>
 #include <nana/gui/widgets/label.hpp>
+#include <nana/gui/widgets/panel.hpp>
+#include <nana/gui/widgets/slider.hpp>
+#include <nana/gui/widgets/tabbar.hpp>
 #include <nana/gui/widgets/textbox.hpp>
+#include <string>
 #include <vector>
 
 namespace UserInterface {
@@ -40,11 +45,72 @@ namespace UserInterface {
             );
         }
         void RunApp() {
+            using namespace nana;
+            // Create the main form
+            form fm{API::make_center(300, 300)};
+            fm.caption("Nana C++ Library - Tabbed Application");
+
+            // Create the tabbar
+            tabbar<std::string> tabs(fm);
+            tabs.push_back("Tab 1");
+            tabs.push_back("Tab 2");
+            tabs.push_back("Tab 3");
+
+            // Create the panel for each tab
+            panel<false> tab1(fm), tab2(fm), tab3(fm);
+            place        layout(fm);
+            layout.div("vert <tabs><<tab1><tab2><tab3>>");
+
+            checkbox chk_butts(tab1, "Butts");
+            chk_butts.events().checked([](const arg_checkbox& arg) {
+                // Event handler for checkbox
+            });
+
+            label   lbl_foo(tab2, "Foo");
+            textbox txt_foo(tab2);
+            label   lbl_bar(tab2, "Bar");
+            textbox txt_bar(tab2);
+
+            // Tab 3 - Slider
+            slider sldr(tab3, rectangle(point(20, 20), size(200, 20)));
+            sldr.value(69);
+            sldr.events().value_changed([](const arg_slider& arg) {
+                // Event handler for slider
+            });
+
+            // Set tab visibility and bind to the tabbar
+            layout.field("tab1") << tab1;
+            layout.field("tab2") << tab2;
+            layout.field("tab3") << tab3;
+            layout.field("tabs") << tabs;
+            layout.collocate();
+
+            tabs.events().activated([&](const arg_tabbar<std::string>&) {
+                unsigned index = tabs.activated();
+
+                tab1.hide();
+                tab2.hide();
+                tab3.hide();
+
+                if (index == 0) tab1.show();
+                else if (index == 1) tab2.show();
+                else if (index == 2) tab3.show();
+            });
+
+            // Show the first tab by default
+            tabs.activated(0);
+            // tab1.show();
+
+            // Run the main loop
+            fm.show();
+            exec();
+        }
+        void RunAppXXX() {
             if (_isRunning.exchange(true)) return;
 
             nana::label lblTopPadding(_form, "");
 
-            std::string arrangement{"5"};
+            std::string arrangement{"5,10"};
             if (!_headerLabel.caption().empty()) arrangement += "," + std::to_string(_buttonHeight);
             for (size_t i = 0; i < _buttonInitialText.size(); i++)
                 arrangement += "," + std::to_string(_buttonHeight);
