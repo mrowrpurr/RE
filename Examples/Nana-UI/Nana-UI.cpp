@@ -12,6 +12,7 @@ namespace UI {
 
     class AppForm {
     public:
+        bool                shouldRefresh = false;
         form                fm{API::make_center(500, 300)};
         tabbar<std::string> tab{fm};
         place               main_place{fm};
@@ -69,7 +70,10 @@ namespace UI {
                 return 69;  // Nana BUG (not used)
             });
 
-            refresh_button.events().click([&] { fm.close(); });
+            refresh_button.events().click([&] {
+                shouldRefresh = true;
+                fm.close();
+            });
 
             main_place.div("vert <tab weight=30><panel margin=10>");
             main_place["tab"] << tab;
@@ -91,7 +95,7 @@ void RunApp() {
     app->RunApp("Hello! " + std::to_string(counter++));
     nana::exec();
 
-    if (counter < 3) RunApp();
+    if (app->shouldRefresh) RunApp();
     else app = nullptr;
 }
 
