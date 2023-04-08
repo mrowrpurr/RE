@@ -2,3 +2,5 @@
 
 CB4 offset
 
+
+624 offset of the qty to the item?
