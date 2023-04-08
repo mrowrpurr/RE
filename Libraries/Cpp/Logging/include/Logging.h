@@ -1,4 +1,5 @@
 #pragma once
 
-#include "Logging/Adapters/spdlog.h"
-#include "Logging/Config.h"
+#include "Logging/Logging.h"
+
+#define Log(...) OutputLogLine(__VA_ARGS__)

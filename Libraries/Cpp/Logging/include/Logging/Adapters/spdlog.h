@@ -1,9 +1,10 @@
 #pragma once
 
-#include "Logging/Config.h"
-#include "spdlog/sinks/basic_file_sink.h"
-#include "spdlog/sinks/stdout_color_sinks.h"
-#include "spdlog/spdlog.h"
+#include <spdlog/sinks/basic_file_sink.h>
+#include <spdlog/sinks/stdout_color_sinks.h>
+#include <spdlog/spdlog.h>
+
+#include "../Config.h"
 
 namespace Logging::Adapters {
 
@@ -32,4 +33,5 @@ namespace Logging::Adapters {
     };
 }
 
-#define Log(...) Logging::Adapters::SpdlogAdapter::GetSingleton().SpdlogLogger->info(__VA_ARGS__)
+#define OutputLogLine(...) \
+    Logging::Adapters::SpdlogAdapter::GetSingleton().SpdlogLogger->info(__VA_ARGS__)
