@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CheatTable CheatEngineTableVersion="45">
+  <CheatEntries>
+    <CheatEntry>
+      <ID>2</ID>
+      <Description>"Find and set symbols"</Description>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{$Lua}
+if syntaxcheck then return end
+
+[ENABLE]
+for i,v in ipairs(enumMemoryRegions()) do
+  if v.RegionSize&gt;=0x1001000 and v.AllocationProtect==4 then
+    unregisterSymbol('GameMemoryStart') registerSymbol('GameMemoryStart',v.BaseAddress+0x20)
+  end
+end
+
+[DISABLE]
+unregisterSymbol('GameMemoryStart')
+</AssemblerScript>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>1</ID>
+      <Description>"GameMemoryStart"</Description>
+      <VariableType>Byte</VariableType>
+      <Address>GameMemoryStart</Address>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>3</ID>
+      <Description>"Gold"</Description>
+      <ShowAsSigned>0</ShowAsSigned>
+      <VariableType>2 Bytes</VariableType>
+      <Address>GameMemoryStart+23bbe</Address>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>5</ID>
+      <Description>"Silver"</Description>
+      <ShowAsSigned>0</ShowAsSigned>
+      <VariableType>2 Bytes</VariableType>
+      <Address>GameMemoryStart+23b76</Address>
+    </CheatEntry>
+  </CheatEntries>
+  <UserdefinedSymbols>
+    <SymbolEntry>
+      <Name>GameMemoryStart</Name>
+      <Address>B1E1020</Address>
+    </SymbolEntry>
+  </UserdefinedSymbols>
+</CheatTable>
