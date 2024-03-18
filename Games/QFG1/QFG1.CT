@@ -39,6 +39,34 @@ unregisterSymbol('GameMemoryStart')
       <VariableType>2 Bytes</VariableType>
       <Address>GameMemoryStart+23b76</Address>
     </CheatEntry>
+    <CheatEntry>
+      <ID>6</ID>
+      <Description>"Daggers"</Description>
+      <ShowAsSigned>0</ShowAsSigned>
+      <VariableType>2 Bytes</VariableType>
+      <Address>GameMemoryStart+23d6e</Address>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>7</ID>
+      <Description>"Flasks"</Description>
+      <ShowAsSigned>0</ShowAsSigned>
+      <VariableType>2 Bytes</VariableType>
+      <Address>GameMemoryStart+23ed6</Address>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>8</ID>
+      <Description>"Food Rations"</Description>
+      <ShowAsSigned>0</ShowAsSigned>
+      <VariableType>2 Bytes</VariableType>
+      <Address>GameMemoryStart+23c06</Address>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>9</ID>
+      <Description>"Next one"</Description>
+      <ShowAsSigned>0</ShowAsSigned>
+      <VariableType>2 Bytes</VariableType>
+      <Address>GameMemoryStart+23c06</Address>
+    </CheatEntry>
   </CheatEntries>
   <UserdefinedSymbols>
     <SymbolEntry>
